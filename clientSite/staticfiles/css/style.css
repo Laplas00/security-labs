@@ -1,0 +1,104 @@
+body {
+  margin: 0;
+  font-family: 'Inter', sans-serif;
+  background: #0b0f1a;
+  color: #e0e0e0;
+}
+
+.top-banner {
+  background-color: #8b5cf6;
+  color: white;
+  text-align: center;
+  padding: 8px 0;
+  font-weight: 600;
+}
+
+.main-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 20px 50px;
+  background: transparent;
+}
+
+.logo {
+  font-size: 24px;
+  font-weight: bold;
+  color: #8b5cf6;
+}
+
+.logo-img {
+  height: 36px;
+  width: 60px;
+  display: block;
+}
+
+
+nav ul {
+  list-style: none;
+  display: flex;
+  gap: 30px;
+  margin: 0;
+  padding: 0;
+}
+
+nav ul li a {
+  text-decoration: none;
+  color: #d1d5db;
+  font-weight: 500;
+  transition: color 0.2s;
+}
+
+nav ul li a:hover {
+  color: #fff;
+}
+
+.hero {
+  text-align: center;
+  padding: 120px 20px;
+}
+
+.hero h1 {
+  font-size: 3rem;
+  color: #f3f4f6;
+  line-height: 1.2;
+  margin-bottom: 1rem;
+}
+
+.hero h1 span {
+  color: #8b5cf6;
+}
+
+.hero p {
+  font-size: 1.25rem;
+  color: #9ca3af;
+}
+
+.buttons {
+  margin-top: 2rem;
+}
+
+.btn {
+  padding: 12px 24px;
+  border-radius: 8px;
+  font-weight: bold;
+  text-decoration: none;
+  display: inline-block;
+  margin: 0 10px;
+  transition: background 0.3s ease;
+}
+
+.btn.primary {
+  background: linear-gradient(90deg, #8b5cf6, #6366f1);
+  color: white;
+}
+
+.btn.secondary {
+  background: #1f2937;
+  color: #d1d5db;
+}
+
+.btn:hover {
+  opacity: 0.9;
+}
+
