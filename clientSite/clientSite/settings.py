@@ -25,8 +25,14 @@ SECRET_KEY = 'django-insecure--b1g6q8^yghq)@by1)q@jdi2j$)+mz2b61d4$nfweef33&eq%!
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ['*']
-
+ALLOWED_HOSTS = [
+    'labs-is-here.online',
+    'www.labs-is-here.online',
+]
+CSRF_TRUSTED_ORIGINS = [
+    'https://labs-is-here.online',
+    'https://www.labs-is-here.online',
+]
 
 # Application definition
 
@@ -53,11 +59,6 @@ MIDDLEWARE = [
     'django.middleware.common.CommonMiddleware',
 ]
 
-CORS_ALLOWED_ORIGINS = [
-    "https://labs-is-here.online",  # твой сайт
-    "https://edge-yourlabs.online",  # второй домен (заменишь)
-    "http://localhost:3000",         # на случай локальных тестов
-]
 
 ROOT_URLCONF = 'clientSite.urls'
 
