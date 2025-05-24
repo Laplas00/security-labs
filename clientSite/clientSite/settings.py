@@ -26,7 +26,6 @@ SECRET_KEY = 'django-insecure--b1g6q8^yghq)@by1)q@jdi2j$)+mz2b61d4$nfweef33&eq%!
 DEBUG = True
 
 ALLOWED_HOSTS = ['*']
-CORS_ALLOW_ALL_ORIGINS = True
 
 
 # Application definition
@@ -39,6 +38,7 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'authentication','labs',
+        'corsheaders',
 ]
 
 MIDDLEWARE = [
@@ -49,6 +49,14 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+        'corsheaders.middleware.CorsMiddleware',
+    'django.middleware.common.CommonMiddleware',
+]
+
+CORS_ALLOWED_ORIGINS = [
+    "https://labs-is-here.online",  # твой сайт
+    "https://edge-yourlabs.online",  # второй домен (заменишь)
+    "http://localhost:3000",         # на случай локальных тестов
 ]
 
 ROOT_URLCONF = 'clientSite.urls'
