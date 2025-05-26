@@ -52,7 +52,7 @@
 
 <p><a href="{{ lab_link }}">Хакни меня!</a></p>
 
-<form action="{% url 'start_lab' %}" method="POST" style="display: inline">
+<form action="{% url 'stop_lab' %}" method="POST" style="display: inline">
   {% csrf_token %}
     <button type="submit">🛑 Остановить работу</button>
     <input type="hidden" name="lab" value="{{ lab_name }}">
@@ -64,7 +64,7 @@
 </form>
 
 {% else %}
-<form action="{% url 'stop_lab' %}" method="POST" style="display: inline">
+<form action="{% url 'start_lab' %}" method="POST" style="display: inline">
   {% csrf_token %}
   <input type="hidden" name="lab" value="{{ lab_name }}">
 
