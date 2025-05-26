@@ -75,8 +75,8 @@ server {{
 
     except jwt.ExpiredSignatureError:
         return jsonify({"error": "Token expired"}), 403
-    except Exception:
-        return jsonify({"error": "Invalid token"}), 403
+    except Exception as e:
+        return jsonify({"error": f"Invalid token, {e}"}), 403
         user = data.get("user", False)
         if user == False:
             return jsonify({'error':'User False'})
