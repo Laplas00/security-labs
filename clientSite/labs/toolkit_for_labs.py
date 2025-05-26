@@ -10,13 +10,16 @@ SECRET_KEY = "SomeSecret22"
 ALGORITHM = "HS256"
 EDGE_API = "http://207.231.109.77:5000"
 
+
 def generate_lab_token(user: str, lab: str):
     payload = {
         "user": user,
         "lab": lab,
         "exp": datetime.utcnow() + timedelta(minutes=30)
     }
-    token = jwt.encode(payload, SECRET_KEY, algorithm=ALGORITHM).decode('utf-8')
+    token = jwt.encode(payload, SECRET_KEY, algorithm=ALGORITHM)
+    if isinstance(token, bytes):
+        token = token.decode("utf-8")
     return token
 
 @login_required 
