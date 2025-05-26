@@ -24,7 +24,7 @@ def start_lab():
     if not all([user, lab]):
         return jsonify({"error": "user and lab required"}), 400
 
-    subdomain = f"for-{user}-{lab}"
+    subdomain = f"{user}-{lab}"
 
     existing = subprocess.getoutput(f"docker ps -a --format '{{{{.Names}}}}' | grep ^{subdomain}$")
     if existing:
