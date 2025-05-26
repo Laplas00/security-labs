@@ -52,18 +52,22 @@
 
 <p><a href="{{ lab_link }}">Хакни меня!</a></p>
 
-<form action="/lab/sql_injection_classic/stop" method="POST" style="display: inline">
+<form action="{% url 'start_lab' %}" method="POST" style="display: inline">
+  {% csrf_token %}
     <button type="submit">🛑 Остановить работу</button>
+    <input type="hidden" name="lab" value="{{ lab_name }}">
 </form>
 
-<form action="/lab/sql_injection_classic/toggle_vuln"
-      method="POST"
-      style="display: inline">
+<form action='#' method="POST" style="display: inline">
+    <input type="hidden" name="lab" value="{{ lab_name }}">
     <button type="submit">⚙️ Вкл/Выкл уязвимость</button>
 </form>
 
 {% else %}
-<form action="/lab/sql_injection_classic/start" method="POST" style="display: inline">
+<form action="{% url 'stop_lab' %}" method="POST" style="display: inline">
+  {% csrf_token %}
+  <input type="hidden" name="lab" value="{{ lab_name }}">
+
     <button type="submit">🚀 Запустить сайт</button>
 </form>
 {% endif %}

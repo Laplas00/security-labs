@@ -1,15 +1,14 @@
 import requests
-from django.http import JsonResponse
-from django.contrib.auth.decorators import login_required
-import jwt
-
-
-
 import jwt
 from datetime import datetime, timedelta
+from django.conf import settings
+from django.http import JsonResponse
+from django.contrib.auth.decorators import login_required
+from django.views.decorators.csrf import csrf_exempt
 
-SECRET_KEY = "SomeSecret22"  # общий секрет с edge
+SECRET_KEY = "SomeSecret22"
 ALGORITHM = "HS256"
+EDGE_API = "http://207.231.109.77:5000"
 
 def generate_lab_token(user: str, lab: str):
     payload = {
@@ -20,17 +19,15 @@ def generate_lab_token(user: str, lab: str):
     token = jwt.encode(payload, SECRET_KEY, algorithm=ALGORITHM)
     return token
 
-EDGE_API = "http://207.231.109.77:5000" 
-
-
 @login_required 
 def start_lab(request): 
     user = request.user.username
-    lab = request.GET.get("lab", "xss")
+    lab = request.POST.get("lab")
 
     data = {
         "user": user,
-        "lab": lab
+        "lab": lab,
+        "jwttoken": generate_lab_token(user, lab),
     }
 
     try:
@@ -41,12 +38,17 @@ def start_lab(request):
 
 @login_required
 def stop_lab(request):
-    port = request.GET.get("port")
-    if not port:
-        return JsonResponse({"error": "port is required"})
+    user = request.user.username
+    lab = request.POST.get("lab")
+
+    data = {
+        "user": user,
+        "lab": lab,
+        "jwttoken": generate_lab_token(user, lab),
+    }
 
     try:
-        r = requests.post(f"{EDGE_API}/stop_lab", json={"port": int(port)})
+        r = requests.post(f"{EDGE_API}/stop_lab", json=data)
         return JsonResponse(r.json())
     except Exception as e:
         return JsonResponse({"error": str(e)})

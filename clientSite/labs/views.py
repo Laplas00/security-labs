@@ -12,5 +12,6 @@ def modules(request):
 
 @login_required
 def sql_classic(request):
-    return render(request, 'labs/sql_injection_classic.html')
+    return render(request, 'labs/sql_injection_classic.html', 
+                  context={'lab_name':'sql_classic'})
 
