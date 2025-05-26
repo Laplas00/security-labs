@@ -1,102 +1,122 @@
 from flask import Flask, request, jsonify
 import subprocess
-import random
-import string
 import os
+import json
+import random
+import jwt
+
+
 
 app = Flask(__name__)
+BASE_PORT = 8100
+MAX_PORT = 8199
+NGINX_SITES = "/etc/nginx/sites-enabled/"
 
-TRAEFIK_NETWORK = "bridge"  # если используешь docker network traefik, пропиши тут имя
-
-# Демо-валидация токена
-def verify_jwt(token):
-    # Здесь будет реальная проверка JWT — сейчас просто заглушка
-    return token == "SomeSecret22"
-
-def get_free_port(start=8100, end=8199):
-    # Находим свободный порт (очень примитивно, для MVP)
-    used_ports = subprocess.getoutput("docker ps --format '{{.Ports}}'").split('\n')
-    for port in range(start, end):
-        if not any(f':{port}->' in x for x in used_ports):
+def get_free_port():
+    for port in range(BASE_PORT, MAX_PORT):
+        result = subprocess.run(['lsof', '-i', f':{port}'], stdout=subprocess.PIPE)
+        if not result.stdout:
             return port
-    raise Exception("Нет свободных портов!")
+    raise Exception("No free ports available")
 
 @app.route("/start_lab", methods=["POST"])
 def start_lab():
     data = request.get_json()
-    user = data.get("user")
-    lab = data.get("lab")
-    token = data.get("jwttoken")
-
-    if not all([user, lab, token]):
-        return jsonify({"error": "user, lab, and jwttoken are required"}), 400
-
-    if not verify_jwt(token):
-        return jsonify({"error": "Invalid JWT token"}), 403
-
-    # Генерируем уникальное имя контейнера: <user>-<lab>
-    container_name = f"{user}-{lab}"
-
-    # Проверяем, не запущен ли уже такой контейнер
-    existing = subprocess.getoutput(f"docker ps -a --format '{{{{.Names}}}}' | grep ^{container_name}$")
-    if existing:
-        return jsonify({"error": "Lab already running for this user!"}), 409
-
-    # Находим свободный порт
-    port = get_free_port()
-
-    # Пример простейшего Flask-сайта как лаба (замени на свой образ)
-    image = "pallets/flask"  # можно собрать свой lab_xss и т.д.
-
-    # Запускаем контейнер с traefik labels
-    run_command = [
-        "docker", "run", "-d",
-        "--name", container_name,
-        "-l", f"traefik.enable=true",
-        "-l", f"traefik.http.routers.{container_name}.rule=Host(`{container_name}.labs-is-here.online`)",
-        "-l", f"traefik.http.routers.{container_name}.entrypoints=web",
-        "-l", f"traefik.http.services.{container_name}.loadbalancer.server.port=5000",
-        "-p", f"{port}:5000",
-        image,
-        "flask", "run", "--host=0.0.0.0"
-    ]
+    token = data.get("token")
 
     try:
-        subprocess.run(run_command, check=True)
-    except Exception as e:
-        return jsonify({"error": str(e)}), 500
+        payload = jwt.decode(token, "SomeSecret22", algorithms=["HS256"])
+        user = data.get("user", False)
 
-    return jsonify({
-        "status": "ok",
-        "url": f"http://{container_name}.labs-is-here.online",
-        "port": port,
-        "container": container_name
-    })
+        if user == False:
+            return jsonify({'error':'User False'})
 
-@app.route("/stop_lab", methods=["POST"])
-def stop_lab():
-    data = request.get_json()
-    user = data.get("user")
-    lab = data.get("lab")
-    token = data.get("jwttoken")
+        lab = data.get("lab", None)
+        if lab is None:
+            return jsonify({'error':'lab None'})
 
-    if not all([user, lab, token]):
-        return jsonify({"error": "user, lab, and jwttoken are required"}), 400
+        subdomain = f"for-{user}-{lab}"
+        port = get_free_port()
 
-    if not verify_jwt(token):
-        return jsonify({"error": "Invalid JWT token"}), 403
+        # Запускаем контейнер
+        subprocess.run([
+            "docker", "run", "-d",
+            "--name", subdomain,
+            "-p", f"{port}:80",
+            "--memory", "150m", "--cpus", "0.05",
+            f"lab_{lab}"
+        ])
 
-    container_name = f"{user}-{lab}"
+        # Генерируем nginx конфиг
+        nginx_conf = f"""
+server {{
+    listen 80;
+    server_name {subdomain}.labs-is-here.online;
 
-    # Проверяем, существует ли контейнер
-    existing = subprocess.getoutput(f"docker ps -a --format '{{{{.Names}}}}' | grep ^{container_name}$")
-    if not existing:
-        return jsonify({"error": "Lab is not running!"}), 404
+    location / {{
+        proxy_pass http://127.0.0.1:{port};
+        proxy_set_header Host $host;
+        proxy_set_header X-Real-IP $remote_addr;
+    }}
+}}
+    """
+        conf_path = f"/etc/nginx/sites-enabled/{subdomain}"
+        with open(conf_path, "w") as f:
+            f.write(nginx_conf)
 
-    # Останавливаем и удаляем контейнер
-    subprocess.run(["docker", "rm", "-f", container_name])
+        subprocess.run(["nginx", "-t"])
+        subprocess.run(["systemctl", "reload", "nginx"])
 
-    return jsonify({"status": "stopped", "container": container_name})
+        return jsonify({
+            "status": "ok",
+            "url": f"http://{subdomain}.labs-is-here.online"
+        })
+
+
+    except jwt.ExpiredSignatureError:
+        return jsonify({"error": "Token expired"}), 403
+    except Exception:
+        return jsonify({"error": "Invalid token"}), 403
+        user = data.get("user", False)
+        if user == False:
+            return jsonify({'error':'User False'})
+        lab = data.get("lab", "xss")
+        subdomain = f"lab-{user}"
+        port = get_free_port()
+
+        # Запускаем контейнер
+        subprocess.run([
+            "docker", "run", "-d",
+            "--name", subdomain,
+            "-p", f"{port}:80",
+            "--memory", "150m", "--cpus", "0.05",
+            f"lab_{lab}"
+        ])
+
+        # Генерируем nginx конфиг
+        nginx_conf = f"""
+    server {{
+        listen 80;
+        server_name {subdomain}.labs-is-here.online;
+
+        location / {{
+            proxy_pass http://127.0.0.1:{port};
+            proxy_set_header Host $host;
+            proxy_set_header X-Real-IP $remote_addr;
+        }}
+    }}
+    """
+        conf_path = f"/etc/nginx/sites-enabled/{subdomain}"
+        with open(conf_path, "w") as f:
+            f.write(nginx_conf)
+
+        subprocess.run(["nginx", "-t"])
+        subprocess.run(["systemctl", "reload", "nginx"])
+
+        return jsonify({
+            "status": "ok",
+            "url": f"http://{subdomain}.labs-is-here.online"
+        })
 
 if __name__ == "__main__":
     app.run(host="0.0.0.0", port=5000)
