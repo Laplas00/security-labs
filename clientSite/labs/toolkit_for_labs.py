@@ -16,7 +16,7 @@ def generate_lab_token(user: str, lab: str):
         "lab": lab,
         "exp": datetime.utcnow() + timedelta(minutes=30)
     }
-    token = jwt.encode(payload, SECRET_KEY, algorithm=ALGORITHM)
+    token = jwt.encode(payload, SECRET_KEY, algorithm=ALGORITHM).decode('utf-8')
     return token
 
 @login_required 
