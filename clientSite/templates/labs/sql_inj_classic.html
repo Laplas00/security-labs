@@ -50,7 +50,7 @@
 
 {% if status.status == "running" %}
 
-<p><a href="{{ lab_link }}">Хакни меня!</a></p>
+<p><a href="{{ status.url }}">Хакни меня!</a></p>
 
 <form action="{% url 'stop_lab' %}" method="POST" style="display: inline">
   {% csrf_token %}
