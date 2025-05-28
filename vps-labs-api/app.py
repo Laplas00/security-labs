@@ -86,7 +86,7 @@ def start_lab():
     return jsonify({
         "status": "ok",
         "url": f"http://{subdomain}.labs-is-here.online",
-        "output":output,
+        "output":str(output),
     })
 
 @app.route("/stop_lab", methods=["POST"])
