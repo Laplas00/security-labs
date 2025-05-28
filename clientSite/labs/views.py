@@ -14,7 +14,7 @@ def modules(request):
 @login_required
 def sql_classic(request):
     lab_name = "sql_inj_classic"
-    user = request.user.username.lowercase()
+    user = request.user.username.lower()
     token = generate_lab_token(user, lab_name)
     status = get_lab_status(user, lab_name, token)
     return render(request, 'labs/sql_inj_classic.html', 
