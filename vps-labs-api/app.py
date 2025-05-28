@@ -81,12 +81,12 @@ def start_lab():
       '-l', f'traefik.http.services.{subdomain}.loadbalancer.server.port=5000', 
       f"lab_{subdomain}", '--memory', '150m', '--cpus', '0.05']
 
-
-    subprocess.run(docker_run)
-
+    output = subprocess.run(docker_run)
+    
     return jsonify({
         "status": "ok",
-        "url": f"http://{subdomain}.labs-is-here.online"
+        "url": f"http://{subdomain}.labs-is-here.online",
+        "output":output,
     })
 
 @app.route("/stop_lab", methods=["POST"])
