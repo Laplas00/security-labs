@@ -11,7 +11,7 @@ MAX_PORT = 8199
 app = Flask(__name__)
 SECRET_KEY = "SomeSecret22"
 ALGORITHM = "HS256"
-
+DOMAIN = "labs-is-here.online"
 
 
 @app.route("/get_lab_status_for_user", methods=["POST"])
