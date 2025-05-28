@@ -14,7 +14,7 @@ def register(request):
         return redirect('dashboard')
     
     if request.method == 'POST':
-        username = request.POST['username']
+        username = request.POST['username'].lowercase()
         email    = request.POST['email']
         password = request.POST['password1']
         confirm  = request.POST['password2']
