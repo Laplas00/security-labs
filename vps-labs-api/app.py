@@ -72,16 +72,16 @@ def start_lab():
     if existing:
         return jsonify({"error": "Lab already running for this user!"}), 409
 
-    docker_run = [
-        "docker", "run", "-d",
-        "--name", subdomain,
-        "-l", f"traefik.enable=true",
-        "-l", f"traefik.http.routers.{subdomain}.rule=Host(`{subdomain}.labs-is-here.online`)",
-        "-l", f"traefik.http.routers.{subdomain}.entrypoints=web",
-        "-l", f"traefik.http.services.{subdomain}.loadbalancer.server.port=5000",
-        "--memory", "150m", "--cpus", "0.05",
-        f"lab_{lab}"
-    ]
+
+    docker_run  = ['docker', 'run', '-d', '--name', f'{subdomain}',
+      '--network', 'traefik-net', 
+      '-l', 'traefik.enable=true', 
+      '-l', f'traefik.http.routers.{subdomain}.rule=Host("{subdomain}.labs-is-here.online")', 
+      '-l', f'traefik.http.routers.{subdomain}.entrypoints=web', 
+      '-l', f'traefik.http.services.{subdomain}.loadbalancer.server.port=5000', 
+      f"lab_{subdomain}", '--memory', '150m', '--cpus', '0.05']
+
+
     subprocess.run(docker_run)
 
     return jsonify({
