@@ -8,7 +8,7 @@ from django.views.decorators.csrf import csrf_exempt
 
 SECRET_KEY = "SomeSecret22"
 ALGORITHM = "HS256"
-EDGE_API = "http://207.231.109.77:5000"
+EDGE_IP = "http://207.231.109.77:5000"
 
 def get_lab_status(user, lab, token):
     data = {
@@ -43,7 +43,7 @@ def start_lab(request):
     }
 
     try:
-        r = requests.post(f"{EDGE_API}/start_lab", json=data)
+        r = requests.post(f"{EDGE_IP}/start_lab", json=data)
         return JsonResponse(r.json())
     except Exception as e:
         return JsonResponse({"error": str(e)})
@@ -60,7 +60,7 @@ def stop_lab(request):
     }
 
     try:
-        r = requests.post(f"{EDGE_API}/stop_lab", json=data)
+        r = requests.post(f"{EDGE_IP}/stop_lab", json=data)
         return JsonResponse(r.json())
     except Exception as e:
         return JsonResponse({"error": str(e)})

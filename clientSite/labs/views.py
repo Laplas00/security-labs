@@ -1,6 +1,6 @@
 from django.shortcuts import render
 from django.contrib.auth.decorators import login_required
-from .toolkit_for_labs import EDGE_IP, generate_lab_token,  get_lab_status
+from .toolkit_for_labs import generate_lab_token,  get_lab_status
 
 
 @login_required
