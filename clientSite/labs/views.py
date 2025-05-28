@@ -1,9 +1,6 @@
 from django.shortcuts import render
 from django.contrib.auth.decorators import login_required
-
-
-EDGE_API = "http://207.231.109.77:5000"
-
+from toolkit_for_labs import EDGE_IP
 
 
 def get_lab_status(user, lab, token):
