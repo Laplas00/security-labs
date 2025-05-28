@@ -93,7 +93,7 @@ def start_lab():
 def stop_lab():
     data = request.get_json()
     token = data.get("jwttoken") or data.get("token")
-    user = data.get("user")
+    user = data.get("user").lower()
     lab = data.get("lab")
 
     try:
