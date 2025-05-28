@@ -48,7 +48,7 @@
 <p>Статус уязвимости: {{ vuln_mode }}</p>
 <p>Статус веб-приложения: {{ status }}</p>
 
-{% if status == "running" %}
+{% if status.status == "running" %}
 
 <p><a href="{{ lab_link }}">Хакни меня!</a></p>
 
