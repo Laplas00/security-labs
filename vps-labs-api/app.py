@@ -82,7 +82,7 @@ def start_lab():
       f"lab_{subdomain}", '--memory', '150m', '--cpus', '0.05']
 
     output = subprocess.run(docker_run)
-    
+    print(output) 
     return jsonify({
         "status": "ok",
         "url": f"http://{subdomain}.labs-is-here.online",
