@@ -89,6 +89,7 @@ def start_lab():
         "url": f"http://{subdomain}.labs-is-here.online"
     })
 
+
 @app.route("/stop_lab", methods=["POST"])
 def stop_lab():
     data = request.get_json()
@@ -111,6 +112,8 @@ def stop_lab():
         "status": "stopped",
         "container": subdomain
     })
+
+
 
 if __name__ == "__main__":
     app.run(host="0.0.0.0", port=5000)
