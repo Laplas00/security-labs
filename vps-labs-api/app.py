@@ -89,7 +89,6 @@ def start_lab():
         "url": f"http://{subdomain}.labs-is-here.online"
     })
 
-
 @app.route("/stop_lab", methods=["POST"])
 def stop_lab():
     data = request.get_json()
@@ -102,16 +101,26 @@ def stop_lab():
     except Exception as e:
         return jsonify({"error": f"Invalid token: {e}"}), 403
 
-    if not all([user, lab]):
+    if not user or not lab:
         return jsonify({"error": "user and lab required"}), 400
 
-    subdomain = f"for-{user}-{lab}"
-    subprocess.run(["docker", "rm", "-f", subdomain])
+    subdomain = f"{user}-{lab}"
+    # Проверим, существует ли контейнер
+    check_cmd = f"docker ps -a --filter 'name=^{subdomain}$' --format '{{{{.Names}}}}'"
+    existing = subprocess.getoutput(check_cmd)
 
-    return jsonify({
-        "status": "stopped",
-        "container": subdomain
-    })
+    if existing.strip() == subdomain:
+        subprocess.run(["docker", "rm", "-f", subdomain])
+        return jsonify({
+            "status": "stopped",
+            "container": subdomain
+        })
+    else:
+        return jsonify({
+            "status": "not_found",
+            "container": subdomain,
+            "message": "No such lab container running for this user"
+        }), 404
 
 
 
