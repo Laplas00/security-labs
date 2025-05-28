@@ -2,6 +2,20 @@ from django.shortcuts import render
 from django.contrib.auth.decorators import login_required
 
 
+EDGE_API = "http://207.231.109.77:5000"
+
+
+
+def get_lab_status(user, lab, token):
+    data = {
+        "user": user,
+        "lab": lab,
+        "token": token
+    }
+    r = requests.post(f"{EDGE_IP}/get_lab_status_for_user", json=data, timeout=5)
+    return r.json()
+
+
 @login_required
 def dashboard(request):
     return render(request, 'dashboard.html')

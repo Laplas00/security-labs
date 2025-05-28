@@ -1,11 +1,53 @@
+import os
+import json
+import random
 from flask import Flask, request, jsonify
 import subprocess
 import jwt
 
-app = Flask(__name__)
 
+bASE_PORT = 8100
+MAX_PORT = 8199
+app = Flask(__name__)
 SECRET_KEY = "SomeSecret22"
 ALGORITHM = "HS256"
+
+
+
+@app.route("/get_lab_status_for_user", methods=["POST"])
+def get_lab_status_for_user():
+    data = request.get_json()
+    token = data.get("token")
+
+    try:
+        payload = jwt.decode(token, SECRET_KEY, algorithms=[ALGORITHM])
+        user = data.get("user", False)
+        lab = data.get("lab", None)
+
+        if not user:
+            return jsonify({'error': 'User False'}), 400
+        if not lab:
+            return jsonify({'error': 'Lab None'}), 400
+
+        subdomain = f"{user}-{lab}"
+        # Проверяем, существует ли контейнер с таким именем и он "Up"
+        ps_cmd = f"docker ps --filter 'name=^{subdomain}$' --filter 'status=running' --format '{{{{.Names}}}}'"
+        existing = subprocess.getoutput(ps_cmd)
+
+        if existing.strip() == subdomain:
+            return jsonify({
+                "status": "running",
+                "url": f"http://{subdomain}.{DOMAIN}"
+            })
+        else:
+            return jsonify({
+                "status": "not_running"
+            })
+    except jwt.ExpiredSignatureError:
+        return jsonify({'error': 'Token expired'}), 401
+    except Exception as e:
+        return jsonify({'error': f'Exception: {e}'}), 400
+
 
 @app.route("/start_lab", methods=["POST"])
 def start_lab():
@@ -72,4 +114,6 @@ def stop_lab():
 
 if __name__ == "__main__":
     app.run(host="0.0.0.0", port=5000)
+
+
 
