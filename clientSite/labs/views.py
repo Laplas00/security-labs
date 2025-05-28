@@ -1,6 +1,6 @@
 from django.shortcuts import render
 from django.contrib.auth.decorators import login_required
-from toolkit_for_labs import EDGE_IP, generate_lab_token,  get_lab_status
+from .toolkit_for_labs import EDGE_IP, generate_lab_token,  get_lab_status
 
 
 @login_required
@@ -18,6 +18,6 @@ def sql_classic(request):
     token = generate_lab_token(user, lab_name)
     status = get_lab_status(request.user, "sql_inj_classic", token)
     return render(request, 'labs/sql_inj_classic.html', 
-                  context={'lab_name':'sql_inj_classic',
+                  context={'lab_name':lab_name,
                            'status':status})
 
