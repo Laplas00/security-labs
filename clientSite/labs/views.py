@@ -27,7 +27,7 @@ def sql_bypass_auth(request):
     user = f"{request.user.username.lower()}{request.user.id}"
     token = generate_lab_token(user, lab_name)
     status = get_lab_status(user, lab_name, token)
-    return render(request, 'labs/{lab_name}.html', 
+    return render(request, f'labs/{lab_name}.html', 
                   context={'lab_name':lab_name,
                            'status':status})
 
