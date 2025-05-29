@@ -1,6 +1,10 @@
 <!doctype html>
-<title>BlogLab</title>
-<link rel="stylesheet" href="https://unpkg.com/modern-css-reset/dist/reset.min.css">
+<head>
+  <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    {% block head %}{% endblock %}
+  <title>BlogLab</title>
+  <link rel="stylesheet" href="https://unpkg.com/modern-css-reset/dist/reset.min.css">
+</head>
 <body>
     <nav>
         <a href="{{ url_for('index') }}">Главная</a>
