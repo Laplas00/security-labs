@@ -8,5 +8,5 @@ RUN pip install -r requirements.txt
 
 EXPOSE 5000
 
-CMD ["python", "app.py"]
+CMD sh -c "pwd && python app.py"
 
