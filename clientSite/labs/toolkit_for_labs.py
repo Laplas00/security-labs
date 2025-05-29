@@ -50,7 +50,7 @@ def start_lab(request):
 
 @login_required
 def stop_lab(request):
-    user = request.user.username
+    user = f"{request.user.username}{request.user.id}"
     lab = request.POST.get("lab")
 
     data = {
