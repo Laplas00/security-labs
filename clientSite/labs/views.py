@@ -17,7 +17,17 @@ def sql_classic(request):
     user = f"{request.user.username.lower()}{request.user.id}"
     token = generate_lab_token(user, lab_name)
     status = get_lab_status(user, lab_name, token)
-    return render(request, 'labs/sql_inj_classic.html', 
+    return render(request, f'labs/{lab_name}.html', 
+                  context={'lab_name':lab_name,
+                           'status':status})
+
+@login_required
+def sql_bypass_auth(request):
+    lab_name = "sql_bp_auth"
+    user = f"{request.user.username.lower()}{request.user.id}"
+    token = generate_lab_token(user, lab_name)
+    status = get_lab_status(user, lab_name, token)
+    return render(request, 'labs/{lab_name}.html', 
                   context={'lab_name':lab_name,
                            'status':status})
 

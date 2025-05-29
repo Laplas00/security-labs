@@ -1,0 +1,28 @@
+<!doctype html>
+<title>BlogLab</title>
+<link rel="stylesheet" href="https://unpkg.com/modern-css-reset/dist/reset.min.css">
+<body>
+    <nav>
+        <a href="{{ url_for('index') }}">Главная</a>
+        {% if session.username %}
+            <span>Привет, {{ session.username }}</span>
+            {% if session.role == 'admin' %}<a href="{{ url_for('admin') }}">Админка</a>{% endif %}
+            <a href="{{ url_for('logout') }}">Выйти</a>
+        {% else %}
+            <a href="{{ url_for('login') }}">Войти</a>
+            <a href="{{ url_for('register') }}">Регистрация</a>
+        {% endif %}
+    </nav>
+    <hr>
+    {% with messages = get_flashed_messages() %}
+      {% if messages %}
+        <ul>
+          {% for message in messages %}
+            <li>{{ message }}</li>
+          {% endfor %}
+        </ul>
+      {% endif %}
+    {% endwith %}
+    {% block content %}{% endblock %}
+</body>
+
