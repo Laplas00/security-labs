@@ -1,0 +1,89 @@
+body {
+    font-family: 'Segoe UI', Arial, sans-serif;
+    background: #f9fafb;
+    color: #222;
+    margin: 0;
+    padding: 0;
+}
+
+nav {
+    background: #fff;
+    box-shadow: 0 2px 8px #eee;
+    padding: 12px 32px;
+    display: flex;
+    gap: 24px;
+    align-items: center;
+}
+
+nav a {
+    text-decoration: none;
+    color: #4461d7;
+    font-weight: 500;
+    margin-right: 16px;
+    transition: color 0.2s;
+}
+nav a:hover {
+    color: #27408b;
+}
+
+hr {
+    margin: 0;
+    border: none;
+    border-bottom: 1px solid #e5e7eb;
+}
+
+h2 {
+    margin-top: 32px;
+    font-size: 1.6em;
+    color: #333;
+}
+
+ul {
+    padding-left: 22px;
+}
+
+li {
+    margin-bottom: 8px;
+}
+
+input, textarea {
+    font-size: 1em;
+    margin: 8px 0 16px 0;
+    padding: 8px 12px;
+    border: 1px solid #b2bac5;
+    border-radius: 6px;
+    width: 100%;
+    max-width: 320px;
+    box-sizing: border-box;
+    transition: border 0.2s;
+}
+input:focus, textarea:focus {
+    border: 1.5px solid #4461d7;
+    outline: none;
+}
+
+input[type="submit"] {
+    width: auto;
+    background: #4461d7;
+    color: #fff;
+    font-weight: 500;
+    border: none;
+    border-radius: 6px;
+    padding: 10px 26px;
+    cursor: pointer;
+    transition: background 0.2s;
+}
+input[type="submit"]:hover {
+    background: #27408b;
+}
+
+ul {
+    list-style-type: disc;
+}
+
+.flash {
+    color: #c1121f;
+    font-weight: bold;
+    margin: 8px 0;
+}
+
