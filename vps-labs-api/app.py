@@ -71,9 +71,11 @@ def start_lab():
 
     subdomain = f"{user}-{lab}"
 
-    existing = subprocess.getoutput(f"docker ps -a --format '{{{{.Names}}}}' | grep ^{subdomain}$")
-    if existing:
-        return jsonify({"error": "Lab already running for this user!"}), 409
+    existing = subprocess.getoutput(
+        f"docker ps -a --format '{{{{.Names}}}}' | grep '^{user}-'"
+    )
+    if existing.strip():
+        return jsonify({"error": "You can run only one lab at a time!"}), 409
 
 
     docker_run  = ['docker', 'run', '-d', '--name', f'{subdomain}',
