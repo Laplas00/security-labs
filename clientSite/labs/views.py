@@ -14,10 +14,13 @@ def modules(request):
 @login_required
 def sql_classic(request):
     lab_name = "sql_inj_classic"
-    user = request.user.username.lower()
+    user = f"{request.user.username.lower()}{request.user.id}"
     token = generate_lab_token(user, lab_name)
     status = get_lab_status(user, lab_name, token)
     return render(request, 'labs/sql_inj_classic.html', 
                   context={'lab_name':lab_name,
                            'status':status})
 
+@login_reqired
+def template_site(request):
+    user = request.user.username.lower()
