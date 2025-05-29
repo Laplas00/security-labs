@@ -31,6 +31,6 @@ def sql_bypass_auth(request):
                   context={'lab_name':lab_name,
                            'status':status})
 
-@login_reqired
+@login_required
 def template_site(request):
     user = request.user.username.lower()
