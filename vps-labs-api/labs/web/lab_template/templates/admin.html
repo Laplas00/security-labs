@@ -1,4 +1,8 @@
 {% extends "base.html" %}
+{% block head %}
+  <link rel="stylesheet" href="{{ url_for('static', filename='admin.css') }}">
+{% endblock %}
+
 {% block content %}
 <h2>Админка</h2>
 <form method="post">
