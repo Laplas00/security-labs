@@ -86,7 +86,8 @@ def start_lab():
 
     output = subprocess.run(docker_run)
     sleep(2)
-    output_docker = subprocess.run()
+    output_docker = subprocess.run(['docker', 'ps'])
+    ic(output_docker)
     return jsonify({
         "status": "ok",
         "url": f"http://{subdomain}.labs-is-here.online",
