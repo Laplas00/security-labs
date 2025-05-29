@@ -1,6 +1,8 @@
 from django.shortcuts import render
 from django.contrib.auth.decorators import login_required
 from .toolkit_for_labs import generate_lab_token,  get_lab_status
+from icecream import ic
+
 
 
 @login_required
@@ -20,13 +22,15 @@ def sql_classic(request):
     return render(request, f'labs/{lab_name}.html', 
                   context={'lab_name':lab_name,
                            'status':status})
-
 @login_required
 def sql_bypass_auth(request):
     lab_name = "sql_bp_auth"
     user = f"{request.user.username.lower()}{request.user.id}"
     token = generate_lab_token(user, lab_name)
     status = get_lab_status(user, lab_name, token)
+    ic(token)
+    ic(status)
+    ic(user)
     return render(request, f'labs/{lab_name}.html', 
                   context={'lab_name':lab_name,
                            'status':status})

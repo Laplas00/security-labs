@@ -33,7 +33,7 @@ def generate_lab_token(user: str, lab: str):
 
 @login_required 
 def start_lab(request): 
-    user = request.user.username
+    user = f"{request.user.username}{request.user.id}"
     lab = request.POST.get("lab")
 
     data = {

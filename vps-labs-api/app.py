@@ -4,6 +4,9 @@ import random
 from flask import Flask, request, jsonify
 import subprocess
 import jwt
+from icecream import ic
+from time import sleep
+
 
 
 bASE_PORT = 8100
@@ -82,7 +85,8 @@ def start_lab():
        '--memory', '150m', '--cpus', '0.05', f"lab_{lab}"]
 
     output = subprocess.run(docker_run)
-    print(output)
+    sleep(2)
+    output_docker = subprocess.run()
     return jsonify({
         "status": "ok",
         "url": f"http://{subdomain}.labs-is-here.online",
