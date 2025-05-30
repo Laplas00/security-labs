@@ -51,6 +51,69 @@ def get_lab_status_for_user():
     except Exception as e:
         return jsonify({'error': f'Exception: {e}'}), 400
 
+@app.route("/toggle_vuln", methods=["POST"])
+def toggle_vuln():
+    data = request.get_json()
+    token = data.get("jwttoken") or data.get("token")
+    user = data.get("user").lower()
+    lab = data.get("lab")
+
+    try:
+        jwt.decode(token, SECRET_KEY, algorithms=[ALGORITHM])
+    except jwt.ExpiredSignatureError:
+        return jsonify({"error": "Token expired"}), 403
+    except Exception as e:
+        return jsonify({"error": f"Invalid token: {e}"}), 403
+
+    if not all([user, lab]):
+        return jsonify({"error": "user and lab required"}), 400
+
+    subdomain = f"{user}-{lab}"
+
+    # Проверяем, что контейнер существует
+    inspect_cmd = ["docker", "inspect", subdomain]
+    inspect_proc = subprocess.run(inspect_cmd, capture_output=True, text=True)
+    if inspect_proc.returncode != 0:
+        return jsonify({"error": "Lab is not running"}), 404
+
+    # Узнаём текущий VULNERABLE (через docker inspect env)
+    env_cmd = ["docker", "inspect", "-f", "{{range .Config.Env}}{{println .}}{{end}}", subdomain]
+    env_proc = subprocess.run(env_cmd, capture_output=True, text=True)
+    envs = env_proc.stdout.splitlines()
+    vuln_value = "0"
+    for env in envs:
+        if env.startswith("VULNERABLE="):
+            vuln_value = env.split("=", 1)[1].strip()
+            break
+    new_vuln = "1" if vuln_value == "0" else "0"
+
+    # Останавливаем и удаляем старый контейнер
+    subprocess.run(["docker", "rm", "-f", subdomain])
+
+    # Запускаем новый контейнер с противоположным VULNERABLE
+    docker_run = [
+        'docker', 'run', '-d', '--name', f'{subdomain}',
+        '--network', 'traefik-net',
+        '-l', 'traefik.enable=true',
+        '-l', f'traefik.http.routers.{subdomain}.rule=Host("{subdomain}.labs-is-here.online")',
+        '-l', f'traefik.http.routers.{subdomain}.entrypoints=web',
+        '-l', f'traefik.http.services.{subdomain}.loadbalancer.server.port=5000',
+        '-e', f'VULNERABLE={new_vuln}',
+        '--memory', '150m', '--cpus', '0.05',
+        f"lab_{lab}"
+    ]
+
+    output = subprocess.run(docker_run, capture_output=True, text=True)
+    from time import sleep
+    sleep(2)
+
+    return jsonify({
+        "status": "ok",
+        "new_vulnerable": new_vuln,
+        "url": f"http://{subdomain}.labs-is-here.online",
+        "docker_output": output.stdout,
+    })
+
 
 @app.route("/start_lab", methods=["POST"])
 def start_lab():

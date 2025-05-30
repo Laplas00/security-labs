@@ -31,6 +31,23 @@ def generate_lab_token(user: str, lab: str):
         token = token.decode("utf-8")
     return token
 
+@login_required
+def toggle_lab_vuln(request):
+    user = f"{request.user.username}{request.user.id}"
+    lab = request.POST.get("lab")
+
+    data = {
+        "user": user,
+        "lab": lab,
+        "jwttoken": generate_lab_token(user, lab),
+    }
+
+    try:
+        r = requests.post(f"{EDGE_IP}/toggle_vuln", json=data)
+        return JsonResponse(r.json())
+    except Exception as e:
+        return JsonResponse({"error": str(e)})
+
 @login_required 
 def start_lab(request): 
     user = f"{request.user.username}{request.user.id}"

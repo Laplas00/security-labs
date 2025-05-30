@@ -58,7 +58,7 @@
     <input type="hidden" name="lab" value="{{ lab_name }}">
 </form>
 
-<form action='#' method="POST" style="display: inline">
+<form action='{% url 'toggle_vuln' %}' method="POST" style="display: inline">
     <input type="hidden" name="lab" value="{{ lab_name }}">
     <button type="submit">⚙️ Вкл/Выкл уязвимость</button>
 </form>
