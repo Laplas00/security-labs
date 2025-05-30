@@ -24,12 +24,33 @@ CREATE TABLE IF NOT EXISTS posts (
 ''')
 
 # Заполнение пользователей
-c.execute("INSERT OR IGNORE INTO users (username, password, role) VALUES ('admin', 'admin', 'admin')")
-c.execute("INSERT OR IGNORE INTO users (username, password, role) VALUES ('user', 'password', 'user')")
+users = [
+    ('admin', 'admin', 'admin'),
+    ('alice', 'alicepass', 'user'),
+    ('bob', 'bobpass', 'user'),
+    ('carol', 'carolpass', 'user'),
+    ('dave', 'davepass', 'user'),
+    ('eve', 'evepass', 'user'),
+]
+for username, password, role in users:
+    c.execute("INSERT OR IGNORE INTO users (username, password, role) VALUES (?, ?, ?)", (username, password, role))
 
 # Заполнение постов
-c.execute("INSERT OR IGNORE INTO posts (title, content, author) VALUES ('Hello World', 'Welcome to our blog!', 'admin')")
-c.execute("INSERT OR IGNORE INTO posts (title, content, author) VALUES ('Flask is Awesome', 'Flask makes web dev fun.', 'user')")
+posts = [
+    ('The Pain of Waking Up from Porn Addiction', 
+     'How a glimpse into the past gave me hope for the future', 'admin'),
+    ('The Importance of Wasting Time', 
+     'In a culture that preaches capitalizing on every single moment, wasting time can provide peace and relief', 'alice'),
+    ('Why We’re Afraid to Speak and What You Can Do to Break Free', 
+     'The silent roots of language anxiety and how healing them unlocks fluency and freedom', 'bob'),
+    ('How to Learn Anything Faster', 
+     'Effective methods for acquiring new skills rapidly and retaining them long-term', 'carol'),
+    ('Building Resilience in Difficult Times', 
+     'Practical tips to strengthen your mental and emotional resilience during challenges', 'dave'),
+]
+
+for title, content, author in posts:
+    c.execute("INSERT OR IGNORE INTO posts (title, content, author) VALUES (?, ?, ?)", (title, content, author))
 
 conn.commit()
 conn.close()

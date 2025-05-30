@@ -4,11 +4,11 @@
 {% endblock %}
 
 {% block content %}
-<h2>Admin page</h2>
+<h2>Админка</h2>
 <form method="post">
-    <input name="title" placeholder="Heading">
-    <textarea name="content" placeholder="Post text"></textarea>
-    <input type="submit" value="Add post">
+    <input name="title" placeholder="Заголовок">
+    <textarea name="content" placeholder="Текст поста"></textarea>
+    <input type="submit" value="Добавить пост">
 </form>
 <ul>
     {% for post in posts %}
