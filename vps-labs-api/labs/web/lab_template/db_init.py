@@ -40,13 +40,13 @@ posts = [
     ('The Pain of Waking Up from Porn Addiction', 
      'How a glimpse into the past gave me hope for the future', 'admin'),
     ('The Importance of Wasting Time', 
-     'In a culture that preaches capitalizing on every single moment, wasting time can provide peace and relief', 'alice'),
+     'In a culture that preaches capitalizing on every single moment, wasting time can provide peace and relief', 'admin'),
     ('Why We’re Afraid to Speak and What You Can Do to Break Free', 
-     'The silent roots of language anxiety and how healing them unlocks fluency and freedom', 'bob'),
+     'The silent roots of language anxiety and how healing them unlocks fluency and freedom', 'admin'),
     ('How to Learn Anything Faster', 
-     'Effective methods for acquiring new skills rapidly and retaining them long-term', 'carol'),
+     'Effective methods for acquiring new skills rapidly and retaining them long-term', 'admin'),
     ('Building Resilience in Difficult Times', 
-     'Practical tips to strengthen your mental and emotional resilience during challenges', 'dave'),
+     'Practical tips to strengthen your mental and emotional resilience during challenges', 'admin'),
 ]
 
 for title, content, author in posts:
