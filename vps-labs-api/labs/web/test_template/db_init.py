@@ -25,12 +25,12 @@ CREATE TABLE IF NOT EXISTS posts (
 
 # Заполнение пользователей
 users = [
-    ('admin', 'admin', 'admin'),
-    ('alice', 'alicepass', 'user'),
-    ('bob', 'bobpass', 'user'),
-    ('carol', 'carolpass', 'user'),
-    ('dave', 'davepass', 'user'),
-    ('eve', 'evepass', 'user'),
+    ('admin', 'adminPass123', 'admin'),
+    ('alice', 'AlicePass222', 'user'),
+    ('bob', 'bobpassA123', 'user'),
+    ('carol', 'carolpassPP00PP', 'user'),
+    ('dave', 'davepassIJIJI22', 'user'),
+    ('eve', '0o0oOOevepass', 'user'),
 ]
 for username, password, role in users:
     c.execute("INSERT OR IGNORE INTO users (username, password, role) VALUES (?, ?, ?)", (username, password, role))

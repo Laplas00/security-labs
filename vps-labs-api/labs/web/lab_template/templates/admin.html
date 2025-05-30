@@ -4,6 +4,7 @@
 {% endblock %}
 
 {% block content %}
+<div class='panel'>
 <h2>Admin page</h2>
 <form method="post">
     <input name="title" placeholder="Heading">
@@ -15,5 +16,6 @@
         <li>{{ post.title }} ({{ post.author }})</li>
     {% endfor %}
 </ul>
+</div>
 {% endblock %}
 

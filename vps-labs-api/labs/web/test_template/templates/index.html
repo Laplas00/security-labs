@@ -16,10 +16,6 @@
           {{ post.title }}
         </a>
         <div class="post-card__subtitle">{{ post.subtitle or post.content[:128] ~ "..." }}</div>
-        <div class="post-card__extras">
-          <span class="post-card__views">👁️ {{ post.views or 0 }}</span>
-          <span class="post-card__comments">💬 {{ post.comments or 0 }}</span>
-        </div>
       </div>
       {% if post.image_url %}
         <img src="{{ post.image_url }}" alt="post image" class="post-card__img">

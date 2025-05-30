@@ -21,7 +21,7 @@ def post(post_id):
     db = get_db()
     post = db.execute('SELECT * FROM posts WHERE id=?', (post_id,)).fetchone()
     if not post:
-        return 'Пост не найден', 404
+        return 'No post', 404
     return render_template('post.html', post=post)
 
 @app.route('/login', methods=['GET', 'POST'])
@@ -34,16 +34,16 @@ def login():
         if user:
             session['username'] = user['username']
             session['role'] = user['role']
-            flash('Успешный вход!')
+            flash('Success!')
             return redirect(url_for('index'))
         else:
-            flash('Неверный логин или пароль')
+            flash('Wrong username or password')
     return render_template('login.html')
 
 @app.route('/logout')
 def logout():
     session.clear()
-    flash('Выход выполнен')
+    flash('Login success')
     return redirect(url_for('index'))
 
 @app.route('/admin', methods=['GET', 'POST'])
@@ -70,10 +70,10 @@ def register():
         try:
             db.execute('INSERT INTO users (username, password, role) VALUES (?, ?, ?)', (username, password, 'user'))
             db.commit()
-            flash('Регистрация успешна, войдите!')
+            flash('Registration complete, login!')
             return redirect(url_for('login'))
         except sqlite3.IntegrityError:
-            flash('Имя пользователя уже занято')
+            flash('Username already in use')
     return render_template('register.html')
 
 if __name__ == '__main__':
