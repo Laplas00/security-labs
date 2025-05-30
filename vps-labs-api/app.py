@@ -38,9 +38,23 @@ def get_lab_status_for_user():
         existing = subprocess.getoutput(ps_cmd)
 
         if existing.strip() == subdomain:
+            # Получаем значение VULNERABLE из контейнера
+            inspect_cmd = [
+                "docker", "inspect", "-f",
+                "{{range .Config.Env}}{{println .}}{{end}}",
+                subdomain
+            ]
+            envs = subprocess.getoutput(' '.join(inspect_cmd)).splitlines()
+            vulnerable = False
+            for env in envs:
+                if env.startswith("VULNERABLE="):
+                    vulnerable = (env.split("=", 1)[1].strip() == "1")
+                    break
+
             return jsonify({
                 "status": "running",
-                "url": f"http://{subdomain}.{DOMAIN}"
+                "url": f"http://{subdomain}.{DOMAIN}",
+                "vulnerable": vulnerable
             })
         else:
             return jsonify({
@@ -50,6 +64,7 @@ def get_lab_status_for_user():
         return jsonify({'error': 'Token expired'}), 401
     except Exception as e:
         return jsonify({'error': f'Exception: {e}'}), 400
+
 
 @app.route("/toggle_vuln", methods=["POST"])
 def toggle_vuln():
