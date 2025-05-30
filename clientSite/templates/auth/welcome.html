@@ -8,18 +8,19 @@
   <link rel="stylesheet" href="{% static 'css/style.css' %}">
 </head>
 <body>
-  <div class="top-banner">Book a Discovery Call</div>
 
   <header class="main-header">
-    <div class="logo">V</div>
+    <div class="logo">
+      <a href="/">
+          <img src="{% static 'img/logo.png' %}" alt="Cyber Labs Logo" class="logo-img">
+      </a>
+    </div>
     <nav>
       <ul>
         <li><a href="#">Home</a></li>
-        <li><a href="#">About</a></li>
-        <li><a href="#">Labs</a></li>
-        <li><a href="#">Contact</a></li>
-        <li><a href="#">Blog</a></li>
-        <li><a href="#">Learn</a></li>
+        <li><a href="https://v-spot.one/#about">About</a></li>
+        <li><a href="https://v-spot.one/#contact">Contact</a></li>
+        <li><a href="https://v-spot.one/#blog">Blog</a></li>
       </ul>
     </nav>
   </header>
@@ -29,7 +30,7 @@
     <p>Train your skills in cybersecurity through real-world lab challenges.</p>
     <div class="buttons">
       <a href="{% url 'signin' %}" class="btn primary">Start Learning</a>
-      <a href="/about" class="btn secondary">Learn More</a>
+      <a href="https://v-spot.one/#about" class="btn secondary">Learn More</a>
     </div>
   </main>
 </body>
