@@ -147,7 +147,8 @@ def start_lab():
       '-l', f'traefik.http.routers.{subdomain}.rule=Host("{subdomain}.labs-is-here.online")',
       '-l', f'traefik.http.routers.{subdomain}.entrypoints=web',
       '-l', f'traefik.http.services.{subdomain}.loadbalancer.server.port=5000',
-       '--memory', '150m', '--cpus', '0.05', f"lab_{lab}"]
+      '-e', f'VULNERABLE=1',
+      '--memory', '150m', '--cpus', '0.05', f"lab_{lab}"]
 
     output = subprocess.run(docker_run)
     sleep(2)
