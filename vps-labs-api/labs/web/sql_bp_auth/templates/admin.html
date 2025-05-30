@@ -1,15 +1,21 @@
 {% extends "base.html" %}
+{% block head %}
+  <link rel="stylesheet" href="{{ url_for('static', filename='admin.css') }}">
+{% endblock %}
+
 {% block content %}
-<h2>Админка</h2>
+<div class='panel'>
+<h2>Admin page</h2>
 <form method="post">
-    <input name="title" placeholder="Заголовок">
-    <textarea name="content" placeholder="Текст поста"></textarea>
-    <input type="submit" value="Добавить пост">
+    <input name="title" placeholder="Heading">
+    <textarea name="content" placeholder="Post text"></textarea>
+    <input type="submit" value="Add post">
 </form>
 <ul>
     {% for post in posts %}
         <li>{{ post.title }} ({{ post.author }})</li>
     {% endfor %}
 </ul>
+</div>
 {% endblock %}
 

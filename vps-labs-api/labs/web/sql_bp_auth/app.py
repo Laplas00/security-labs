@@ -4,6 +4,7 @@ import sqlite3
 
 app = Flask(__name__)
 app.secret_key = 'secretkey'
+VULNERABLE = os.getenv('VULNERABLE', '0') == '1'
 
 def get_db():
     conn = sqlite3.connect('blog.db')
@@ -21,7 +22,7 @@ def post(post_id):
     db = get_db()
     post = db.execute('SELECT * FROM posts WHERE id=?', (post_id,)).fetchone()
     if not post:
-        return 'Пост не найден', 404
+        return 'No post', 404
     return render_template('post.html', post=post)
 
 @app.route('/login', methods=['GET', 'POST'])
@@ -34,16 +35,16 @@ def login():
         if user:
             session['username'] = user['username']
             session['role'] = user['role']
-            flash('Успешный вход!')
+            flash('Success!')
             return redirect(url_for('index'))
         else:
-            flash('Неверный логин или пароль')
+            flash('Wrong username or password')
     return render_template('login.html')
 
 @app.route('/logout')
 def logout():
     session.clear()
-    flash('Выход выполнен')
+    flash('Login success')
     return redirect(url_for('index'))
 
 @app.route('/admin', methods=['GET', 'POST'])
@@ -57,7 +58,7 @@ def admin():
         author = session['username']
         db.execute('INSERT INTO posts (title, content, author) VALUES (?, ?, ?)', (title, content, author))
         db.commit()
-        flash('Пост добавлен!')
+        flash('Post added!')
     posts = db.execute('SELECT * FROM posts').fetchall()
     return render_template('admin.html', posts=posts)
 
@@ -70,14 +71,14 @@ def register():
         try:
             db.execute('INSERT INTO users (username, password, role) VALUES (?, ?, ?)', (username, password, 'user'))
             db.commit()
-            flash('Регистрация успешна, войдите!')
+            flash('Registration complete, login!')
             return redirect(url_for('login'))
         except sqlite3.IntegrityError:
-            flash('Имя пользователя уже занято')
+            flash('Username already in use')
     return render_template('register.html')
 
 if __name__ == '__main__':
     if not os.path.exists('blog.db'):
         import db_init  # инициализация базы при первом запуске
-    app.run(host='0.0.0.0', port=5000)
+    app.run(host='0.0.0.0', port=5000) # for traefic use 5000
 

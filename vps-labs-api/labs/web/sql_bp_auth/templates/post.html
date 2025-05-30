@@ -1,7 +1,23 @@
 {% extends "base.html" %}
-{% block content %}
-<h2>{{ post.title }}</h2>
-<div>{{ post.content }}</div>
-<p><em>Автор: {{ post.author }}</em></p>
+{% block head %}
+  <link rel="stylesheet" href="{{ url_for('static', filename='medium-style.css') }}">
 {% endblock %}
+{% block content %}
+<div class="post-page">
+  <h1 class="post-page__title">{{ post.title }}</h1>
+  <div class="post-page__meta">
+    <span>Author: <b>{{ post.author }}</b></span>
+    <span class="post-page__date">{{ post.date or '' }}</span>
+  </div>
+  {% if post.image_url %}
+    <img src="{{ post.image_url }}" class="post-page__img" alt="Post image">
+  {% endif %}
+  <div class="post-page__content">
+    {{ post.content }}
+  </div>
+</div>
+{% endblock %}
+
+
+
 

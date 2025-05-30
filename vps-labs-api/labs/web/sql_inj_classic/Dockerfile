@@ -1,8 +1,14 @@
-FROM python:3.10-slim
+FROM python:3.11-slim
 
-WORKDIR /app
+WORKDIR /sql_inj_classic
+
 COPY . .
-RUN pip install flask
 
-CMD ["python", "app.py"]
+RUN pip install -r requirements.txt
+
+EXPOSE 5000
+
+ENV VULNERABLE=0
+
+CMD sh -c "pwd && python app.py"
 

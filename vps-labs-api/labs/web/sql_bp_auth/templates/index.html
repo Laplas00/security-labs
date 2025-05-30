@@ -1,13 +1,30 @@
 {% extends "base.html" %}
+{% block head %}
+  <link rel="stylesheet" href="{{ url_for('static', filename='medium-style.css') }}">
+{% endblock %}
 {% block content %}
-<h2>Посты</h2>
-<ul>
-    {% for post in posts %}
-        <li>
-            <a href="{{ url_for('post', post_id=post.id) }}">{{ post.title }}</a>
-            <em>Автор: {{ post.author }}</em>
-        </li>
-    {% endfor %}
-</ul>
+
+<div class="feed-container">
+  {% for post in posts %}
+    <div class="post-card">
+      <div class="post-card__info">
+        <div class="post-card__meta">
+          <span class="post-card__author">{{ post.author }}</span>
+          <span class="post-card__date">{{ post.date or '' }}</span>
+        </div>
+        <a href="{{ url_for('post', post_id=post.id) }}" class="post-card__title">
+          {{ post.title }}
+        </a>
+        <div class="post-card__subtitle">{{ post.subtitle or post.content[:128] ~ "..." }}</div>
+      </div>
+      {% if post.image_url %}
+        <img src="{{ post.image_url }}" alt="post image" class="post-card__img">
+      {% else %}
+        <div class="post-card__img post-card__img--stub"></div>
+      {% endif %}
+    </div>
+  {% endfor %}
+</div>
+
 {% endblock %}
 
