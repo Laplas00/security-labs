@@ -16,11 +16,14 @@ def modules(request):
                  'tier': 'easy',
                  'description':'Understanding of classical SQl injection.',
                 },
-                 {'name':'reflected_xss',
+             {'name':'reflected_xss',
                  'tier': 'easy',
                  'description':'Understanding of reflected xss injection.',
                 },
              ]
+    print("==== DEBUG cards ====")
+    for c in cards:
+        print(c)
 
     return render(request, 'cards.html', context={'cards':cards})
 
