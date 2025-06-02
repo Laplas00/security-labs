@@ -104,7 +104,7 @@ def toggle_vuln():
 
     # Останавливаем и удаляем старый контейнер
     subprocess.run(["docker", "rm", "-f", subdomain])
-
+    
     # Запускаем новый контейнер с противоположным VULNERABLE
     docker_run = [
         'docker', 'run', '-d', '--name', f'{subdomain}',
@@ -155,7 +155,8 @@ def start_lab():
     if existing.strip():
         return jsonify({"error": "You can run only one lab at a time!"}), 409
 
-
+    print('Lab is start: ', lab)
+    print('Subdomain:', subdomain)
     docker_run  = ['docker', 'run', '-d', '--name', f'{subdomain}',
       '--network', 'traefik-net',
       '-l', 'traefik.enable=true',
