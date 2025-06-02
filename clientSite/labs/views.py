@@ -15,7 +15,6 @@ def modules(request):
                 {'name':'sql_inj_classic',
                  'tier': 'easy',
                  'description':'Understanding of classical SQl injection.',
-                 'url':''
                 },
                  {'name':'reflected_xss',
                  'tier': 'easy',
