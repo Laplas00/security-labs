@@ -1,6 +1,6 @@
 FROM python:3.11-slim
 
-WORKDIR /sql_inj_classic 
+WORKDIR /sql_inj_classic
 
 COPY . .
 
