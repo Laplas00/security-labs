@@ -1,0 +1,30 @@
+version: "3.9"
+
+services:
+  traefik:
+    image: traefik:v2.11
+    command:
+      - "--entrypoints.web.address=:80"
+      - "--api.dashboard=true"
+      - "--api.insecure=true"
+      - "--providers.docker=true"
+      - "--log.level=INFO"
+      - "--accesslog=true"
+      - "--accesslog.filepath=/logs/access.log"
+      - "--providers.docker.exposedbydefault=false"
+      - "--providers.file.directory=/etc/traefik/dynamic"
+      - "--providers.file.watch=true"
+    ports:
+      - "80:80"
+      - "8080:8080"
+    volumes:
+      - "/var/run/docker.sock:/var/run/docker.sock:ro"
+      - "./traefik_dynamic:/etc/traefik/dynamic"
+      - "./traefik_logs:/logs"
+    networks:
+      - traefik-net
+
+networks:
+  traefik-net:
+    external: true
+
