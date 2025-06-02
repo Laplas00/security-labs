@@ -18,8 +18,8 @@
         </div>
         <div class="card-footer">
             <span class="card-time">30 min</span>
-            <a href="{% url 'lab_view' card.name %}" class="btn primary">Start</a>
-
+            {% url 'lab_view' card.name as card_url %}
+            <a href="{{ card_url|default:'#' }}" class="btn primary">Start</a>
         </div>
     </div>
   {% endfor %}
