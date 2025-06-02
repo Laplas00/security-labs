@@ -1,0 +1,49 @@
+body {
+  font-family: 'Inter', sans-serif;
+  color: #333;
+  background-color: #f9f9f9;
+}
+
+.container {
+  max-width: 900px;
+  margin: 0 auto;
+  padding: 1.5rem;
+}
+
+.site-header {
+  background-color: white;
+  border-bottom: 1px solid #eee;
+  padding: 1rem 0;
+  margin-bottom: 1.5rem;
+}
+
+.site-title {
+  font-size: 1.8rem;
+  margin: 0;
+}
+
+.site-title a {
+  text-decoration: none;
+  color: #222;
+}
+
+.site-nav a {
+  margin-left: 1rem;
+  text-decoration: none;
+  color: #0066cc;
+}
+
+.site-nav .username {
+  margin-left: 1rem;
+  font-weight: bold;
+}
+
+.site-footer {
+  margin-top: 2rem;
+  padding: 1rem 0;
+  font-size: 0.9rem;
+  color: #777;
+  border-top: 1px solid #ddd;
+  text-align: center;
+}
+

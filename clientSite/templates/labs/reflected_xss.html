@@ -1,0 +1,83 @@
+{% extends 'base.html' %}
+{% block content %}
+<div class="container mt-4">
+
+  <h2>Reflected XSS (Cross-Site Scripting)</h2>
+  <br>
+
+  <p><strong>Reflected XSS</strong> is a type of web vulnerability where malicious JavaScript code is immediately "reflected" by the server in the response, usually via URL parameters.</p>
+
+  <p>This vulnerability occurs when the server includes user input directly in the HTML output <strong>without sanitization or escaping</strong>.</p>
+
+  <h5>📌 Example scenario:</h5>
+  <p>Imagine a website with a search function that reflects the user's input on the page:</p>
+  <pre><code>https://example.com/search?q=test</code></pre>
+
+  <p>The server-side code may look like this:</p>
+  <pre><code>&lt;p&gt;You searched for: {{ query }}&lt;/p&gt;</code></pre>
+
+  <p>If the input is not sanitized, an attacker can craft the following URL:</p>
+  <pre><code>https://example.com/search?q=&lt;script&gt;alert(1)&lt;/script&gt;</code></pre>
+
+  <p>The resulting HTML becomes:</p>
+  <pre><code>&lt;p&gt;You searched for: &lt;script&gt;alert(1)&lt;/script&gt;&lt;/p&gt;</code></pre>
+
+  <p>This causes the browser to execute the JavaScript code — in this case, an <code>alert</code>.</p>
+
+  <h5>🎯 Attack goals:</h5>
+  <ul>
+    <li>Execute JavaScript in the victim's browser</li>
+    <li>Steal cookies or session tokens: <code>document.cookie</code></li>
+    <li>Redirect users to phishing sites: <code>location.href = 'http://evil.com'</code></li>
+    <li>Display fake login forms</li>
+    <li>Keylogging or browser exploitation</li>
+  </ul>
+
+  <h5>⚠️ Vulnerable areas:</h5>
+  <ul>
+    <li>Search boxes</li>
+    <li>Feedback/contact forms</li>
+    <li>Any URL parameter that is shown in the page</li>
+    <li>Error messages using user input</li>
+  </ul>
+
+  <h5>🧪 Testing tips:</h5>
+  <ul>
+    <li>Try URLs like: <code>?q=&lt;script&gt;alert(1)&lt;/script&gt;</code></li>
+    <li>Use a payload like: <code>&lt;img src=x onerror=alert('XSS')&gt;</code></li>
+    <li>Check if your input appears on the page <strong>unescaped</strong></li>
+  </ul>
+
+  <p><strong>Key concept:</strong> reflected XSS doesn't store the payload — it works only when the user clicks a malicious link or submits a form.</p>
+
+  <p>This is one of the most common types of XSS and is often used in phishing or redirection attacks.</p>
+
+  <p>Status: {{ vuln_mode }}</p>
+  <p>App status: {{ status }}</p>
+
+  {% if status.status == "running" %}
+  <p><a href="{{ status.url }}">Try the reflected XSS!</a></p>
+
+  <form action="{% url 'stop_lab' %}" method="POST" style="display: inline">
+    {% csrf_token %}
+      <button type="submit">🛑 Stop Lab</button>
+      <input type="hidden" name="lab" value="{{ lab_name }}">
+  </form>
+
+  <form action='{% url 'toggle_vuln' %}' method="POST" style="display: inline">
+    {% csrf_token %}
+      <input type="hidden" name="lab" value="{{ lab_name }}">
+      <button type="submit">⚙️ Toggle Vulnerability</button>
+  </form>
+
+  {% else %}
+  <form action="{% url 'start_lab' %}" method="POST" style="display: inline">
+    {% csrf_token %}
+    <input type="hidden" name="lab" value="{{ lab_name }}">
+      <button type="submit">🚀 Start Lab</button>
+  </form>
+  {% endif %}
+
+</div>
+{% endblock %}
+

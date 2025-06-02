@@ -6,6 +6,23 @@
 {% block content %}
 
 <div class="cards-container">
+  {% for card in cards %}
+    <div class="card">
+      <img src="{% static 'img/sql-lab.jpg' %}" alt="{{card.name}}">
+        <div class="card-content">
+          <h3 class="card-title">{{card.name}}</h3>
+            <div class="card-tags">
+              <span class="tag">{{card.tier}}</span>
+            </div>
+            <p class="card-desc">{{ card.description }}</p>
+        </div>
+        <div class="card-footer">
+            <span class="card-time">30 min</span>
+            <a href="{% url 'lab_view' card.name %}" class="btn primary">Start</a>
+
+        </div>
+    </div>
+  {% endfor %}
     <!-- Пример карточки -->
     <div class="card">
         <img src="{% static 'img/sql-lab.jpg' %}" alt="SQL Lab">

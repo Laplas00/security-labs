@@ -11,29 +11,32 @@ def dashboard(request):
 
 @login_required
 def modules(request):
-    return render(request, 'cards.html')
+    cards = [
+                {'name':'sql_inj_classic',
+                 'tier': 'easy',
+                 'description':'Understanding of classical SQl injection.',
+                 'url':''
+                },
+                 {'name':'reflected_xss',
+                 'tier': 'easy',
+                 'description':'Understanding of reflected xss injection.',
+                },
+             ]
+
+    return render(request, 'cards.html', context={'cards':cards})
 
 @login_required
-def sql_classic(request):
-    lab_name = "sql_inj_classic"
+def lab_view(request, lab_name):
     user = f"{request.user.username.lower()}{request.user.id}"
     token = generate_lab_token(user, lab_name)
     status = get_lab_status(user, lab_name, token)
-    return render(request, f'labs/{lab_name}.html', 
-                  context={'lab_name':lab_name,
-                           'status':status})
-@login_required
-def sql_bypass_auth(request):
-    lab_name = "sql_bp_auth"
-    user = f"{request.user.username.lower()}{request.user.id}"
-    token = generate_lab_token(user, lab_name)
-    status = get_lab_status(user, lab_name, token)
-    ic(token)
-    ic(status)
-    ic(user)
-    return render(request, f'labs/{lab_name}.html', 
-                  context={'lab_name':lab_name,
-                           'status':status})
+
+    return render(request, f'labs/{lab_name}.html', {
+        'lab_name': lab_name,
+        'status': status
+    })
+
+
 
 @login_required
 def template_site(request):

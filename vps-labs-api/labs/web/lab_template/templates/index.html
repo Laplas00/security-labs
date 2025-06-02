@@ -17,11 +17,7 @@
         </a>
         <div class="post-card__subtitle">{{ post.subtitle or post.content[:128] ~ "..." }}</div>
       </div>
-      {% if post.image_url %}
-        <img src="{{ post.image_url }}" alt="post image" class="post-card__img">
-      {% else %}
-        <div class="post-card__img post-card__img--stub"></div>
-      {% endif %}
+      
     </div>
   {% endfor %}
 </div>
