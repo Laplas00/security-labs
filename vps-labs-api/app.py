@@ -42,10 +42,12 @@ def get_lab_status_for_user():
             # Получаем значение VULNERABLE из контейнера
             inspect_cmd = [
                 "docker", "inspect", "-f",
-                "{{range .Config.Env}}{{println .}}{{end}}",
+                '{{range .Config.Env}}{{println .}}{{end}}',
                 subdomain
             ]
-            envs = subprocess.getoutput(' '.join(inspect_cmd)).splitlines()
+            envs = subprocess.check_output(inspect_cmd).decode().splitlines()
+
+
             vulnerable = False
             print('For ennv in envs')
             for env in envs:
