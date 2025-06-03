@@ -1,3 +1,4 @@
+
 {% extends 'base.html' %}
 {% block content %}
 <div class="container mt-4">
@@ -5,15 +6,12 @@
   <h2>Stored XSS (Cross-Site Scripting)</h2>
   <br>
 
-  <p><strong>Stored XSS</strong> is a persistent form of cross-site scripting. Unlike reflected XSS, the malicious input is stored on the server — typically in a database — and served to users every time the vulnerable page is loaded.</p>
+  <p><strong>Stored XSS</strong> is a type of web vulnerability where malicious JavaScript code is <strong>stored on the server</strong> and later displayed to users, leading to script execution in their browsers.</p>
 
-  <p>When a user submits malicious JavaScript through an input form (e.g. a comment field), and the application fails to sanitize it, the script becomes part of the stored data and executes in the browser of anyone who visits that page.</p>
+  <p>Unlike reflected XSS, stored XSS doesn't require the victim to click a crafted link — the payload lives in the system and runs automatically when a page is loaded.</p>
 
   <h5>📌 Example scenario:</h5>
-  <p>A web page allows users to post public comments. An attacker submits this input:</p>
-  <pre><code>&lt;script&gt;alert('XSS')&lt;/script&gt;</code></pre>
-
-  <p>If the application doesn't escape or sanitize the input, every user who views the page will trigger that script. It might look like this in HTML:</p>
+  <p>Imagine a comment form that stores user input in a database and displays it like this:</p>
   <pre><code>
   &lt;div class="comment"&gt;
     &lt;strong&gt;User:&lt;/strong&gt; attacker &lt;br&gt;
@@ -21,62 +19,38 @@
   &lt;/div&gt;
   </code></pre>
 
+  <p>If the application does not sanitize the input, anyone viewing this page will trigger the attacker's script.</p>
+
   <h5>🎯 Attack goals:</h5>
   <ul>
-    <li>Persistent execution of malicious JavaScript on all visitors</li>
-    <li>Session hijacking or cookie theft (<code>document.cookie</code>)</li>
-    <li>Defacing pages, injecting fake forms or phishing payloads</li>
-    <li>Propagating worms via self-replicating scripts</li>
+    <li>Automatic script execution for all viewers</li>
+    <li>Session or cookie theft</li>
+    <li>Injecting fake UI or phishing forms</li>
+    <li>Propagating self-replicating XSS worms</li>
   </ul>
 
   <h5>⚠️ Vulnerable areas:</h5>
   <ul>
-    <li>Comment systems</li>
-    <li>User profile fields</li>
-    <li>Forum posts or chat messages</li>
-    <li>Any user input displayed to others</li>
+    <li>Comment sections</li>
+    <li>Forum posts or chat systems</li>
+    <li>User profile data (e.g., bio, status)</li>
+    <li>Any stored input that gets rendered later</li>
   </ul>
 
   <h5>🧪 Testing tips:</h5>
   <ul>
-    <li>Try injecting: <code>&lt;img src=x onerror=alert('XSS')&gt;</code></li>
-    <li>Submit a comment, then reload the page to see if the script runs</li>
-    <li>Check if previous comments get rendered unescaped</li>
+    <li>Submit: <code>&lt;script&gt;alert('Stored XSS')&lt;/script&gt;</code> as a comment or post</li>
+    <li>Refresh the page — if the alert appears, the payload was stored</li>
+    <li>Check HTML output — is it rendered as script or escaped?</li>
   </ul>
 
-  <p><strong>Key concept:</strong> stored XSS works <strongeven without clicking a link</strong> — the payload lives in the system and executes each time the content is rendered.</p>
-
-  <hr>
-
-  <h4>💬 Post a comment</h4>
-  <form method="POST">
-    <input type="text" name="author" placeholder="Your name" required>
-    <textarea name="comment" placeholder="Your comment" rows="3" required></textarea>
-    <button type="submit">Submit</button>
-  </form>
-
-  <h5>📝 Comments:</h5>
-  <div class="comment-section">
-    {% for comment in comments %}
-      <div class="comment">
-        <strong>{{ comment.author }}</strong><br>
-        {% if vuln_mode %}
-          {{ comment.content|safe }}
-        {% else %}
-          {{ comment.content }}
-        {% endif %}
-      </div>
-      <hr>
-    {% else %}
-      <p>No comments yet.</p>
-    {% endfor %}
-  </div>
+  <p><strong>Key concept:</strong> Stored XSS stays in the system — it infects future views of the content without additional interaction.</p>
 
   <p>Status: {{ vuln_mode }}</p>
   <p>App status: {{ status }}</p>
 
- {% if status.status == "running" %}
-  <p><a href="{{ status.url }}">Try the reflected XSS!</a></p>
+  {% if status.status == "running" %}
+  <p><a href="{{ status.url }}">Try the stored XSS lab</a></p>
 
   <form action="{% url 'stop_lab' %}" method="POST" style="display: inline">
     {% csrf_token %}
@@ -84,7 +58,7 @@
       <input type="hidden" name="lab" value="{{ lab_name }}">
   </form>
 
-  <form action='{% url 'toggle_vuln' %}' method="POST" style="display: inline">
+  <form action="{% url 'toggle_vuln' %}" method="POST" style="display: inline">
     {% csrf_token %}
       <input type="hidden" name="lab" value="{{ lab_name }}">
       <button type="submit">⚙️ Toggle Vulnerability</button>
@@ -100,5 +74,4 @@
 
 </div>
 {% endblock %}
-
 
