@@ -19,6 +19,7 @@ DOMAIN = "labs-is-here.online"
 
 @app.route("/get_lab_status_for_user", methods=["POST"])
 def get_lab_status_for_user():
+    print('get lab status for user')
     data = request.get_json()
     token = data.get("token")
 
@@ -46,7 +47,9 @@ def get_lab_status_for_user():
             ]
             envs = subprocess.getoutput(' '.join(inspect_cmd)).splitlines()
             vulnerable = False
+            print('For ennv in envs')
             for env in envs:
+                print(env)
                 if env.startswith("VULNERABLE="):
                     vulnerable = (env.split("=", 1)[1].strip() == "1")
                     break
