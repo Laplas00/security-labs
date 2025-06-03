@@ -6,7 +6,7 @@ import sqlite3
 app = Flask(__name__)
 app.secret_key = 'SomeSecret22'
 VULNERABLE = os.getenv('VULNERABLE', '0') == '1'
-
+pritn(VULNERABLE)
 
 
 def get_db():
