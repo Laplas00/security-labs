@@ -49,7 +49,7 @@
   <hr>
 
   <h4>💬 Post a comment</h4>
-  <form method="POST" action="{{ url_for('post_comment') }}">
+  <form method="POST">
     <input type="text" name="author" placeholder="Your name" required>
     <textarea name="comment" placeholder="Your comment" rows="3" required></textarea>
     <button type="submit">Submit</button>
@@ -75,29 +75,30 @@
   <p>Status: {{ vuln_mode }}</p>
   <p>App status: {{ status }}</p>
 
-  {% if status.status == "running" %}
-    <p><a href="{{ status.url }}">Visit the vulnerable app</a></p>
+ {% if status.status == "running" %}
+  <p><a href="{{ status.url }}">Try the reflected XSS!</a></p>
 
-    <form action="{% url 'stop_lab' %}" method="POST" style="display: inline">
-      {% csrf_token %}
-        <button type="submit">🛑 Stop Lab</button>
-        <input type="hidden" name="lab" value="{{ lab_name }}">
-    </form>
+  <form action="{% url 'stop_lab' %}" method="POST" style="display: inline">
+    {% csrf_token %}
+      <button type="submit">🛑 Stop Lab</button>
+      <input type="hidden" name="lab" value="{{ lab_name }}">
+  </form>
 
-    <form action='{% url 'toggle_vuln' %}' method="POST" style="display: inline">
-      {% csrf_token %}
-        <input type="hidden" name="lab" value="{{ lab_name }}">
-        <button type="submit">⚙️ Toggle Vulnerability</button>
-    </form>
+  <form action='{% url 'toggle_vuln' %}' method="POST" style="display: inline">
+    {% csrf_token %}
+      <input type="hidden" name="lab" value="{{ lab_name }}">
+      <button type="submit">⚙️ Toggle Vulnerability</button>
+  </form>
 
   {% else %}
-    <form action="{% url 'start_lab' %}" method="POST" style="display: inline">
-      {% csrf_token %}
-        <input type="hidden" name="lab" value="{{ lab_name }}">
-        <button type="submit">🚀 Start Lab</button>
-    </form>
+  <form action="{% url 'start_lab' %}" method="POST" style="display: inline">
+    {% csrf_token %}
+    <input type="hidden" name="lab" value="{{ lab_name }}">
+      <button type="submit">🚀 Start Lab</button>
+  </form>
   {% endif %}
 
 </div>
 {% endblock %}
+
 
