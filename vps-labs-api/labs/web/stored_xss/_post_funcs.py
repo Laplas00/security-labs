@@ -15,7 +15,7 @@ def post(post_id):
 def store_user_message():
     message = request.form.get("message", "").strip()
 
-    if VULNERABLE == "1":
+    if VULNERABLE:
         # если включена уязвимость, допустим всё (в т.ч. XSS)
         valid = True
     else:
