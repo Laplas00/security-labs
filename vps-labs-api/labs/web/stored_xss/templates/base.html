@@ -16,6 +16,7 @@
   <header class="site-header">
     <div class="container header-content">
       <h1 class="site-title"><a href="{{ url_for('index') }}">BlogLab</a></h1>
+      <br>
       <nav class="site-nav">
         <a href="{{ url_for('index') }}">Home</a>
         {% if session.username %}
@@ -28,6 +29,8 @@
           <a href="{{ url_for('login') }}">Login</a>
           <a href="{{ url_for('register') }}">Registration</a>
         {% endif %}
+        <a href="{{ url_for('discussion') }}">Discussion</a>
+
         <input id="search-input" placeholder="Search posts..." />
         <script src="{{ url_for('static', filename='site.js') }}"></script>
       </nav>

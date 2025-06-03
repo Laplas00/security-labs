@@ -1,0 +1,40 @@
+{% extends 'base.html' %}
+{% block content %}
+<div class="container mt-4">
+
+  <h2>Discussion</h2>
+  <p class="text-muted">Share your thoughts anonymously. Stored messages appear below.</p>
+
+  <form method="POST" action="{{ url_for('store_user_message') }}" class="discussion-form">
+    <textarea name="message" placeholder="Write something..." required></textarea>
+    <button type="submit">Post</button>
+  </form>
+
+  {% with messages = get_flashed_messages(with_categories=true) %}
+    {% if messages %}
+      <div class="flash-messages">
+        {% for category, msg in messages %}
+          <div class="flash {{ category }}">{{ msg }}</div>
+        {% endfor %}
+      </div>
+    {% endif %}
+  {% endwith %}
+
+  <h5>Recent Comments:</h5>
+  <div class="discussion-list">
+    {% for comment in comments %}
+      <div class="comment-box">
+        {% if vuln_mode %}
+          {{ comment|safe }}
+        {% else %}
+          {{ comment }}
+        {% endif %}
+      </div>
+    {% else %}
+      <p>No comments yet.</p>
+    {% endfor %}
+  </div>
+
+</div>
+{% endblock %}
+
