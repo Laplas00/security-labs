@@ -1,0 +1,103 @@
+{% extends 'base.html' %}
+{% block content %}
+<div class="container mt-4">
+
+  <h2>Stored XSS (Cross-Site Scripting)</h2>
+  <br>
+
+  <p><strong>Stored XSS</strong> is a persistent form of cross-site scripting. Unlike reflected XSS, the malicious input is stored on the server — typically in a database — and served to users every time the vulnerable page is loaded.</p>
+
+  <p>When a user submits malicious JavaScript through an input form (e.g. a comment field), and the application fails to sanitize it, the script becomes part of the stored data and executes in the browser of anyone who visits that page.</p>
+
+  <h5>📌 Example scenario:</h5>
+  <p>A web page allows users to post public comments. An attacker submits this input:</p>
+  <pre><code>&lt;script&gt;alert('XSS')&lt;/script&gt;</code></pre>
+
+  <p>If the application doesn't escape or sanitize the input, every user who views the page will trigger that script. It might look like this in HTML:</p>
+  <pre><code>
+  &lt;div class="comment"&gt;
+    &lt;strong&gt;User:&lt;/strong&gt; attacker &lt;br&gt;
+    &lt;script&gt;alert('XSS')&lt;/script&gt;
+  &lt;/div&gt;
+  </code></pre>
+
+  <h5>🎯 Attack goals:</h5>
+  <ul>
+    <li>Persistent execution of malicious JavaScript on all visitors</li>
+    <li>Session hijacking or cookie theft (<code>document.cookie</code>)</li>
+    <li>Defacing pages, injecting fake forms or phishing payloads</li>
+    <li>Propagating worms via self-replicating scripts</li>
+  </ul>
+
+  <h5>⚠️ Vulnerable areas:</h5>
+  <ul>
+    <li>Comment systems</li>
+    <li>User profile fields</li>
+    <li>Forum posts or chat messages</li>
+    <li>Any user input displayed to others</li>
+  </ul>
+
+  <h5>🧪 Testing tips:</h5>
+  <ul>
+    <li>Try injecting: <code>&lt;img src=x onerror=alert('XSS')&gt;</code></li>
+    <li>Submit a comment, then reload the page to see if the script runs</li>
+    <li>Check if previous comments get rendered unescaped</li>
+  </ul>
+
+  <p><strong>Key concept:</strong> stored XSS works <strongeven without clicking a link</strong> — the payload lives in the system and executes each time the content is rendered.</p>
+
+  <hr>
+
+  <h4>💬 Post a comment</h4>
+  <form method="POST" action="{{ url_for('post_comment') }}">
+    <input type="text" name="author" placeholder="Your name" required>
+    <textarea name="comment" placeholder="Your comment" rows="3" required></textarea>
+    <button type="submit">Submit</button>
+  </form>
+
+  <h5>📝 Comments:</h5>
+  <div class="comment-section">
+    {% for comment in comments %}
+      <div class="comment">
+        <strong>{{ comment.author }}</strong><br>
+        {% if vuln_mode %}
+          {{ comment.content|safe }}
+        {% else %}
+          {{ comment.content }}
+        {% endif %}
+      </div>
+      <hr>
+    {% else %}
+      <p>No comments yet.</p>
+    {% endfor %}
+  </div>
+
+  <p>Status: {{ vuln_mode }}</p>
+  <p>App status: {{ status }}</p>
+
+  {% if status.status == "running" %}
+    <p><a href="{{ status.url }}">Visit the vulnerable app</a></p>
+
+    <form action="{% url 'stop_lab' %}" method="POST" style="display: inline">
+      {% csrf_token %}
+        <button type="submit">🛑 Stop Lab</button>
+        <input type="hidden" name="lab" value="{{ lab_name }}">
+    </form>
+
+    <form action='{% url 'toggle_vuln' %}' method="POST" style="display: inline">
+      {% csrf_token %}
+        <input type="hidden" name="lab" value="{{ lab_name }}">
+        <button type="submit">⚙️ Toggle Vulnerability</button>
+    </form>
+
+  {% else %}
+    <form action="{% url 'start_lab' %}" method="POST" style="display: inline">
+      {% csrf_token %}
+        <input type="hidden" name="lab" value="{{ lab_name }}">
+        <button type="submit">🚀 Start Lab</button>
+    </form>
+  {% endif %}
+
+</div>
+{% endblock %}
+

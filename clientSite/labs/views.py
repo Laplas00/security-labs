@@ -16,9 +16,13 @@ def modules(request):
                  'tier': 'easy',
                  'description':'Understanding of classical SQl injection.',
                 },
-             {'name':'reflected_xss',
+                {'name':'reflected_xss',
                  'tier': 'easy',
                  'description':'Understanding of reflected xss injection.',
+                },
+                {'name':'stored_xss',
+                 'tier': 'easy',
+                 'description':'Understanding of stored xss injection.',
                 },
              ]
     print("==== DEBUG cards ====")
