@@ -8,7 +8,7 @@ RUN pip install -r requirements.txt
 
 EXPOSE 5000
 
-ENV VULNERABLE=0
+ENV VULNERABLE=1
 
 CMD sh -c "pwd && python app.py"
 

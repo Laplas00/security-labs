@@ -95,13 +95,14 @@ def toggle_vuln():
     env_cmd = ["docker", "inspect", "-f", "{{range .Config.Env}}{{println .}}{{end}}", subdomain]
     env_proc = subprocess.run(env_cmd, capture_output=True, text=True)
     envs = env_proc.stdout.splitlines()
+    print(envs, '<-envs')
     vuln_value = "0"
     for env in envs:
         if env.startswith("VULNERABLE="):
             vuln_value = env.split("=", 1)[1].strip()
             break
     new_vuln = "1" if vuln_value == "0" else "0"
-
+    ic(new_vuln)
     # Останавливаем и удаляем старый контейнер
     subprocess.run(["docker", "rm", "-f", subdomain])
     
