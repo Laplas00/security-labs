@@ -66,6 +66,7 @@ def get_lab_status_for_user():
     except jwt.ExpiredSignatureError:
         return jsonify({'error': 'Token expired'}), 401
     except Exception as e:
+        print('Error: ', e)
         return jsonify({'error': f'Exception: {e}'}), 400
 
 
