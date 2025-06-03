@@ -13,7 +13,8 @@ def post(post_id):
 
 @app.route("/find-post", methods=["GET"])
 def find_post():
-    vuln_mode = VULNERABLE == '1'
+    vuln_mode = VULNERABLE
+    print(vuln_mode)
     q = request.args.get("q", "")
     conn = sqlite3.connect('blog.db')
     c = conn.cursor()
