@@ -1,3 +1,36 @@
+.search-form {
+  display: flex;
+  justify-content: flex-start;
+  align-items: center;
+  margin-right: 10px;
+}
+
+.search-input {
+  flex: 1;
+  padding: 0.5rem 1rem;
+  font-size: 1rem;
+  border: 1px solid #ccc;
+  border-radius: 6px;
+  margin-right: 10px;
+}
+
+.search-button {
+  padding: 0.5rem 1.2rem;
+  font-size: 1rem;
+  border: none;
+  background-color: #0077ff;
+  color: white;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+}
+
+.search-button:hover {
+  background-color: #005fd1;
+}
+
+
+
 body {
     font-family: 'Segoe UI', Arial, sans-serif;
     background: #f9fafb;
@@ -11,8 +44,9 @@ nav {
     box-shadow: 0 2px 8px #eee;
     padding: 12px 32px;
     display: flex;
-    gap: 24px;
+    /* gap: 24px; */
     align-items: center;
+    justify-content: space-around;
 }
 
 nav a {
@@ -48,7 +82,6 @@ li {
 
 input, textarea {
     font-size: 1em;
-    margin: 8px 0 16px 0;
     padding: 8px 12px;
     border: 1px solid #b2bac5;
     border-radius: 6px;
