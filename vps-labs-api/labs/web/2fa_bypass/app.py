@@ -3,6 +3,9 @@ from core import *
 
 
 
+
+
+
 if __name__ == '__main__':
     if not os.path.exists('blog.db'):
         import db_init  # инициализация базы при первом запуске

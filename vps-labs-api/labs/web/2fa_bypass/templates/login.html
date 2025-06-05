@@ -1,0 +1,19 @@
+
+{% extends "base.html" %}
+{% block head %}
+  <link rel="stylesheet" href="{{ url_for('static', filename='medium-style.css') }}">
+{% endblock %}
+{% block content %}
+<div class="auth-form">
+    <h2>Login</h2>
+    <form method="POST" action="{{ url_for('login') }}" class="auth-form">
+      <input type="email" name="email" placeholder="Email" required autofocus>
+      <input type="password" name="password" placeholder="Password" required>
+      <button type="submit">Log In</button>
+    </form>
+    <p class="auth-form__alt">
+        No account? <a href="{{ url_for('register') }}">Register</a>
+    </p>
+</div>
+{% endblock %}
+ 

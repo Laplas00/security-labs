@@ -22,7 +22,19 @@ def modules(request):
                 },
                 {'name':'stored_xss',
                  'tier': 'easy',
-                 'description':'Understanding of stored xss injection.',
+                 'description':'example',
+                },
+                {'name':'idor_bac', #idor brocen access control  
+                 'tier': 'easy',
+                 'description':'URL/parameter tampering, missing ownership check',
+                },
+                {'name':'auth_bypass',
+                 'tier': 'easy',
+                 'description':'single-step, JSON/response manipulation',
+                },
+                {'name':'2fa_bypass',
+                 'tier': 'easy',
+                 'description':'Most complex - mulsti step, proxy manipulation',
                 },
              ]
     print("==== DEBUG cards ====")
