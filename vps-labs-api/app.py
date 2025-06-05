@@ -165,6 +165,7 @@ def start_lab():
     existing = subprocess.getoutput(
         f"docker ps -a --format '{{{{.Names}}}}' | grep '^{user}-'"
     )
+    ic(existing)
     if existing.strip():
         return jsonify({"error": "You can run only one lab at a time!"}), 409
 
