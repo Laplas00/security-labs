@@ -56,12 +56,19 @@
   </footer>
 
 </body>
-<script>
-  const auth = localStorage.getItem("authenticated");
 
-  if (auth !== "true") {
-    // не пускаем на страницу, редиректим обратно
+<script>
+  const isAuthenticated = localStorage.getItem("authenticated") === "true";
+  const isLoginPage = window.location.pathname === "/login";
+
+  if (!isAuthenticated && !isLoginPage) {
+    // Не авторизован и не на логин-странице — редирект на логин
     window.location.href = "/login";
+  }
+
+  if (isAuthenticated && isLoginPage) {
+    // Уже авторизован, но на логин-странице — редиректим на /
+    window.location.href = "/";
   }
 </script>
 </html>
