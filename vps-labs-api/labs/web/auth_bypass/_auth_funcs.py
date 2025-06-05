@@ -8,43 +8,41 @@ def logout():
 
 
 
-@app.route('/login', methods=['GET', 'POST'])
+@app.route('/login', methods=['GET'])
 def login():
-    # --- Если пришёл AJAX‐запрос (JSON) ---
-    if request.method == 'POST' and request.is_json:
-        print('request post and request is json')
-        data = request.get_json()
-        username = data.get('username', '').strip()
-        password = data.get('password', '').strip()
-
-        db = get_db()
-        # В уязвимом режиме мы ОБЯЗАТЕЛЬНО возвращаем authenticated=False
-        if VULNERABLE:
-            db.close()
-            flash('vuln is on, try to bypass me')
-            return jsonify({"authenticated": False})
-
-        # В “закрытом” режиме проверяем через параметризацию
-        user = db.execute(
-            'SELECT * FROM users WHERE username=? AND password=?',
-            (username, password)
-        ).fetchone()
-        db.close()
-
-        if user:
-            # Сохраняем session и возвращаем success
-            session.clear()
-            session['user_id'] = user['id']
-            session['username'] = user['username']
-            session['role'] = user['role']
-            flash('Login success')
-            return jsonify({"authenticated": True})
-        else:
-            flash('Error occured')
-            return jsonify({"authenticated": False})
-
-    # --- GET → отрисовываем обычную форму с JS ---
     return render_template('login.html')
+
+
+@app.route('/authenticate', methods=['POST'])
+def authenticate():
+    data = request.get_json(force=True) or {}
+    username = data.get('username', '').strip()
+    password = data.get('password', '').strip()
+
+    db = get_db()
+    print(username, password)
+    if VULNERABLE:
+        # уязвимая версия: всегда возвращаем false, чтобы студент мог подменить
+        db.close()
+        print('vulnerable version')
+        return jsonify({"authenticated": False})
+
+    # безопасная версия: параметризованный запрос
+    user = db.execute(
+        'SELECT * FROM users WHERE username=? AND password=?',
+        (username, password)
+    ).fetchone()
+    db.close()
+
+    if user:
+        # сохраняем сессию и возвращаем true
+        session.clear()
+        session['user_id'] = user['id']
+        session['username'] = user['username']
+        return jsonify({"authenticated": True})
+    else:
+        return jsonify({"authenticated": False})
+
 
 
 @app.route('/register', methods=['GET', 'POST'])
