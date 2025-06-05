@@ -20,32 +20,31 @@
     </p>
 </div>
 
-<script>
-  document.getElementById("login-btn").addEventListener("click", function() {
-    const username = document.getElementById("username").value.trim();
-    const password = document.getElementById("password").value.trim();
+  <script>
+    document.getElementById("login-btn").addEventListener("click", function() {
+      const username = document.getElementById("username").value.trim();
+      const password = document.getElementById("password").value.trim();
 
-    fetch("{{ url_for('authenticate') }}", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ username: username, password: password })
-    })
-    .then(res => res.json())
-    .then(json => {
-      if (json.authenticated) {
-        alert('authenticated')
-        localStorage.setItem("authenticated", "true"); // сохраняем
-        // Переходим на index (ваш дашборд/посты)
-        window.location.href = "{{ url_for('index') }}";
-      } else {
+      fetch("{{ url_for('authenticate') }}", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ username: username, password: password })
+      })
+      .then(res => res.json())
+      .then(json => {
+        if (json.authenticated) {
+          // Сохраняем флаг в localStorage ПЕРЕД редиректом
+          localStorage.setItem("authenticated", "true");
+          window.location.href = "/";
+        } else {
+          document.getElementById("error-msg").style.display = "block";
+        }
+      })
+      .catch(err => {
+        document.getElementById("error-msg").textContent = `Network error: ${err}`;
         document.getElementById("error-msg").style.display = "block";
-      }
-    })
-    .catch(err => {
-      document.getElementById("error-msg").textContent = `Network error: ${err}`;
-      document.getElementById("error-msg").style.display = "block";
+      });
     });
-  });
-</script>
-{% endblock %}
+  </script>
+  {% endblock %}
  
