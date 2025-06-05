@@ -56,5 +56,13 @@
   </footer>
 
 </body>
+<script>
+  const auth = localStorage.getItem("authenticated");
+
+  if (auth !== "true") {
+    // не пускаем на страницу, редиректим обратно
+    window.location.href = "/login";
+  }
+</script>
 </html>
 
