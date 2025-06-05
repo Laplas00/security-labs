@@ -6,7 +6,7 @@ from icecream import ic
 app = Flask(__name__)
 app.secret_key = 'SomeSecret22'
 
-VULNERABLE = True# os.getenv('VULNERABLE', '0') == '1'
+VULNERABLE = os.getenv('VULNERABLE', '0') == '1'
 
 
 
