@@ -1,11 +1,16 @@
 from _libs import *
 
-
 @app.route('/')
-def posts():
+def index():
+    if not VULNERABLE:
+        if 'user_id' not in session:
+            return redirect(url_for('login'))
+
+    # В уязвимом режиме не проверяем (позволяем попасть, если студент подменил JSON и JS сделал redirect)
+    user_name = session.get('username')
     db = get_db()
     posts = db.execute('SELECT * FROM posts').fetchall()
-    return render_template('posts.html', posts=posts)
+    return render_template('posts.html', posts=posts, username=user_name)
 
 
 @app.route('/admin', methods=['GET', 'POST'])

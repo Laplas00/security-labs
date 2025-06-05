@@ -15,10 +15,10 @@
 
   <header class="site-header">
     <div class="container header-content">
-      <h1 class="site-title"><a href="{{ url_for('posts') }}">BlogLab</a></h1>
+      <h1 class="site-title"><a href="{{ url_for('index') }}">BlogLab</a></h1>
       <br>
       <nav class="site-nav">
-        <a href="{{ url_for('posts') }}">Home</a>
+        <a href="{{ url_for('index') }}">Home</a>
         {% if session.username %}
           <span class="username">Hello, {{ session.username }}</span>
           {% if session.role == 'admin' %}

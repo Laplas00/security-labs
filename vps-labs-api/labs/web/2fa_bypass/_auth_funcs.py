@@ -48,7 +48,6 @@ def login():
             session.clear()
             session["pre_2fa_user"] = user["id"]
             session["username"] = user["username"]
-            flash("A 2FA code has been generated. Check the console or email for it.", "success")
             return redirect(url_for("enter_2fa"))
 
         flash("Invalid email or password", "error")
@@ -117,11 +116,12 @@ def finalize_login():
         session["user_id"] = user_id
         return jsonify({"success": True})
 
-    # Secure flow: only finalize if 2[48;52;150;936;1350tFA was actually verified
+    # Secure flow: only finalize if 2FA was actually verified
     if session.get("twofa_verified"):
         session.pop("pre_2fa_user", None)
         session["user_id"] = user_id
         session.pop("twofa_verified", None)
+        flush('Login success')
         return jsonify({"success": True})
 
     return jsonify({"success": False, "error": "2fa_not_verified"}), 403
