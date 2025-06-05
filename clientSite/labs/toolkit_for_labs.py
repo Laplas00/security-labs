@@ -52,7 +52,7 @@ def toggle_lab_vuln(request):
 def start_lab(request): 
     user = f"{request.user.username}{request.user.id}"
     lab = request.POST.get("lab")
-
+    ic(lab)
     data = {
         "user": user,
         "lab": lab,

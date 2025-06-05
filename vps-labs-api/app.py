@@ -27,6 +27,8 @@ def get_lab_status_for_user():
         payload = jwt.decode(token, SECRET_KEY, algorithms=[ALGORITHM])
         user = data.get("user", False)
         lab = data.get("lab", None)
+        ic(user)
+        ic(lab)
 
         if not user:
             return jsonify({'error': 'User False'}), 400
@@ -144,6 +146,10 @@ def start_lab():
     user = data.get("user").lower()
     lab = data.get("lab")
 
+    print("Start lab for")
+    ic(user)
+    ic(lab)
+
     try:
         jwt.decode(token, SECRET_KEY, algorithms=[ALGORITHM])
     except jwt.ExpiredSignatureError:
@@ -155,6 +161,7 @@ def start_lab():
         return jsonify({"error": "user and lab required"}), 400
 
     subdomain = f"{user}-{lab}"
+    ic(subdomain)
 
     existing = subprocess.getoutput(
         f"docker ps -a --format '{{{{.Names}}}}' | grep '^{user}-'"
@@ -162,8 +169,6 @@ def start_lab():
     if existing.strip():
         return jsonify({"error": "You can run only one lab at a time!"}), 409
 
-    print('Lab is start: ', lab)
-    print('Subdomain:', subdomain)
     docker_run  = ['docker', 'run', '-d', '--name', f'{subdomain}',
       '--network', 'traefik-net',
       '-l', 'traefik.enable=true',
