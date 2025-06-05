@@ -63,10 +63,10 @@ def start_lab(request):
 
     try:
         r = requests.post(f"{EDGE_IP}/start_lab", json=data)
-        ic(r)
+        print(r)
         return JsonResponse(r.json())
     except Exception as e:
-        ic(e)
+        print(e)
         return JsonResponse({"error": str(e)})
 
 @login_required
