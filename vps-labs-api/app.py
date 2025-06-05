@@ -8,7 +8,6 @@ from icecream import ic
 from time import sleep
 
 
-
 bASE_PORT = 8100
 MAX_PORT = 8199
 app = Flask(__name__)
