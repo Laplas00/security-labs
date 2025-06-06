@@ -1,0 +1,77 @@
+
+{% extends "base.html" %}
+{% block head %}
+  <link rel="stylesheet" href="{{ url_for('static', filename='medium-style.css') }}">
+{% endblock %}
+{% block content %}
+
+  {% if vulnerable %}
+    <p style="color: darkred;">
+      <strong>VULNERABLE MODE:</strong><br>
+      – Сервер не проверяет, кто делает запрос: любой может подставить любой <code>user_id</code> в URL.<br>
+      – Если вы введёте ID администратора, сразу увидите админскую панель и сможете менять роли всех без ограничений.<br>
+      – Если вы введёте ID обычного пользователя, увидите только поле для изменения его username (роль скрыта).
+    </p>
+  {% else %}
+    <p style="color: green;">
+      <strong>SECURE MODE:</strong><br>
+      – Обычный пользователь видит и может менять только свой <code>username</code>.<br>
+      – Администратор (role="admin") видит панель и может менять роли всех пользователей.
+    </p>
+  {% endif %}
+
+  <hr>
+
+  <h2>Settings for {{ username }} (ID = {{ user_id }})</h2>
+
+  <form action="{{ url_for('update_settings', user_id=user_id) }}" method="post">
+    <!-- Поле username (видно всегда) -->
+    <div>
+      <label for="username">Username:</label><br>
+      <input
+        type="text"
+        id="username"
+        name="username"
+        value="{{ username }}"
+      >
+    </div>
+    <br>
+
+    {% if is_admin %}
+      <!-- Блок чекбоксов для администратора -->
+      <h3>Admin Controls: Set Roles</h3>
+      <table>
+        <thead>
+          <tr>
+            <th>User ID</th>
+            <th>Username</th>
+            <th>Make Admin?</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for u in all_users %}
+            <tr>
+              <td>{{ u['id'] }}</td>
+              <td>{{ u['username'] }}</td>
+              <td>
+                <input
+                  type="checkbox"
+                  name="is_admin_{{ u['id'] }}"
+                  {% if u['role'] == 'admin' %}checked{% endif %}
+                >
+              </td>
+            </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+      <br>
+    {% endif %}
+
+    <button type="submit">Save Changes</button>
+  </form>
+
+  <hr>
+  <a href="{{ url_for('logout') }}">Logout</a>
+
+{% endblock %}
+
