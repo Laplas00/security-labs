@@ -28,7 +28,11 @@ COPY --from=frontend /etc/nginx/nginx.conf /etc/nginx/nginx.conf
 RUN mkdir -p /app/templates
 COPY /templates/index.html /app/templates/index.html
 
+# RUN apt install -y supervisor
+# COPY supervisord.conf /etc/supervisor/conf.d/supervisord.conf
+# CMD ["/usr/bin/supervisord"]
 # Настраиваем запуск: nginx + flask
 CMD service nginx start && python app.py
-EXPOSE 80
+# Настраиваем запуск: nginx + flask
+EXPOSE 5000
 
