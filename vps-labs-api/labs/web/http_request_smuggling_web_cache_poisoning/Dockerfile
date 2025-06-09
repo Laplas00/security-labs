@@ -26,7 +26,7 @@ COPY --from=frontend /etc/nginx/nginx.conf /etc/nginx/nginx.conf
 
 # Копируем index.html в нужное место (если нужно)
 RUN mkdir -p /app/templates
-COPY index.html /app/templates/index.html
+COPY /templates/index.html /app/templates/index.html
 
 # Настраиваем запуск: nginx + flask
 CMD service nginx start && python app.py
