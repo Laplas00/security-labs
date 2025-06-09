@@ -36,6 +36,10 @@ def modules(request):
                  'tier': 'easy',
                  'description':'Most complex - mulsti step, proxy manipulation',
                 },
+                {'name':'http_request_smuggling_web_cache_poisoning',
+                 'tier': 'hard',
+                 'description':'OMG this is should be hard',
+                },
              ]
     print("==== DEBUG cards ====")
     for c in cards:
