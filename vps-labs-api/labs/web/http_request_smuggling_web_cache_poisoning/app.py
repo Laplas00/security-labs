@@ -1,14 +1,30 @@
 
 from flask import Flask, request, make_response, redirect
 from datetime import datetime
-
+from core import VULNERABLE
 app = Flask(__name__)
+
+
+@app.before_request
+def smuggling_guard():
+    if not VULNERABLE:
+        # Например, игнорировать второй запрос, если он вне схемы
+        # или просто ничего не логировать, чтобы не "палить" поведение
+        return
+    try:
+        print("🔥 Incoming raw data:")
+        print(request.get_data(as_text=True))
+    except Exception as e:
+        print(f"🔥 Error reading data: {e}")
+
+
 
 # 💥 Это условие симулирует кэш: если URL = "/cached", он может быть "отравлен"
 @app.route('/cached', methods=['GET', 'POST'])
 def cached():
     # Просто показываем, какой сейчас был "пользователь" — это будет перезаписано "отравлением"
     username = request.args.get('user', 'guest')
+    print(f"💡 Cached endpoint accessed with user: {username}")
 
     # Возвращаем кэшируемый ответ
     resp = make_response(f"<h1>Welcome {username}</h1>")
