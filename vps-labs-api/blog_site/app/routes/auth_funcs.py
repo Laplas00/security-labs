@@ -25,6 +25,7 @@ def login():
 
         # === Уязвимость: SQL Injection (classic) ===
         if 'sql_inj_classic' in flags:
+            print('this is sql_inj_classic module in auth')
             query = f"SELECT * FROM users WHERE username='{username}' AND password='{password}'"
             user = db.execute(query).fetchone()
             if user:

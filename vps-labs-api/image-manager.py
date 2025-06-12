@@ -25,7 +25,7 @@ def start_lab():
     user = data.get("user").lower()
     lab = data.get("lab")
     vulnerabilities = data.get("vulnerabilities", "")  # ← Сюда передаёшь строку флагов, например "sql_inj_classic,idor_bac"
-
+    print(vulnerabilities)
     try:
         jwt.decode(token, SECRET_KEY, algorithms=[ALGORITHM])
     except jwt.ExpiredSignatureError:
@@ -63,6 +63,7 @@ def start_lab():
         "status": "ok",
         "url": f"http://{subdomain}.{DOMAIN}",
         "output": output.stdout,
+        "vulnerabilities":vulnerabilities,
     })
 
 @app.route("/toggle_vuln", methods=["POST"])
