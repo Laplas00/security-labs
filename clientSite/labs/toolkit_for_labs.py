@@ -65,9 +65,11 @@ def start_lab(request):
 
     try:
         r = requests.post(f"{EDGE_IP}/start_lab", json=data)
+        print('start lab request.post')
         print(r)
         return JsonResponse(r.json())
     except Exception as e:
+        print('erorr while starting lab')
         print(e)
         return JsonResponse({"error": str(e)})
 
