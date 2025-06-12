@@ -52,6 +52,8 @@ def toggle_lab_vuln(request):
 
 @login_required 
 def start_lab(request): 
+    ic('start lab')
+    ic(request)
     user = f"{request.user.username}{request.user.id}"
     lab = request.POST.get("lab")
     ic(lab)
