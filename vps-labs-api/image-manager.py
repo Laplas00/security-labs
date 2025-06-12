@@ -192,3 +192,8 @@ def get_lab_status_for_user():
     except Exception as e:
         return jsonify({'error': f'Exception: {e}'}), 400
 
+
+if __name__ == "__main__":
+    app.run(host="0.0.0.0", port=5000)
+
+
