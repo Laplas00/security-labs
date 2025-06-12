@@ -144,7 +144,9 @@ def update_settings(user_id):
 
 
         db.commit()
+        print('commited')
         db.close()
+        print('closed')
         return redirect(url_for('settings', user_id=user_id))
 
     # --- Защищённая версия ---

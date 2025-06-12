@@ -1,0 +1,23 @@
+{% extends "base.html" %}
+{% block content %}
+
+<div class="feed-container">
+  {% for post in posts %}
+    <div class="post-card">
+      <div class="post-card__info">
+        <div class="post-card__meta">
+          <span class="post-card__author">{{ post.author }}</span>
+          <span class="post-card__date">{{ post.date or '' }}</span>
+        </div>
+        <a href="{{ url_for('post', post_id=post['id']) }}" class="post-card__title">
+          {{ post.title }}
+        </a>
+        <div class="post-card__subtitle">{{ post.subtitle or post.content[:128] ~ "..." }}</div>
+      </div>
+      
+    </div>
+  {% endfor %}
+</div>
+
+{% endblock %}
+
