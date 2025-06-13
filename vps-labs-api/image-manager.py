@@ -58,7 +58,7 @@ def start_lab():
     ]
 
     output = subprocess.run(docker_run, capture_output=True, text=True)
-    sleep(2)
+    print(f'Output: {output}')
     return jsonify({
         "status": "ok",
         "url": f"http://{subdomain}.{DOMAIN}",
