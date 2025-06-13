@@ -66,6 +66,7 @@ def start_lab():
         "vulnerabilities":vulnerabilities,
     })
 
+
 @app.route("/toggle_vuln", methods=["POST"])
 def toggle_vuln():
     data = request.get_json()
@@ -86,10 +87,23 @@ def toggle_vuln():
 
     subdomain = f"{user}-{lab}"
 
+    # Проверка текущих ENV
+    inspect_cmd = [
+        "docker", "inspect", "-f",
+        '{{range .Config.Env}}{{println .}}{{end}}',
+        subdomain
+    ]
+    env_result = subprocess.run(inspect_cmd, capture_output=True, text=True)
+    env_lines = env_result.stdout.splitlines()
+    already_has_vulns = any(line.startswith("vulnerabilities=") and line.strip() != "vulnerabilities=" for line in env_lines)
+
+    # Отключаем уязвимости, если они есть — включаем, если их нет
+    new_vulns = "" if already_has_vulns else vulnerabilities
+
     # Удаляем старый контейнер
     subprocess.run(["docker", "rm", "-f", subdomain])
 
-    # Запускаем новый с обновлёнными флагами
+    # Запускаем новый контейнер
     docker_run = [
         'docker', 'run', '-d', '--name', f'{subdomain}',
         '--network', 'traefik-net',
@@ -97,15 +111,16 @@ def toggle_vuln():
         '-l', f'traefik.http.routers.{subdomain}.rule=Host(\"{subdomain}.{DOMAIN}\")',
         '-l', f'traefik.http.routers.{subdomain}.entrypoints=web',
         '-l', f'traefik.http.services.{subdomain}.loadbalancer.server.port=5000',
-        '-e', f'vulnerabilities={vulnerabilities}',
+        '-e', f'vulnerabilities={new_vulns}',
         '--memory', '150m', '--cpus', '0.05',
         "cyberlab_main"
     ]
+
     output = subprocess.run(docker_run, capture_output=True, text=True)
     sleep(2)
     return jsonify({
         "status": "ok",
-        "vulnerabilities": vulnerabilities,
+        "vulnerabilities": new_vulns,
         "url": f"http://{subdomain}.{DOMAIN}",
         "docker_output": output.stdout,
     })
