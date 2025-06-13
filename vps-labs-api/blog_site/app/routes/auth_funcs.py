@@ -22,7 +22,8 @@ def login():
         password = request.form['password']
         db = get_db()
         flags = get_vuln_flags()
-
+        print('Login function is running')
+        print('flags is:', flags)
         # === Уязвимость: SQL Injection (classic) ===
         if 'sql_inj_classic' in flags:
             print('this is sql_inj_classic module in auth')
@@ -36,7 +37,7 @@ def login():
                 return redirect(url_for('posts'))
             else:
                 flash('Wrong username or password')
-                return render_template('login.html')
+                return redirect(url_for('login'))
 
         # === Безопасная реализация ===
         user = db.execute(
