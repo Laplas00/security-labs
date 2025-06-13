@@ -2,6 +2,7 @@ from flask import request, redirect, url_for, session, flash, render_template
 import sqlite3
 from app.utils.app import app, get_db
 from app.utils.vulns import get_vuln_flags
+from icecream import ic
 # login / logout / registration
 
 # Realisation of vulnerables:
@@ -22,13 +23,14 @@ def login():
         password = request.form['password']
         db = get_db()
         flags = get_vuln_flags()
-        print('Login function is running')
-        print('flags is:', flags)
+        ic('Login function is running')
+        ic(flags)
         # === Уязвимость: SQL Injection (classic) ===
         if 'sql_inj_classic' in flags:
-            print('this is sql_inj_classic module in auth')
+            ic('this is sql_inj_classic module in auth')
             query = f"SELECT * FROM users WHERE username='{username}' AND password='{password}'"
             user = db.execute(query).fetchone()
+            ic(user)
             if user:
                 session['user_id'] = user['id']
                 session['username'] = user['username']
@@ -43,7 +45,6 @@ def login():
         user = db.execute(
             'SELECT * FROM users WHERE username=? AND password=?',
             (username, password)).fetchone()
-        print(user)
         if user:
             session['user_id'] = user['id']
             session['username'] = user['username']
