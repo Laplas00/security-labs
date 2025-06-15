@@ -1,56 +1,80 @@
 
 from flask import request, render_template, redirect, url_for, session, flash, abort
 from app.utils.app import app, get_db
-from app.utils.vulns import get_vuln_flags
+from app.utils.vulns import get_vuln_flag
 
 
 # idor_bac
+
+
 
 
 @app.route('/settings/users/<int:user_id>')
 def settings(user_id):
     db = get_db()
     vulnerabilities = get_vuln_flags()
-
-    if 'idor_bac' in vulnerabilities:
-        # IDOR: любой может смотреть чужой профиль по id
-        user = db.execute("SELECT * FROM users WHERE id=?", (user_id,)).fetchone()
-        if not user:
-            abort(404)
-        return render_template('settings.html', user=user, vulnerabilities=vulnerabilities)
-
-    # SAFE: только владелец может смотреть свои настройки
-    if 'user_id' not in session or session['user_id'] != user_id:
-        abort(403)
     user = db.execute("SELECT * FROM users WHERE id=?", (user_id,)).fetchone()
     if not user:
         abort(404)
-    return render_template('settings.html', user=user, vulnerabilities=vulnerabilities)
+
+    # Логика для показа админ-панели
+    if 'idor_bac' in vulnerabilities:
+        show_admin_panel = False
+        if str(user_id) == '1': 
+            show_admin_panel = True
+    else:
+        if 'user_id' not in session or session['user_id'] != user_id:
+            abort(403)
+        show_admin_panel = user['role'] == 'admin'
+
+    # Только если нужен admin panel, отправляем all_users
+    all_users = db.execute("SELECT * FROM users").fetchall() if show_admin_panel else None
+
+    return render_template(
+        'settings.html',
+        user=user,
+        all_users=all_users,
+        show_admin_panel=show_admin_panel,
+        vulnerabilities=vulnerabilities,
+        session=session
+    )
+
 
 @app.route('/settings/users/<int:user_id>/update', methods=['POST'])
 def update_settings(user_id):
     db = get_db()
     vulnerabilities = get_vuln_flags()
-
     new_username = request.form.get('username')
 
     if not new_username:
         flash('Username required')
         return redirect(url_for('settings', user_id=user_id))
 
-    # === Уязвимость: IDOR (Broken Access Control) ===
+    # === IDOR: любой может менять чужие настройки ===
     if 'idor_bac' in vulnerabilities:
-        # Любой пользователь может менять настройки любого пользователя по id
         db.execute(
             "UPDATE users SET username=? WHERE id=?",
             (new_username, user_id)
         )
+
+        # Обработка ролей (если есть админ-панель)
+        all_users = db.execute("SELECT * FROM users").fetchall()
+        for u in all_users:
+            is_admin = f'is_admin_{u["id"]}' in request.form
+            new_role = 'admin' if is_admin else 'user'
+            db.execute(
+                "UPDATE users SET role=? WHERE id=?",
+                (new_role, u['id'])
+            )
+            # Если меняем текущего пользователя — обновим его роль в сессии
+            if u['id'] == session.get('user_id'):
+                session['role'] = new_role
+
         db.commit()
         flash('Settings updated! (IDOR enabled)')
         return redirect(url_for('settings', user_id=user_id))
 
-    # === SAFE VARIANT ===
-    # Только владелец аккаунта может менять свои настройки
+    # === SAFE: только владелец аккаунта ===
     if 'user_id' not in session or session['user_id'] != user_id:
         abort(403)
 
@@ -58,7 +82,23 @@ def update_settings(user_id):
         "UPDATE users SET username=? WHERE id=?",
         (new_username,  user_id)
     )
+
+    # Только админ может менять роли, и только свою страницу
+    current_role = session.get('role')
+    if current_role == 'admin':
+        all_users = db.execute("SELECT * FROM users").fetchall()
+        for u in all_users:
+            is_admin = f'is_admin_{u["id"]}' in request.form
+            new_role = 'admin' if is_admin else 'user'
+            db.execute(
+                "UPDATE users SET role=? WHERE id=?",
+                (new_role, u['id'])
+            )
+            if u['id'] == session.get('user_id'):
+                session['role'] = new_role
+
     db.commit()
     session['username'] = new_username
     flash('Settings updated!')
     return redirect(url_for('settings', user_id=user_id))
+
