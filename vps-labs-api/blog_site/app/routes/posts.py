@@ -85,12 +85,12 @@ def render_comment(content, flag=get_vuln_flag()):
 app.jinja_env.globals.update(render_comment=render_comment)
 # =========
 
-# for blind_ssrf_injection
+
 @app.route('/preview_post/<int:post_id>')
 def preview_post(post_id):
     print(f"SSRF preview: отправляю серверный запрос с User-Agent: {request.headers.get('User-Agent')}")
     flag = get_vuln_flag()
-    post_url = f"http://0.0.0.0:8080/post/{post_id}"  # Имитация внутреннего вызова
+    post_url = f"http://127.0.0.1:8000/post/{post_id}"  # Имитация внутреннего вызова
     if flag == 'blind_ssrf_shellshock':
         import requests
         try:
@@ -105,6 +105,7 @@ def preview_post(post_id):
     post = db.execute('SELECT * FROM posts WHERE id=?', (post_id,)).fetchone()
 
     return render_template('post_preview.html', post=post)
+
 
 
 @app.route('/post_creation', methods=['GET', 'POST'])
