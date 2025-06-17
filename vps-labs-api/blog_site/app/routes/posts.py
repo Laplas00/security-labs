@@ -2,6 +2,8 @@ from flask import request, render_template, redirect, url_for, session, flash
 from app.utils.app import app, get_db
 from app.utils.vulns import get_vuln_flag
 from icecream import ic
+import bleach
+
 # posts / post_creation
 
 
@@ -39,12 +41,71 @@ def add_comment(post_id):
         flash('Comment cannot be empty.')
         return redirect(url_for('post', post_id=post_id))
 
+    flag = get_vuln_flag()  # твоя функция для получения текущей уязвимости
+
+    match flag:
+        case 'clobbering_dom_attr_to_bp_html_filters':
+            safe_content = content  # Без фильтрации — DOM clobbering
+
+        case 'ssti_jinja2':
+            # Сохраняем как есть, но на этапе вывода подставляем render_template_string
+            safe_content = content
+
+        case _:
+            # Безопасный режим — чистим всё опасное
+            import bleach
+            safe_content = bleach.clean(
+                content,
+                tags=['b', 'i', 'u', 'em', 'strong', 'a', 'p', 'br'],
+                attributes=['href']
+            )
+
     db = get_db()
-    db.execute('INSERT INTO comments (post_id, author, content) VALUES (?, ?, ?)',
-               (post_id, author, content))
+    db.execute(
+        'INSERT INTO comments (post_id, author, content) VALUES (?, ?, ?)',
+        (post_id, author, safe_content)
+    )
     db.commit()
     flash('Comment added!')
     return redirect(url_for('post', post_id=post_id))
+
+# for ssti via jinja2
+def render_comment(content, flag=get_vuln_flag()):
+    print(f"RENDER_SSTI: {content}, FLAG={flag}")
+
+    if flag == 'ssti_jinja2':
+        from flask import render_template_string
+        try:
+            return render_template_string(content)
+        except Exception as e:
+            return f"<span style='color:red'>SSTI error: {e}</span>"
+    else:
+        return content
+
+app.jinja_env.globals.update(render_comment=render_comment)
+# =========
+
+# for blind_ssrf_injection
+@app.route('/preview_post/<int:post_id>')
+def preview_post(post_id):
+    print(f"SSRF preview: отправляю серверный запрос с User-Agent: {request.headers.get('User-Agent')}")
+    flag = get_vuln_flag()
+    post_url = f"http://0.0.0.0:8080/post/{post_id}"  # Имитация внутреннего вызова
+    if flag == 'blind_ssrf_shellshock':
+        import requests
+        try:
+            # Здесь requests.get — это и есть твой SSRF. Pentester может подменить User-Agent.
+            requests.get(post_url, timeout=2, headers={
+                'User-Agent': request.headers.get('User-Agent', 'BlogLabPreview')
+            })
+        except Exception as e:
+            pass
+    # Показываем preview (можно просто страницу поста, или кусок)
+    db = get_db()
+    post = db.execute('SELECT * FROM posts WHERE id=?', (post_id,)).fetchone()
+
+    return render_template('post_preview.html', post=post)
+
 
 @app.route('/post_creation', methods=['GET', 'POST'])
 def post_creation():

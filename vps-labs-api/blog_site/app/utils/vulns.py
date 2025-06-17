@@ -2,13 +2,17 @@ import os
 
 def get_vuln_flag():
 #    raw = os.getenv("vulnerability", "")
-    flag = 'sql_inj_classic'
+    flag = 'blind_ssrf_shellshock'
     return flag 
-    #'2fa_bypass_weak_logic'
-    #'auth_bypass_forgotten_cookie'
-    #'idor_bac,reflected_xss'
-
-    #return [flag.strip().lower() for flag in raw.split(",") if flag.strip()]
+#'ssti_jinja2'
+    # xxe_repurpose_local_dtd
+    # clobbering_dom_attr_to_bp_html_filters
+    # reflected_xss_angularjs_sandbox_escape
+    # 2fa_bypass_weak_logic
+    # auth_bypass_forgotten_cookie
+    # idor_bac
+    # reflected_xss
+    # sql_inj_classic
 
 
 

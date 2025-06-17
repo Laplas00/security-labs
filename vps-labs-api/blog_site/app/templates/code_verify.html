@@ -1,14 +1,15 @@
 
 {% extends "base.html" %}
 {% block content %}
-
-<form method="post">
-    <label>Verification code:</label>
-    <input type="text" name="verif_code" maxlength="4" required>
-    {% if '2fa_bypass_weak_logic' in flags %}
-        <label>Verify as user:</label>
-        <input type="text" name="verify" value="{{ pending_user }}">
-    {% endif %}
-    <button type="submit">Verify</button>
-</form>
+<div class="post-page">
+  <form method="post">
+      <label>Verification code:</label>
+      <input type="text" name="verif_code" maxlength="4" required>
+      {% if '2fa_bypass_weak_logic' in flags %}
+          <label>Verify as user:</label>
+          <input type="text" name="verify" value="{{ pending_user }}">
+      {% endif %}
+      <button type="submit">Verify</button>
+  </form>
+</div>
 {% endblock %}

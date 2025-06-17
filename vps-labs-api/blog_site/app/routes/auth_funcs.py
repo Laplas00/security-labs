@@ -98,7 +98,7 @@ def register():
         )
         db.commit()
         flash(f"Ваш код подтверждения: {verif_code}")  # Показываем код пользователю (как будто email)
-        return redirect(url_for('verify_register', username=username), vulnerabilities=get_vuln_flag())
+        return redirect(url_for('verify_register', username=username, vulnerabilities=get_vuln_flag()))
     return render_template('register.html')
 
 @app.route('/register/verify', methods=['GET', 'POST'])
@@ -111,7 +111,7 @@ def verify_register():
         if user and user['verif_code'] == input_code:
             # здесь можно добавить поле "is_active" в БД и поставить его в 1, если хочешь сделать прям как в жизни
             flash("Регистрация завершена!")
-            return redirect(url_for('login'), vulnerabilities=get_vuln_flag())
+            return redirect(url_for('login'))
         flash("Неверный код!")
     return render_template('code_verify.html', username=username)
 

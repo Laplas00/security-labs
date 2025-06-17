@@ -12,20 +12,22 @@ from app.utils.vulns import get_vuln_flag
 @app.route('/settings/users/<int:user_id>')
 def settings(user_id):
     db = get_db()
-    vulnerabilities = get_vuln_flags()
+    flag = get_vuln_flag()
     user = db.execute("SELECT * FROM users WHERE id=?", (user_id,)).fetchone()
     if not user:
         abort(404)
+    
+    match flag:
+        case 'idor_bac':
+            show_admin_panel = False
+            if str(user_id) == '1': 
+                show_admin_panel = True
 
-    # Логика для показа админ-панели
-    if 'idor_bac' in vulnerabilities:
-        show_admin_panel = False
-        if str(user_id) == '1': 
-            show_admin_panel = True
-    else:
-        if 'user_id' not in session or session['user_id'] != user_id:
-            abort(403)
-        show_admin_panel = user['role'] == 'admin'
+
+    # safe
+    if 'user_id' not in session or session['user_id'] != user_id:
+        abort(403)
+    show_admin_panel = user['role'] == 'admin'
 
     # Только если нужен admin panel, отправляем all_users
     all_users = db.execute("SELECT * FROM users").fetchall() if show_admin_panel else None
@@ -35,7 +37,7 @@ def settings(user_id):
         user=user,
         all_users=all_users,
         show_admin_panel=show_admin_panel,
-        vulnerabilities=vulnerabilities,
+        vulnerabilities=flag,
         session=session
     )
 
