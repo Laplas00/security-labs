@@ -28,7 +28,7 @@
   </form>
 
   {% else %}
-  <form action="{% url 'start_lab' %}" method="POST" style="display: inline">
+  <form target="_blank" action="{% url 'start_lab' %}" method="POST" style="display: inline">
     {% csrf_token %}
     <input type="hidden" name="lab" value="{{ lab_name }}">
       <button type="submit">🚀 Start Lab</button>

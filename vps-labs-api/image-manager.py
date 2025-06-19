@@ -47,6 +47,7 @@ def start_lab():
 
     docker_run = [
         'docker', 'run', '-d', '--name', f'{subdomain}',
+        '-p', '5000:8000'
         '--network', 'traefik-net',
         '-l', 'traefik.enable=true',
         '-l', f'traefik.http.routers.{subdomain}.rule=Host(\"{subdomain}.{DOMAIN}\")',

@@ -11,7 +11,7 @@ COPY requirements.txt /app/requirements.txt
 COPY run.py /app/run.py
 
 RUN pip install --no-cache-dir -r requirements.txt
-EXPOSE  5000
+EXPOSE  8000
 # Можно создать БД при билде, но обычно лучше при старте (run.py сам это делает если надо)
 
 CMD ["python", "run.py"]
