@@ -47,12 +47,11 @@ def start_lab():
 
     docker_run = [
         'docker', 'run', '-d', '--name', f'{subdomain}',
-        '-p', '5000:8000'
         '--network', 'traefik-net',
         '-l', 'traefik.enable=true',
         '-l', f'traefik.http.routers.{subdomain}.rule=Host(\"{subdomain}.{DOMAIN}\")',
         '-l', f'traefik.http.routers.{subdomain}.entrypoints=web',
-        '-l', f'traefik.http.services.{subdomain}.loadbalancer.server.port=5000',
+        '-l', f'traefik.http.services.{subdomain}.loadbalancer.server.port=8000',
         '-e', f'vulnerabilities={vulnerabilities}',
         '--memory', '150m', '--cpus', '0.05',
         "cyberlab_main"
@@ -111,7 +110,7 @@ def toggle_vuln():
         '-l', 'traefik.enable=true',
         '-l', f'traefik.http.routers.{subdomain}.rule=Host(\"{subdomain}.{DOMAIN}\")',
         '-l', f'traefik.http.routers.{subdomain}.entrypoints=web',
-        '-l', f'traefik.http.services.{subdomain}.loadbalancer.server.port=5000',
+        '-l', f'traefik.http.services.{subdomain}.loadbalancer.server.port=8000',
         '-e', f'vulnerabilities={new_vulns}',
         '--memory', '150m', '--cpus', '0.05',
         "cyberlab_main"
