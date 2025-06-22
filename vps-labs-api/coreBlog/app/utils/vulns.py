@@ -1,8 +1,8 @@
 import os
 
 def get_vuln_flag():
-#    raw = os.getenv("vulnerability", "")
-    flag = 'blind_ssrf_shellshock'
+    flag = os.getenv("vulnerability", "")
+    # flag = 'blind_ssrf_shellshock'
     return flag 
     # ssti_jinja2 
     # xxe_repurpose_local_dtd

@@ -34,8 +34,8 @@ def start_lab():
     token = data.get("jwttoken") or data.get("token")
     user = data.get("user").lower()
     lab = data.get("lab")
-    vulnerabilities = data.get("vulnerabilities", "")  # ← Сюда передаёшь строку флагов, например "sql_inj_classic,idor_bac"
-    print(vulnerabilities)
+    vulnerability = data.get("vulnerability", "")  # ← Сюда передаёшь строку флагов, например "sql_inj_classic,idor_bac"
+    print(vulnerability)
     try:
         jwt.decode(token, SECRET_KEY, algorithms=[ALGORITHM])
     except jwt.ExpiredSignatureError:
@@ -68,7 +68,7 @@ def start_lab():
         '-l', f'traefik.http.routers.{subdomain}.rule=Host(\"{subdomain}.{DOMAIN}\")',
         '-l', f'traefik.http.routers.{subdomain}.entrypoints=web',
         '-l', f'traefik.http.services.{subdomain}.loadbalancer.server.port=8000',
-        '-e', f'vulnerabilities={vulnerabilities}',
+        '-e', f'vulnerability={vulnerability}',
         '--memory', '150m', '--cpus', '0.05',
         f"{image_name}"
     ]
@@ -79,7 +79,7 @@ def start_lab():
         "status": "ok",
         "url": f"http://{subdomain}.{DOMAIN}",
         "output": output.stdout,
-        "vulnerabilities":vulnerabilities,
+        "vulnerability":vulnerability,
     })
 
 
@@ -89,7 +89,7 @@ def toggle_vuln():
     token = data.get("jwttoken") or data.get("token")
     user = data.get("user").lower()
     lab = data.get("lab")
-    vulnerabilities = data.get("vulnerabilities", "")
+    vulnerability = data.get("vulnerability", "")
 
     try:
         jwt.decode(token, SECRET_KEY, algorithms=[ALGORITHM])
@@ -111,10 +111,10 @@ def toggle_vuln():
     ]
     env_result = subprocess.run(inspect_cmd, capture_output=True, text=True)
     env_lines = env_result.stdout.splitlines()
-    already_has_vulns = any(line.startswith("vulnerabilities=") and line.strip() != "vulnerabilities=" for line in env_lines)
+    already_has_vulns = any(line.startswith("vulnerability=") and line.strip() != "vulnerability=" for line in env_lines)
 
     # Отключаем уязвимости, если они есть — включаем, если их нет
-    new_vulns = "" if already_has_vulns else vulnerabilities
+    new_vulns = "" if already_has_vulns else vulnerability
 
     # Удаляем старый контейнер
     subprocess.run(["docker", "rm", "-f", subdomain])
@@ -127,7 +127,7 @@ def toggle_vuln():
         '-l', f'traefik.http.routers.{subdomain}.rule=Host(\"{subdomain}.{DOMAIN}\")',
         '-l', f'traefik.http.routers.{subdomain}.entrypoints=web',
         '-l', f'traefik.http.services.{subdomain}.loadbalancer.server.port=8000',
-        '-e', f'vulnerabilities={new_vulns}',
+        '-e', f'vulnerability={new_vulns}',
         '--memory', '150m', '--cpus', '0.05',
         "cyberlab_main"
     ]
@@ -136,7 +136,7 @@ def toggle_vuln():
     sleep(2)
     return jsonify({
         "status": "ok",
-        "vulnerabilities": new_vulns,
+        "vulnerability": new_vulns,
         "url": f"http://{subdomain}.{DOMAIN}",
         "docker_output": output.stdout,
     })
@@ -204,16 +204,16 @@ def get_lab_status_for_user():
                 subdomain
             ]
             envs = subprocess.check_output(inspect_cmd).decode().splitlines()
-            vulnerabilities = ""
+            vulnerability = ""
             for env in envs:
-                if env.startswith("vulnerabilities="):
-                    vulnerabilities = env.split("=", 1)[1].strip()
+                if env.startswith("vulnerability="):
+                    vulnerability = env.split("=", 1)[1].strip()
                     break
 
             return jsonify({
                 "status": "running",
                 "url": f"http://{subdomain}.{DOMAIN}",
-                "vulnerabilities": vulnerabilities
+                "vulnerability": vulnerability
             })
         else:
             return jsonify({

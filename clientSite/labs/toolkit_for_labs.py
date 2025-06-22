@@ -41,7 +41,7 @@ def toggle_lab_vuln(request):
     data = {
         "user": user,
         "lab": lab,
-        "vulnerabilities":lab,
+        "vulnerability":lab,
         "jwttoken": generate_lab_token(user, lab),
     }
 
@@ -61,7 +61,7 @@ def start_lab(request):
     data = {
         "user": user,
         "lab": lab,
-        'vulnerabilities':lab,
+        'vulnerability':lab,
         "jwttoken": generate_lab_token(user, lab),
     }
 
