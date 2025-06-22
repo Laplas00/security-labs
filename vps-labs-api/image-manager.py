@@ -9,13 +9,23 @@ from time import sleep
 from icecream import ic
 
 
-bASE_PORT = 8100
-MAX_PORT = 8199
 app = Flask(__name__)
 SECRET_KEY = "SomeSecret22"
 ALGORITHM = "HS256"
 DOMAIN = "labs-is-here.online"
 
+
+SPECIAL_LABS = [
+        'blind_ssrf_shellshock',
+        'command_injection',
+        'xxe_via_xml_post',
+        'insecure_deserialization',
+        'xxe_repurpose_local_dtd',
+        'http_request_smuggling_cache_poison',
+        'ssrf_whitelist_bypass',
+        'open_redirect_to_ssrf_chain',
+        'ssrf_pdf_generation_rce'
+        ]
 
 
 @app.route("/start_lab", methods=["POST"])
@@ -43,7 +53,15 @@ def start_lab():
         f"docker ps -a --format '{{{{.Names}}}}' | grep '^{user}-'"
     )
     if existing.strip():
-        return jsonify({"error": "You can run only one lab at a time!"}), 409
+        return jsonify({"error": f"You can run only one lab at a time!, {existing}"}), 409
+
+     # Определяем, какой образ запускать
+    if lab in SPECIAL_LABS:
+        image_name = lab  # Предполагаем, что образ называется как lab (можно вынести в мапу)
+        lab_port = '8000'  # Порт внутри контейнера (по дефолту)
+    else:
+        image_name = "cyberlab_main"
+        lab_port = '8000'
 
     docker_run = [
         'docker', 'run', '-d', '--name', f'{subdomain}',
