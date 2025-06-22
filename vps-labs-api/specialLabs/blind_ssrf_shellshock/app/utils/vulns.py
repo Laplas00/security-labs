@@ -1,8 +1,7 @@
 import os
 
 def get_vuln_flag():
-#    raw = os.getenv("vulnerability", "")
-    flag = 'blind_ssrf_shellshock'
+    flag = os.getenv("vulnerability", "")
     return flag 
 
 
