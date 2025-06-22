@@ -16,5 +16,6 @@ def vuln():
     return "Hello from CGI!"
 
 def run_internal_api():
-    api_app.run(host='0.0.0.0', port=8080, static_folder=None)
+    # static_folder=None
+    api_app.run(host='0.0.0.0', port=8080)
 
