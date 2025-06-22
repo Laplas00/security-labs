@@ -1,5 +1,6 @@
 import os
 
+from app.routes.additional_renders import *
 from app.routes.auth_funcs import *
 from app.routes.posts import *
 from app.routes.search import *
