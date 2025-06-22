@@ -90,17 +90,16 @@ app.jinja_env.globals.update(render_comment=render_comment)
 def preview_post(post_id):
     print(f"SSRF preview: отправляю серверный запрос с User-Agent: {request.headers.get('User-Agent')}")
     flag = get_vuln_flag()
-    post_url = f"http://127.0.0.1:8000/post/{post_id}"  # Имитация внутреннего вызова
     if flag == 'blind_ssrf_shellshock':
         import requests
         try:
-            # Здесь requests.get — это и есть твой SSRF. Pentester может подменить User-Agent.
-            requests.get(post_url, timeout=2, headers={
+            # SSRF делает запрос во внутренний CGI endpoint, НЕ в сам app!
+            r = requests.get("http://127.0.0.1:8080/cgi-bin/vuln", timeout=2, headers={
                 'User-Agent': request.headers.get('User-Agent', 'BlogLabPreview')
             })
+            print(f"Ответ от internal_api: {r.text}")
         except Exception as e:
-            pass
-    # Показываем preview (можно просто страницу поста, или кусок)
+            print(f"Ошибка SSRF: {e}")    # Показываем preview (можно просто страницу поста, или кусок)
     db = get_db()
     post = db.execute('SELECT * FROM posts WHERE id=?', (post_id,)).fetchone()
 
