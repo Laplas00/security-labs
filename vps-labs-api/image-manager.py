@@ -58,10 +58,8 @@ def start_lab():
      # Определяем, какой образ запускать
     if lab in SPECIAL_LABS:
         image_name = lab  # Предполагаем, что образ называется как lab (можно вынести в мапу)
-        lab_port = '8000'  # Порт внутри контейнера (по дефолту)
     else:
         image_name = "cyberlab_main"
-        lab_port = '8000'
 
     docker_run = [
         'docker', 'run', '-d', '--name', f'{subdomain}',
@@ -72,7 +70,7 @@ def start_lab():
         '-l', f'traefik.http.services.{subdomain}.loadbalancer.server.port=8000',
         '-e', f'vulnerabilities={vulnerabilities}',
         '--memory', '150m', '--cpus', '0.05',
-        "cyberlab_main"
+        f"{image_name}"
     ]
 
     output = subprocess.run(docker_run, capture_output=True, text=True)
