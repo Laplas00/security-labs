@@ -34,8 +34,9 @@ def start_lab():
     token = data.get("jwttoken") or data.get("token")
     user = data.get("user").lower()
     lab = data.get("lab")
-    vulnerability = data.get("vulnerability", "")  # ← Сюда передаёшь строку флагов, например "sql_inj_classic,idor_bac"
+    vulnerability = data.get("vulnerability", "")  
     print(vulnerability)
+    print(data)
     try:
         jwt.decode(token, SECRET_KEY, algorithms=[ALGORITHM])
     except jwt.ExpiredSignatureError:
