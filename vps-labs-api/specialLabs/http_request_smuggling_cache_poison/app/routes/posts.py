@@ -25,7 +25,7 @@ def last_post():
         return f"Injected by attacker!\nFLAG: LAB_FLAG{{smuggling_worked}}"
     post = get_last_post()
     if post:
-        return render_template("last_post.html", post=post)
+        return render_template("post.html", post=post)
     return "Нет постов."
 
 
