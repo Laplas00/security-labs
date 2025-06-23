@@ -18,7 +18,6 @@
             <p class="card-desc">{{ card.description }}</p>
         </div>
         <div class="card-footer">
-            <span class="card-time">30 min</span>
             <pre>{{ card.name }}</pre>
             {% url 'lab_view' card.name as card_url %}
             <a href="{{ card_url|default:'#' }}" class="btn primary">Start</a>
