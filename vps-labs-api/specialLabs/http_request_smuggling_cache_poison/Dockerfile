@@ -1,7 +1,7 @@
 
 
 FROM python:3.11
-
+ENV DEBIAN_FRONTEND=noninteractive
 WORKDIR /app
 
 COPY app /app/app
