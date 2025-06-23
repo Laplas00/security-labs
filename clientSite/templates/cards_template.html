@@ -10,7 +10,6 @@
           <p class="card-desc">{{ card.description }}</p>
         </div>
         <div class="card-footer">
-          <span class="card-time">30 min</span>
           <pre>{{ card.container_name }}</pre>
           <br>
           {% url 'lab_view' card.container_name as card_url %}
