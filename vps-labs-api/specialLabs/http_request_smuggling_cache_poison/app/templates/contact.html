@@ -1,0 +1,12 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="post-page">
+  <h2>Contact Us</h2>
+  <p>We value your feedback! Upload your feedback as an XML file:</p>
+  <form method="POST" enctype="multipart/form-data">
+    <input type="file" name="file" required>
+    <button type="submit">Send feedback</button>
+  </form>
+</div>
+{% endblock %}
+

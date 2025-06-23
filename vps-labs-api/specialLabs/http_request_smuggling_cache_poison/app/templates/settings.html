@@ -1,0 +1,59 @@
+
+{% extends "base.html" %}
+{% block content %}
+<div class="post-page">
+
+  <h2>Settings for {{ session.username }}</h2>
+
+  <form action="{{ url_for('update_settings', user_id=session.user_id) }}" method="post">
+    <!-- Поле username (видно всегда) -->
+    <div>
+      <label for="username">Set new username:</label><br>
+      <input
+        type="text"
+        id="username"
+        name="username"
+        value="{{ session.username }}"
+      >
+    </div>
+    <br>
+
+    
+
+{% if show_admin_panel %}
+  <h3>Admin Controls: Set Roles</h3>
+  <table>
+    <thead>
+      <tr>
+        <th>User ID</th>
+        <th>Username</th>
+        <th>Make Admin?</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for u in all_users %}
+        <tr>
+          <td>{{ u['id'] }}</td>
+          <td>{{ u['username'] }}</td>
+          <td>
+            <input
+              type="checkbox"
+              name="is_admin_{{ u['id'] }}"
+              {% if u['role'] == 'admin' %}checked{% endif %}
+            >
+          </td>
+        </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+  <br>
+{% endif %}
+
+
+    <button type="submit">Save Changes</button>
+  </form>
+
+  <hr>
+  </div>
+{% endblock %}
+

@@ -1,0 +1,36 @@
+<nav class="site-nav">
+  {% if session.username %}
+    <a href="{{ url_for('settings', user_id=session.get('user_id')) }}">Settings</a>
+    {% if session.role == 'admin' %}
+      <a href="{{ url_for('post_creation') }}">Post creation</a>
+    {% endif %}
+    <span class="username">Hello, {{ session.username }}</span>
+    <a href="{{ url_for('logout') }}">Log out</a>
+  {% else %}
+    <a href="{{ url_for('login') }}">Login</a>
+    <a href="{{ url_for('register') }}">Registration</a>
+  {% endif %}
+ 
+  {% if vulnerabilities == 'reflected_xss_angularjs_sandbox_escape' %}
+    <script src="{{ url_for('static', filename='angular.js') }}"></script>
+    <script>console.log('reflected xss AngularJS sandbox escape')</script>
+    <div>
+      <form method="GET" action="{{ url_for('find_post') }}" class="search-form">
+        <input type="text" name="q" value="{{ q|default('') }}" 
+              placeholder="Search posts..." class="search-input" autofocus />
+        <button type="submit" class="search-button">Search</button>
+      </form>
+      <div>
+        {{ q | safe }}
+      </div>
+    </div>
+  {% else %}
+    <form method="GET" action="{{ url_for('find_post') }}" class="search-form">
+      <input type="text" name="q" value="{{ q|default('') }}" placeholder="Search posts..." class="search-input" />
+      <button type="submit" class="search-button">Search</button>
+    </form>
+  {% endif %}
+
+
+</nav>
+
