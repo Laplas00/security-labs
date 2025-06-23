@@ -22,7 +22,7 @@ SPECIAL_LABS = [
         'insecure_deserialization',
         'xxe_repurpose_local_dtd',
         'http_request_smuggling_cache_poison',
-        'ssrf_whitelist_bypass',
+        'ssrf_whitelist_based_bypass',
         'open_redirect_to_ssrf_chain',
         'ssrf_pdf_generation_rce'
         ]
