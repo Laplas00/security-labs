@@ -8,11 +8,7 @@
     <a href="{{ url_for('login') }}">Login</a>
     <a href="{{ url_for('register') }}">Registration</a>
   {% endif %}
-
-  {% if vulnerabilities == 'xxe_repurpose_local_dtd'%}
-    <a href="{{ url_for('contact') }}">Contact us</a>
-  {% endif %}
-
+ 
   {% if vulnerabilities == 'reflected_xss_angularjs_sandbox_escape' %}
     <script src="{{ url_for('static', filename='angular.js') }}"></script>
     <script>console.log('reflected xss AngularJS sandbox escape')</script>
