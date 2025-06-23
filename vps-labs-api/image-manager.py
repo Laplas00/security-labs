@@ -16,15 +16,16 @@ DOMAIN = "labs-is-here.online"
 
 
 SPECIAL_LABS = [
-        'blind_ssrf_shellshock',
+        'xss_angular_sandbox_escape',#+
+        'blind_ssrf_shellshock',#+
+        'ssrf_whitelist_based_bypass',#+
+        'xxe_repurpose_local_dtd',#+
+        'http_request_smuggling_cache_poison',#+
+
         'command_injection',
         'xxe_via_xml_post',
         'insecure_deserialization',
-        'xxe_repurpose_local_dtd',
-        'http_request_smuggling_cache_poison',
-        'ssrf_whitelist_based_bypass',
         'open_redirect_to_ssrf_chain',
-        'ssrf_pdf_generation_rce'
         ]
 
 

@@ -58,7 +58,7 @@ def modules(request):
                  'tier': 'hard',
                  'description':'000',
                 },
-                {'name':'ssrf_internal_api_exposure',
+                {'name':'xss_angular_sandbox_escape',
                  'tier': 'hard',
                  'description':'000',
                 },
