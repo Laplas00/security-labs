@@ -74,15 +74,7 @@ def preview_post(post_id):
     print(f"SSRF preview: отправляю серверный запрос с User-Agent: {request.headers.get('User-Agent')}")
     flag = get_vuln_flag()
     post_url = f"http://127.0.0.1:8000/post/{post_id}"  # Имитация внутреннего вызова
-    if flag == 'blind_ssrf_shellshock':
-        import requests
-        try:
-            # Здесь requests.get — это и есть твой SSRF. Pentester может подменить User-Agent.
-            requests.get(post_url, timeout=2, headers={
-                'User-Agent': request.headers.get('User-Agent', 'BlogLabPreview')
-            })
-        except Exception as e:
-            pass
+
     # Показываем preview (можно просто страницу поста, или кусок)
     db = get_db()
     post = db.execute('SELECT * FROM posts WHERE id=?', (post_id,)).fetchone()
@@ -104,18 +96,7 @@ def post_creation():
         content = request.form['content']
         author = session['username']
 
-        # === Уязвимость: Stored XSS через посты ===
-        if 'stored_xss_posts' in flags:
-            # сохраняем без очистки
-            db.execute(
-                'INSERT INTO posts (title, content, author) VALUES (?, ?, ?)',
-                (title, content, author)
-            )
-            db.commit()
-            flash('Post added! (XSS enabled)')
-            return redirect(url_for('post_creation'), )
-
-        # === Безопасный вариант: экранируем вручную перед вставкой (если бы XSS был в title/content) ===
+           # === Безопасный вариант: экранируем вручную перед вставкой (если бы XSS был в title/content) ===
         # либо используем безопасный рендеринг в шаблоне через {{ }} без |safe
 
         db.execute(
