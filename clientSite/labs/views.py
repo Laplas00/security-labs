@@ -54,7 +54,7 @@ def modules(request):
                  'tier': 'hard',
                  'description':'000',
                 },
-                {'name':'ssrf_blacklist_based_bypass',
+                {'name':'ssrf_whitelist_based_bypass',
                  'tier': 'hard',
                  'description':'000',
                 },
