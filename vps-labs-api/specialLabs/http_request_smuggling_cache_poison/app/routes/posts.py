@@ -20,8 +20,7 @@ def get_last_post():
 def last_post():
     db = get_db()
     vuln = get_vuln_flag()
-    injected = request.headers.get('X-Smuggle-Poison')
-    if vuln == 'http_request_smuggling_cache_poison' and injected:
+    if vuln == 'http_request_smuggling_cache_poison':
         return f"Injected by attacker!\nFLAG: LAB_FLAG{{smuggling_worked}}"
     post = get_last_post()
     if post:
