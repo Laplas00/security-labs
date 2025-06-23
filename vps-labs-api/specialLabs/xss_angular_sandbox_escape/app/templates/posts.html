@@ -1,0 +1,49 @@
+
+{% extends "base.html" %}
+{% block content %}
+<!--ng-app-->
+<div >
+  <!-- Jinja блок — просто показывает что пришло с backend, Angular тут не влияет -->
+
+{% if vulnerability == 'reflected_xss_angularjs_sandbox_escape' %}
+  <div>
+    <h3>Результат поиска (Jinja):</h3>
+    <div style="color:gray;">{{ q }}</div>
+  </div>
+  <div>
+    <h3>Результат поиска (симуляция Angular XSS):</h3>
+  
+    {% if "constructor.prototype" in q or "fromCharCode" in q or "filter.constructor" in q %}
+      <script>alert("Поздравляем! Флаг: LAB_FLAG{sandbox_escape_worked}")</script>
+      <div style="color:green;">Флаг: <b>LAB_FLAG{sandbox_escape_worked}</b></div>
+    {% else %}
+      <div>Пример сложного payload: <br>
+        <code>{}.toString.constructor.prototype.charAt=[].join;$event.view.alert(1)</code><br>
+        Попробуй разные комбинации с <b>constructor.prototype</b> и <b>fromCharCode</b>.
+      </div>
+    {% endif %}
+  </div>
+
+{% endif %}
+<!---->
+
+  <div class="feed-container" style="margin-top:32px;">
+    {% for post in posts %}
+      <div class="post-card">
+        <div class="post-card__info">
+          <div class="post-card__meta">
+            <span class="post-card__author">{{ post.author }}</span>
+            <span class="post-card__date">{{ post.date or '' }}</span>
+            <span class="post-card__comments">💬 {{ post.comment_count }} comments</span>
+          </div>
+          <a href="{{ url_for('post', post_id=post['id']) }}" class="post-card__title">
+            {{ post.title }}
+          </a>
+          <div class="post-card__subtitle">{{ post.subtitle or post.content[:128] ~ "..." }}</div>
+        </div>
+      </div>
+    {% endfor %}
+  </div>
+</div>
+{% endblock %}
+
