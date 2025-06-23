@@ -27,26 +27,6 @@
   {% endfor %}
 
 
-  <div class="cards-grid">
-    {% for card in cards %}
-      <div class="card">
-        <img src="{% static 'img/sql-lab.jpg' %}" alt="{{ card.lab_name }}">
-        <div class="card-content">
-          <h3 class="card-title">{{ card.lab_name }}</h3>
-          <div class="card-tags">
-            <span class="tag">{{ card.tier }}</span>
-          </div>
-          <p class="card-desc">{{ card.description }}</p>
-        </div>
-        <div class="card-footer">
-          <span class="card-time">30 min</span>
-          <pre>{{ card.container_name }}</pre>
-          {% url 'lab_view' card.container_name as card_url %}
-          <a href="{{ card_url|default:'#' }}" class="btn primary">Start</a>
-        </div>
-      </div>
-    {% endfor %}
-  </div>
 </div>
 
 {% endblock %}
