@@ -15,15 +15,14 @@ def get_last_post():
         return post
     return None
 
+
 @app.route('/last_post', methods=['GET'])
 def last_post():
     db = get_db()
     vuln = get_vuln_flag()
-    # Проверка "отравления" (например, есть определённая строка или заголовок в кэше)
     injected = request.headers.get('X-Smuggle-Poison')
     if vuln == 'http_request_smuggling_cache_poison' and injected:
         return f"Injected by attacker!\nFLAG: LAB_FLAG{{smuggling_worked}}"
-    # В обычном случае отдаём реальный последний пост
     post = get_last_post()
     if post:
         return render_template("last_post.html", post=post)

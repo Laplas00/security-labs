@@ -4,6 +4,13 @@
 
 <div class="feed-container">
 
+  <div class="last-read-panel" style="background:#f6f6f6;padding:1em;margin-bottom:2em;border-radius:10px;">
+    <b>Кэшированный пост (Nginx):</b><br>
+    <a href="{{ url_for('last_post') }}" target="_blank">Открыть кеш /last_post</a>
+    <br>
+    <span style="font-size:small;color:#888;">Здесь будет показан кэшируемый ответ, который участвует в атаке Smuggling.</span>
+  </div>
+
   {% for post in posts %}
     <div class="post-card">
       <div class="post-card__info">

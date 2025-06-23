@@ -11,7 +11,9 @@ COPY run.py /app/run.py
 COPY nginx.conf /etc/nginx/nginx.conf
 
 RUN pip install --no-cache-dir -r requirements.txt
-RUN apt-get update && apt-get install -y curl nginx
+RUN apt-get update && \
+    apt-get install -y --no-install-recommends curl nginx && \
+    rm -rf /var/lib/apt/lists/*
 
 EXPOSE 8000
 EXPOSE 5000
