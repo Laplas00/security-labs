@@ -84,6 +84,7 @@ def start_lab():
     })
 
 
+
 @app.route("/toggle_vuln", methods=["POST"])
 def toggle_vuln():
     data = request.get_json()
@@ -112,15 +113,22 @@ def toggle_vuln():
     ]
     env_result = subprocess.run(inspect_cmd, capture_output=True, text=True)
     env_lines = env_result.stdout.splitlines()
-    already_has_vulns = any(line.startswith("vulnerability=") and line.strip() != "vulnerability=" for line in env_lines)
+    already_has_vulns = any(
+        line.startswith("vulnerability=") and line.strip() != "vulnerability=" for line in env_lines
+    )
 
-    # Отключаем уязвимости, если они есть — включаем, если их нет
+    # Переключение уязвимости
     new_vulns = "" if already_has_vulns else vulnerability
 
     # Удаляем старый контейнер
     subprocess.run(["docker", "rm", "-f", subdomain])
 
-    # Запускаем новый контейнер
+    # Определяем образ
+    if lab in SPECIAL_LABS:
+        image_name = lab  # Например: "xxe_repurpose_local_dtd"
+    else:
+        image_name = "cyberlab_main"
+
     docker_run = [
         'docker', 'run', '-d', '--name', f'{subdomain}',
         '--network', 'traefik-net',
@@ -130,7 +138,7 @@ def toggle_vuln():
         '-l', f'traefik.http.services.{subdomain}.loadbalancer.server.port=8000',
         '-e', f'vulnerability={new_vulns}',
         '--memory', '150m', '--cpus', '0.05',
-        "cyberlab_main"
+        image_name
     ]
 
     output = subprocess.run(docker_run, capture_output=True, text=True)
