@@ -1,0 +1,44 @@
+
+{% extends 'base.html' %}
+{% block content %}
+<div class="container mt-4">
+
+  <h1>{{ card.lab_name }}</h1>
+  <p><strong>Tier:</strong> {{ card.tier|title }}</p>
+  <p>{{ card.description }}</p>
+  <hr>
+
+  <h2>Объяснение/Решение</h2>
+  <div class="explanation">
+    {{ card.full_description|linebreaks }}
+  </div>
+
+  <hr>
+  <p>Status: {{ vuln_mode }}</p>
+  <p>App status: {{ status.status }}</p>
+
+  {% if status.status == "running" %}
+    <p><a href="{{ status.url }}" target="_blank" class="btn btn-success">Try to hack!</a></p>
+
+    <form action="{% url 'stop_lab' %}" method="POST" style="display: inline">
+      {% csrf_token %}
+      <input type="hidden" name="lab" value="{{ card.container_name }}">
+      <button type="submit" class="btn btn-danger">🛑 Stop Lab</button>
+    </form>
+
+    <form action='{% url 'toggle_vuln' %}' method="POST" style="display: inline">
+      {% csrf_token %}
+      <input type="hidden" name="lab" value="{{ card.container_name }}">
+      <button type="submit" class="btn btn-secondary">⚙️ Toggle Vulnerability</button>
+    </form>
+
+  {% else %}
+    <form target="_blank" action="{% url 'start_lab' %}" method="POST" style="display: inline">
+      {% csrf_token %}
+      <input type="hidden" name="lab" value="{{ card.container_name }}">
+      <button type="submit" class="btn btn-primary">🚀 Start Lab</button>
+    </form>
+  {% endif %}
+
+</div>
+{% endblock %}

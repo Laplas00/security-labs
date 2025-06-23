@@ -2,6 +2,8 @@ from django.shortcuts import render
 from django.contrib.auth.decorators import login_required
 from .toolkit_for_labs import generate_lab_token,  get_lab_status
 from icecream import ic
+# from .models import LabModule
+from django.shortcuts import render, get_object_or_404
 
 
 
@@ -44,12 +46,29 @@ def modules(request):
                  'tier': 'hard',
                  'description':'single-step, JSON/response manipulation',
                 },
+                {'name':'xxe_repurpose_local_dtd',
+                 'tier': 'hard',
+                 'description':'',
+                },
+                {'name':'http_request_smuggling_cache_poison',
+                 'tier': 'hard',
+                 'description':'000',
+                },
+                {'name':'ssrf_blacklist_based_bypass',
+                 'tier': 'hard',
+                 'description':'000',
+                },
+                {'name':'ssrf_internal_api_exposure',
+                 'tier': 'hard',
+                 'description':'000',
+                },
              ]
     print("==== DEBUG cards ====")
     for c in cards:
         print(c)
+    # cards = LabModule.objects.all().order_by('tier', 'lab_name')
+    return render(request, 'cards.html', context={'cards': cards})
 
-    return render(request, 'cards.html', context={'cards':cards})
 
 @login_required
 def lab_view(request, lab_name):
@@ -61,8 +80,21 @@ def lab_view(request, lab_name):
         'lab_name': lab_name,
         'status': status
     })
-
-
+# @login_required
+# def lab_view(request, lab_name):
+#     user = f"{request.user.username.lower()}{request.user.id}"
+#     token = generate_lab_token(user, lab_name)
+#     status = get_lab_status(user, lab_name, token)
+#
+#     card = get_object_or_404(LabModule, container_name=lab_name)
+#
+#     return render(request, 'lab_detail.html', {
+#         'card': card,
+#         'status': status,
+#         'vuln_mode': status.get('mode', ''),  # если у тебя есть это поле
+#         # можно добавить другие динамические параметры
+#     })
+#
 
 @login_required
 def template_site(request):
