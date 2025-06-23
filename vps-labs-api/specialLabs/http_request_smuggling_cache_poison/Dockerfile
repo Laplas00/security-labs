@@ -13,9 +13,10 @@ COPY nginx.conf /etc/nginx/nginx.conf
 RUN pip install --no-cache-dir -r requirements.txt
 
 
+
 RUN apt-get update && \
-    apt-get install -y --no-install-recommends apt-utils dialog procps net-tools curl && \
-    apt-get install -y --no-install-recommends nginx && \
+    apt-get install -y --no-install-recommends curl nginx && \
+    dpkg --configure -a && \
     rm -rf /var/lib/apt/lists/*
 
 EXPOSE 8000
