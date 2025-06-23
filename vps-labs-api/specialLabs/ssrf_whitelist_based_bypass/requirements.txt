@@ -7,4 +7,3 @@ gunicorn
 flask-cors
 dotenv
 bleach==6.2.0
-io
