@@ -55,7 +55,7 @@ def avatar_proxy(user_id):
 
     avatar_url = row['avatar_url']
     vulnerability = get_vuln_flag()  # get_vuln_flag, не get_vuln_flags
-    ssrf_flag = vulnerability == 'ssrf_blacklist_based_bypass'
+    ssrf_flag = vulnerability == 'ssrf_whitelist_based_bypass'
 
     def is_url_ok(url):
         if ssrf_flag:
@@ -80,7 +80,7 @@ def avatar_proxy(user_id):
 
 
 def is_avatar_url_ok(url, vuln_flag):
-    if vuln_flag == 'ssrf_blacklist_based_bypass':
+    if vuln_flag == 'ssrf_whitelist_based_bypass':
         return url and url.startswith('https://i.pravatar.cc')
     try:
         from urllib.parse import urlparse
