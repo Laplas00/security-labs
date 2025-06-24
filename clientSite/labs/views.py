@@ -62,6 +62,10 @@ def modules(request):
                  'tier': 'hard',
                  'description':'000',
                 },
+                {'name':'command_injection_basic',
+                 'tier': 'easy',
+                 'description':'000',
+                },
              ]
     print("==== DEBUG cards ====")
     for c in cards:

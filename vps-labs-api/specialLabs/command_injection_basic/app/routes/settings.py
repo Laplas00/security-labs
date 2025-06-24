@@ -1,12 +1,8 @@
-
-from flask import request, render_template, redirect, url_for, session, flash, abort
+import io
+from flask import send_file, request, render_template, redirect, url_for, session, flash, abort
 from app.utils.app import app, get_db
 from app.utils.vulns import get_vuln_flag
-
-
-# idor_bac
-
-
+import requests
 
 
 @app.route('/settings/users/<int:user_id>')
@@ -17,6 +13,13 @@ def settings(user_id):
     if not user:
         abort(404)
     
+    match flag:
+        case 'idor_bac':
+            show_admin_panel = False
+            if str(user_id) == '1': 
+                show_admin_panel = True
+
+
     # safe
     if 'user_id' not in session or session['user_id'] != user_id:
         abort(403)
@@ -35,10 +38,6 @@ def settings(user_id):
     )
 
 
-import requests
-from flask import send_file, abort
-import io
-
 @app.route('/avatar_proxy/<int:user_id>')
 def avatar_proxy(user_id):
     db = get_db()
@@ -47,45 +46,31 @@ def avatar_proxy(user_id):
         return send_file('default_avatar.png', mimetype='image/png')
 
     avatar_url = row['avatar_url']
-    vulnerability = get_vuln_flag()  # get_vuln_flag, не get_vuln_flags
-    ssrf_flag = vulnerability == 'ssrf_whitelist_based_bypass'
+    vulnerability = get_vuln_flag()  # типа 'command_injection_basic' или None
 
-    def is_url_ok(url):
-        if ssrf_flag:
-            return url.startswith('https://i.pravatar.cc')
-        from urllib.parse import urlparse
-        p = urlparse(url)
-        return p.scheme == 'https' and p.hostname == 'i.pravatar.cc'
+    # INJECTION CASE
+    if vulnerability == 'command_injection_basic':
+        print('vulnerability', vulnerability, 'is runned')
+        # Имитация загрузки картинки через shell-команду
+        import subprocess, tempfile
+        with tempfile.NamedTemporaryFile(suffix=".jpg") as temp_file:
+            cmd = f"curl -s {avatar_url} > {temp_file.name}"
+            # Уязвимость: avatar_url без экранирования = инъекция
+            subprocess.call(cmd, shell=True)
+            try:
+                return send_file(temp_file.name, mimetype='image/jpeg')
+            except Exception:
+                return send_file('default_avatar.png', mimetype='image/png')
 
-    if not is_url_ok(avatar_url):
-        return send_file('default_avatar.png', mimetype='image/png')
-
+    # SAFE CASE (старый код)
     try:
         resp = requests.get(avatar_url, timeout=3)
         resp.raise_for_status()
         img_data = io.BytesIO(resp.content)
         mimetype = resp.headers.get('content-type')
-        # fallback к jpeg если неизвестен mimetype
         return send_file(img_data, mimetype=mimetype or 'image/jpeg')
     except Exception:
         return send_file('default_avatar.png', mimetype='image/png')
-
-
-
-def is_avatar_url_ok(url, vuln_flag):
-    if vuln_flag == 'ssrf_whitelist_based_bypass':
-        return url and url.startswith('https://i.pravatar.cc')
-    try:
-        from urllib.parse import urlparse
-        p = urlparse(url)
-        return (
-            p.scheme == 'https' and
-            p.hostname == 'i.pravatar.cc'
-        )
-    except Exception:
-        return False
-
-
 
 @app.route('/settings/users/<int:user_id>/update', methods=['POST'])
 def update_settings(user_id):
@@ -101,7 +86,7 @@ def update_settings(user_id):
     if 'user_id' not in session or session['user_id'] != user_id:
         abort(403)
 
-    if new_avatar_url and is_avatar_url_ok(new_avatar_url, vulnerability):
+    if new_avatar_url:
         db.execute(
             "UPDATE users SET username=?, avatar_url=? WHERE id=?",
             (new_username, new_avatar_url, user_id)

@@ -124,9 +124,9 @@ def post_creation():
             xml_data = request.files['xml_file'].read()
             try:
                 
-                elif vuln == 'xxe_repurpose_local_dtd':
-                    # Грузим DTD с файловой системы (или сетевой), разрешаем SYSTEM
-                    parser = ET.XMLParser(resolve_entities=True, load_dtd=True)
+                if vuln == 'xxe_via_xml_post':
+                    # Inline DTD, разрешаем внешние ENTITY, но НЕ грузим DTD с файловой системы
+                    parser = ET.XMLParser(resolve_entities=True, load_dtd=False)
                     tree = ET.fromstring(xml_data, parser)
                 else:
                     # Безопасный парсер (запрещаем DTD, XXE)

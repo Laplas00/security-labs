@@ -16,7 +16,15 @@ def settings(user_id):
     user = db.execute("SELECT * FROM users WHERE id=?", (user_id,)).fetchone()
     if not user:
         abort(404)
+    
+    match flag:
+        case 'idor_bac':
+            show_admin_panel = False
+            if str(user_id) == '1': 
+                show_admin_panel = True
 
+
+    # safe
     if 'user_id' not in session or session['user_id'] != user_id:
         abort(403)
     show_admin_panel = user['role'] == 'admin'
@@ -43,7 +51,31 @@ def update_settings(user_id):
     if not new_username:
         flash('Username required')
         return redirect(url_for('settings', user_id=user_id))
- 
+
+    # === IDOR: любой может менять чужие настройки ===
+    if 'idor_bac' in vulnerabilities:
+        db.execute(
+            "UPDATE users SET username=? WHERE id=?",
+            (new_username, user_id)
+        )
+
+        # Обработка ролей (если есть админ-панель)
+        all_users = db.execute("SELECT * FROM users").fetchall()
+        for u in all_users:
+            is_admin = f'is_admin_{u["id"]}' in request.form
+            new_role = 'admin' if is_admin else 'user'
+            db.execute(
+                "UPDATE users SET role=? WHERE id=?",
+                (new_role, u['id'])
+            )
+            # Если меняем текущего пользователя — обновим его роль в сессии
+            if u['id'] == session.get('user_id'):
+                session['role'] = new_role
+
+        db.commit()
+        flash('Settings updated! (IDOR enabled)')
+        return redirect(url_for('settings', user_id=user_id))
+
     # === SAFE: только владелец аккаунта ===
     if 'user_id' not in session or session['user_id'] != user_id:
         abort(403)

@@ -7,6 +7,27 @@ import bleach
 # posts / post_creation
 
 
+def get_last_post():
+    db = get_db()
+    last_post_id = session.get('last_post_id')
+    if last_post_id:
+        post = db.execute('SELECT * FROM posts WHERE id=?', (last_post_id,)).fetchone()
+        return post
+    return None
+
+
+@app.route('/last_post', methods=['GET'])
+def last_post():
+    db = get_db()
+    vuln = get_vuln_flag()
+    if vuln == 'http_request_smuggling_cache_poison':
+        return f"Injected by attacker!\nFLAG: LAB_FLAG{{smuggling_worked}}"
+    post = get_last_post()
+    if post:
+        return render_template("post.html", post=post)
+    return "Нет постов."
+
+
 @app.route('/')
 def posts():
     db = get_db()
@@ -16,7 +37,8 @@ def posts():
                (SELECT COUNT(*) FROM comments WHERE comments.post_id = posts.id) AS comment_count
         FROM posts
     ''').fetchall()
-    return render_template('posts.html', posts=posts, vulnerabilities=get_vuln_flag())
+    last_post = get_last_post()
+    return render_template('posts.html', posts=posts, vulnerabilities=get_vuln_flag(), last_post=last_post)
 
 
 @app.route('/post/<int:post_id>')
@@ -25,6 +47,8 @@ def post(post_id):
     post = db.execute('SELECT * FROM posts WHERE id=?', (post_id,)).fetchone()
     if not post:
         return 'No post', 404
+
+    session['last_post_id'] = post_id
 
     comments = db.execute('SELECT * FROM comments WHERE post_id=?', (post_id,)).fetchall()
     return render_template('post.html', post=post, comments=comments, vulnerabilities=get_vuln_flag())
@@ -108,38 +132,18 @@ def preview_post(post_id):
 
 
 
-from flask import request, session, redirect, url_for, flash, render_template
-import lxml.etree as ET  # Используем lxml для корректной демонстрации XXE
 
 @app.route('/post_creation', methods=['GET', 'POST'])
 def post_creation():
-    if 'username' not in session:
+    if 'username' not in session or session.get('role') != 'admin':
         return redirect(url_for('login'))
 
     db = get_db()
     vuln = get_vuln_flag()
 
     if request.method == 'POST':
-        if 'xml_file' in request.files and request.files['xml_file'].filename:
-            xml_data = request.files['xml_file'].read()
-            try:
-                
-                elif vuln == 'xxe_repurpose_local_dtd':
-                    # Грузим DTD с файловой системы (или сетевой), разрешаем SYSTEM
-                    parser = ET.XMLParser(resolve_entities=True, load_dtd=True)
-                    tree = ET.fromstring(xml_data, parser)
-                else:
-                    # Безопасный парсер (запрещаем DTD, XXE)
-                    parser = ET.XMLParser(resolve_entities=False, load_dtd=False, no_network=True)
-                    tree = ET.fromstring(xml_data, parser)
-                title = tree.findtext('title')
-                content = tree.findtext('body')
-            except Exception as e:
-                flash('Ошибка обработки XML: ' + str(e))
-                return redirect(url_for('post_creation'))
-        else:
-            title = request.form['title']
-            content = request.form['content']
+        title = request.form['title']
+        content = request.form['content']
 
         author = session['username']
         db.execute(
