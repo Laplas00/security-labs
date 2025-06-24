@@ -66,6 +66,10 @@ def modules(request):
                  'tier': 'easy',
                  'description':'000',
                 },
+                {'name':'xxe_via_xml_post',
+                 'tier': 'easy',
+                 'description':'000',
+                },
              ]
     print("==== DEBUG cards ====")
     for c in cards:
