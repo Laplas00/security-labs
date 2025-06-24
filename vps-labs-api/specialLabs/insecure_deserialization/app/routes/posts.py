@@ -1,10 +1,12 @@
-from flask import request, render_template, redirect, url_for, session, flash
+from flask import request, render_template, redirect, url_for, session, flash, send_file
 from app.utils.app import app, get_db
 from app.utils.vulns import get_vuln_flag
 from icecream import ic
 import bleach
-
-# posts / post_creation
+import lxml.etree as ET  # Используем lxml для корректной демонстрации XXE
+import io
+import pickle
+import json
 
 
 @app.route('/')
@@ -43,22 +45,12 @@ def add_comment(post_id):
 
     flag = get_vuln_flag()  # твоя функция для получения текущей уязвимости
 
-    match flag:
-        case 'clobbering_dom_attr_to_bp_html_filters':
-            safe_content = content  # Без фильтрации — DOM clobbering
-
-        case 'ssti_jinja2':
-            # Сохраняем как есть, но на этапе вывода подставляем render_template_string
-            safe_content = content
-
-        case _:
-            # Безопасный режим — чистим всё опасное
-            import bleach
-            safe_content = bleach.clean(
-                content,
-                tags=['b', 'i', 'u', 'em', 'strong', 'a', 'p', 'br'],
-                attributes=['href']
-            )
+    import bleach
+    safe_content = bleach.clean(
+        content,
+        tags=['b', 'i', 'u', 'em', 'strong', 'a', 'p', 'br'],
+        attributes=['href']
+    )
 
     db = get_db()
     db.execute(
@@ -106,10 +98,32 @@ def preview_post(post_id):
     return render_template('post_preview.html', post=post)
 
 
+@app.route('/save_draft', methods=['POST'])
+def save_draft():
+    vuln = get_vuln_flag()
+    title = request.form.get('title', '').strip()
+    content = request.form.get('content', '').strip()
+    if not title or not content:
+        flash('Title and content required to save draft.')
+        return redirect(url_for('post_creation'))
 
+    draft = {
+        'title': title,
+        'content': content
+    }
+    if vuln == 'insecure_deserialization':
+        buf = io.BytesIO()
+        pickle.dump(draft, buf)
+    else:
+        buf = io.BytesIO(json.dumps(draft).encode())
+    buf.seek(0)    
 
-from flask import request, session, redirect, url_for, flash, render_template
-import lxml.etree as ET  # Используем lxml для корректной демонстрации XXE
+    return send_file(
+        buf,
+        as_attachment=True,
+        download_name='post.draft',
+        mimetype='application/octet-stream'
+    )
 
 @app.route('/post_creation', methods=['GET', 'POST'])
 def post_creation():
@@ -120,35 +134,48 @@ def post_creation():
     vuln = get_vuln_flag()
 
     if request.method == 'POST':
-        if 'xml_file' in request.files and request.files['xml_file'].filename:
-            xml_data = request.files['xml_file'].read()
+        if 'draft_file' in request.files and request.files['draft_file'].filename:
+            draft_data = request.files['draft_file'].read()
             try:
-                
-                if vuln == 'xxe_repurpose_local_dtd':
-                    # Грузим DTD с файловой системы (или сетевой), разрешаем SYSTEM
-                    parser = ET.XMLParser(resolve_entities=True, load_dtd=True)
-                    tree = ET.fromstring(xml_data, parser)
+                if vuln == 'insecure_deserialization':
+                    draft = pickle.loads(draft_data)
                 else:
-                    # Безопасный парсер (запрещаем DTD, XXE)
-                    parser = ET.XMLParser(resolve_entities=False, load_dtd=False, no_network=True)
-                    tree = ET.fromstring(xml_data, parser)
-                title = tree.findtext('title')
-                content = tree.findtext('body')
+                    # В безопасном режиме поддерживаем только json-драфты
+                    try:
+                        draft = json.loads(draft_data)
+                    except Exception:
+                        flash('Only JSON drafts are supported in secure mode.')
+                        return redirect(url_for('post_creation'))
+                title = draft.get('title', 'Draft')
+                content = draft.get('content', '')
             except Exception as e:
-                flash('Ошибка обработки XML: ' + str(e))
+                flash('Ошибка загрузки черновика: ' + str(e))
                 return redirect(url_for('post_creation'))
-        else:
-            title = request.form['title']
-            content = request.form['content']
 
-        author = session['username']
-        db.execute(
-            'INSERT INTO posts (title, content, author) VALUES (?, ?, ?)',
-            (title, content, author)
-        )
-        db.commit()
-        flash('Post added!')
-        return redirect(url_for('post_creation'))
+            author = session['username']
+            db.execute(
+                'INSERT INTO posts (title, content, author) VALUES (?, ?, ?)',
+                (title, content, author)
+            )
+            db.commit()
+            flash('Draft imported as post!')
+            return redirect(url_for('post_creation'))
+        else:
+            # Обычное создание поста (через форму)
+            title = request.form.get('title', '').strip()
+            content = request.form.get('content', '').strip()
+            if not title or not content:
+                flash('Title and content required.')
+                return redirect(url_for('post_creation'))
+
+            author = session['username']
+            db.execute(
+                'INSERT INTO posts (title, content, author) VALUES (?, ?, ?)',
+                (title, content, author)
+            )
+            db.commit()
+            flash('Post added!')
+            return redirect(url_for('post_creation'))
 
     posts = db.execute('SELECT * FROM posts').fetchall()
     return render_template('post_creation.html', posts=posts)

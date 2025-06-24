@@ -70,6 +70,14 @@ def modules(request):
                  'tier': 'easy',
                  'description':'000',
                 },
+                {'name':'insecure_deserialization',
+                 'tier': 'easy',
+                 'description':'000',
+                },
+                {'name':'open_redirect_to_ssrf_chain',
+                 'tier': 'hard',
+                 'description':'000',
+                },
              ]
     print("==== DEBUG cards ====")
     for c in cards:

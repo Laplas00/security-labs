@@ -21,9 +21,9 @@ SPECIAL_LABS = [
         'ssrf_whitelist_based_bypass',#+
         'xxe_repurpose_local_dtd',#+
         'http_request_smuggling_cache_poison',#+
+        'command_injection_basic', #+
+        'xxe_via_xml_post', #+
 
-        'command_injection_basic',
-        'xxe_via_xml_post',
         'insecure_deserialization',
         'open_redirect_to_ssrf_chain',
         ]

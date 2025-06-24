@@ -3,7 +3,8 @@ from app.utils.app import app, get_db
 from app.utils.vulns import get_vuln_flag
 from icecream import ic
 import bleach
-
+import re
+import requests
 # posts / post_creation
 
 
@@ -41,24 +42,31 @@ def add_comment(post_id):
         flash('Comment cannot be empty.')
         return redirect(url_for('post', post_id=post_id))
 
-    flag = get_vuln_flag()  # твоя функция для получения текущей уязвимости
+    # Поиск всех ссылок (http/https) в комментарии
+    urls = re.findall(r'https?://[^\s]+', content)
 
-    match flag:
-        case 'clobbering_dom_attr_to_bp_html_filters':
-            safe_content = content  # Без фильтрации — DOM clobbering
+    flag = get_vuln_flag()
 
-        case 'ssti_jinja2':
-            # Сохраняем как есть, но на этапе вывода подставляем render_template_string
-            safe_content = content
+    # Ветвим только если нужная уязвимость
+    if flag == 'open_redirect_to_ssrf_chain':
+        print('check comment if there url and OPENREDIRECT')
+        for url in urls:
+            try:
+                print('create a request')
+                # Для настоящей “цепи” проверок: именно GET-запрос, именно с follow redirects!
+                resp = requests.get(f'http://127.0.0.1:8080/check_comment', params={'url': url}, timeout=5)
+                # Можешь что-то логировать или возвращать пользователю, если хочешь
+                print(resp)
+                print(resp.text)
+            except Exception as e:
+                print(f"[add_comment] Ошибка проверки ссылки: {e}", flush=True)
 
-        case _:
-            # Безопасный режим — чистим всё опасное
-            import bleach
-            safe_content = bleach.clean(
-                content,
-                tags=['b', 'i', 'u', 'em', 'strong', 'a', 'p', 'br'],
-                attributes=['href']
-            )
+    # Очищаем контент как и раньше
+    safe_content = bleach.clean(
+        content,
+        tags=['b', 'i', 'u', 'em', 'strong', 'a', 'p', 'br'],
+        attributes=['href']
+    )
 
     db = get_db()
     db.execute(
@@ -68,23 +76,6 @@ def add_comment(post_id):
     db.commit()
     flash('Comment added!')
     return redirect(url_for('post', post_id=post_id))
-
-# for ssti via jinja2
-def render_comment(content, flag=get_vuln_flag()):
-    print(f"RENDER_SSTI: {content}, FLAG={flag}")
-
-    if flag == 'ssti_jinja2':
-        from flask import render_template_string
-        try:
-            return render_template_string(content)
-        except Exception as e:
-            return f"<span style='color:red'>SSTI error: {e}</span>"
-    else:
-        return content
-
-app.jinja_env.globals.update(render_comment=render_comment)
-# =========
-
 
 @app.route('/preview_post/<int:post_id>')
 def preview_post(post_id):
@@ -107,41 +98,33 @@ def preview_post(post_id):
 
 
 
-
-from flask import request, session, redirect, url_for, flash, render_template
-import lxml.etree as ET  # Используем lxml для корректной демонстрации XXE
-
 @app.route('/post_creation', methods=['GET', 'POST'])
 def post_creation():
-    if 'username' not in session:
-        return redirect(url_for('login'))
+    if 'username' not in session or session.get('role') != 'admin':
+        return redirect(url_for('login'), )
 
     db = get_db()
-    vuln = get_vuln_flag()
+    flags = get_vuln_flag()
 
     if request.method == 'POST':
-        if 'xml_file' in request.files and request.files['xml_file'].filename:
-            xml_data = request.files['xml_file'].read()
-            try:
-                
-                if vuln == 'xxe_repurpose_local_dtd':
-                    # Грузим DTD с файловой системы (или сетевой), разрешаем SYSTEM
-                    parser = ET.XMLParser(resolve_entities=True, load_dtd=True)
-                    tree = ET.fromstring(xml_data, parser)
-                else:
-                    # Безопасный парсер (запрещаем DTD, XXE)
-                    parser = ET.XMLParser(resolve_entities=False, load_dtd=False, no_network=True)
-                    tree = ET.fromstring(xml_data, parser)
-                title = tree.findtext('title')
-                content = tree.findtext('body')
-            except Exception as e:
-                flash('Ошибка обработки XML: ' + str(e))
-                return redirect(url_for('post_creation'))
-        else:
-            title = request.form['title']
-            content = request.form['content']
-
+        title = request.form['title']
+        content = request.form['content']
         author = session['username']
+
+        # === Уязвимость: Stored XSS через посты ===
+        if 'stored_xss_posts' in flags:
+            # сохраняем без очистки
+            db.execute(
+                'INSERT INTO posts (title, content, author) VALUES (?, ?, ?)',
+                (title, content, author)
+            )
+            db.commit()
+            flash('Post added! (XSS enabled)')
+            return redirect(url_for('post_creation'), )
+
+        # === Безопасный вариант: экранируем вручную перед вставкой (если бы XSS был в title/content) ===
+        # либо используем безопасный рендеринг в шаблоне через {{ }} без |safe
+
         db.execute(
             'INSERT INTO posts (title, content, author) VALUES (?, ?, ?)',
             (title, content, author)
@@ -152,3 +135,4 @@ def post_creation():
 
     posts = db.execute('SELECT * FROM posts').fetchall()
     return render_template('post_creation.html', posts=posts)
+
