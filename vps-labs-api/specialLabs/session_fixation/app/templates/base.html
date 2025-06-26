@@ -12,8 +12,8 @@
   <header class="site-header">
     <div class="container header-content">
       <h1 class="site-title">
-        <a href="{{ url_for('posts') }}">BlogLab</a>
-        <p>{{ vulnerability }}</p>
+        <a href="{{ url_for('posts', session_id=session_id) }}">BlogLab</a>
+        <p>{{ vulnerabilities }}</p>
 
       </h1>
 
@@ -42,7 +42,7 @@
   </footer>
 
   <script>
-    window.vulnerability = {{ flags|default([])|tojson|safe }};
+    window.vulnerabilities = {{ flags|default([])|tojson|safe }};
   </script>
   <script src="{{ url_for('static', filename='script_vulnerables.js') }}"></script>
   <script src="{{ url_for('static', filename='site.js') }}"></script>

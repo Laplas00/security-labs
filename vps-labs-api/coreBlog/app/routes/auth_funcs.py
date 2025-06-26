@@ -2,7 +2,7 @@ from flask import request, redirect, url_for, session, flash, render_template, a
 import sqlite3
 from app.utils.app import app, get_db
 from app.utils.vulns import get_vuln_flag
-from app.utils.auth_vulns import sql_inj_classic
+from app.utils.auth_vulns import sql_inj_classic 
 from icecream import ic
 import random
 # login / logout / registration
@@ -49,7 +49,7 @@ def login():
             flash('Wrong username or password')
             return redirect(url_for('login'))
 
-    return render_template('login.html',vulnerabilities=get_vuln_flag())
+    return render_template('login.html',vulnerability=get_vuln_flag())
 
 
 @app.route('/login/verify', methods=['GET', 'POST'])
@@ -77,7 +77,7 @@ def login_verify():
             return redirect(url_for('posts'))
         else:
             flash("Wrong verification code!")
-    return render_template('code_verify.html', pending_user=pending_user, vulnerabilities=get_vuln_flag())
+    return render_template('code_verify.html', pending_user=pending_user, vulnerability=get_vuln_flag())
 
 
 @app.route('/register', methods=['GET', 'POST'])
@@ -98,7 +98,7 @@ def register():
         )
         db.commit()
         flash(f"Ваш код подтверждения: {verif_code}")  # Показываем код пользователю (как будто email)
-        return redirect(url_for('verify_register', username=username, vulnerabilities=get_vuln_flag()))
+        return redirect(url_for('verify_register', username=username, vulnerability=get_vuln_flag()))
     return render_template('register.html')
 
 @app.route('/register/verify', methods=['GET', 'POST'])

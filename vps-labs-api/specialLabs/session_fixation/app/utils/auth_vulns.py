@@ -3,6 +3,7 @@ from flask import request, redirect, url_for, flash
 from icecream import ic
 
 
+
 # ooooooooooooooooooooooooooooooooooooooooooooooo
 # classic sql injection via login form (password don't required)
 def sql_inj_classic(db, session, request):

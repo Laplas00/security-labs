@@ -1,0 +1,40 @@
+{% extends 'base.html' %}
+{% block content %}
+<div class="container mt-4">
+
+  <h2>Module name</h2>
+  <br>
+
+  <p><strong>Module name: Session fixation</strong>type of vulnerability</p>
+
+<!-- here description of vulnerability -->
+
+  <p>Status: {{ vuln_mode }}</p>
+  <p>App status: {{ status }}</p>
+
+  {% if status.status == "running" %}
+  <p><a href="{{ status.url }}">Try to hack!</a></p>
+
+  <form action="{% url 'stop_lab' %}" method="POST" style="display: inline">
+    {% csrf_token %}
+      <button type="submit">🛑 Stop Lab</button>
+      <input type="hidden" name="lab" value="{{ lab_name }}">
+  </form>
+
+  <form action='{% url 'toggle_vuln' %}' method="POST" style="display: inline">
+    {% csrf_token %}
+      <input type="hidden" name="lab" value="{{ lab_name }}">
+      <button type="submit">⚙️ Toggle Vulnerability</button>
+  </form>
+
+  {% else %}
+  <form target="_blank" action="{% url 'start_lab' %}" method="POST" style="display: inline">
+    {% csrf_token %}
+    <input type="hidden" name="lab" value="{{ lab_name }}">
+      <button type="submit">🚀 Start Lab</button>
+  </form>
+  {% endif %}
+
+</div>
+{% endblock %}
+

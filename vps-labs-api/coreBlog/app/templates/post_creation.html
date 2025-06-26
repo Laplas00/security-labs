@@ -5,17 +5,37 @@
 
 {% block content %}
 <div class='panel'>
-<h2>Admin page</h2>
-<form method="post">
-    <input name="title" placeholder="Heading">
-    <textarea name="content" placeholder="Post text"></textarea>
-    <input type="submit" value="Add post">
-</form>
-<ul>
-    {% for post in posts %}
-        <li>{{ post.title }}</li>
-    {% endfor %}
-</ul>
+  <h2>Post creation</h2>
+  <form method="post">
+      <input name="title" placeholder="Heading" id='post_title'>
+      <textarea name="content" placeholder="Post text" id='post_content'></textarea>
+      <input type="submit" value="Add post">
+  </form>
+
+  {% if vulnerability == 'dom_xss_polyglot' %}
+    <h3>Live Preview:</h3>
+    <div id="preview_title" style="font-weight:bold;"></div>
+    <div id="preview_content"></div>
+    <script>
+      // Классический live preview — уязвим!
+      const titleInput = document.getElementById('post_title');
+      const contentInput = document.getElementById('post_content');
+      const previewTitle = document.getElementById('preview_title');
+      const previewContent = document.getElementById('preview_content');
+      titleInput.addEventListener('input', function() {
+          previewTitle.innerHTML = titleInput.value;
+      });
+      contentInput.addEventListener('input', function() {
+          previewContent.innerHTML = contentInput.value;
+      });
+    </script>
+  {% endif %}
+
+  <ul>
+      {% for post in posts %}
+          <li>{{ post.title }}</li>
+      {% endfor %}
+  </ul>
 </div>
 {% endblock %}
 

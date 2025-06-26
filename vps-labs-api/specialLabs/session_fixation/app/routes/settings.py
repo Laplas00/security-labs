@@ -1,5 +1,5 @@
 
-from flask import request, render_template, redirect, url_for, session, flash, abort
+from flask import request, render_template, redirect, url_for, session, flash, abort, g
 from app.utils.app import app, get_db
 from app.utils.vulns import get_vuln_flag
 
@@ -20,23 +20,14 @@ def settings(user_id):
     match flag:
         case 'idor_bac':
             show_admin_panel = False
-            # imitate admin id, so user can see the admin panel
             if str(user_id) == '1': 
                 show_admin_panel = True
-        
-        case 'http_parameter_pollution_priv_esc':
-            # Берём все переданные role
-            roles = request.args.getlist('role')  # e.g. ['user','admin']
-            # Эскалация только если как минимум два параметра и последний = 'admin'
-            if len(roles) >= 2 and roles[-1] == 'admin':
-                show_admin_panel = True
-            else:
-                show_admin_panel = user['role'] == 'admin'
-            
-    if not flag:
-        if 'user_id' not in session or session['user_id'] != user_id:
-            abort(403)
-        show_admin_panel = user['role'] == 'admin'
+
+
+    # safe
+    if 'user_id' not in session or session['user_id'] != user_id:
+        abort(403)
+    show_admin_panel = user['role'] == 'admin'
 
     # Только если нужен admin panel, отправляем all_users
     all_users = db.execute("SELECT * FROM users").fetchall() if show_admin_panel else None
@@ -46,8 +37,9 @@ def settings(user_id):
         user=user,
         all_users=all_users,
         show_admin_panel=show_admin_panel,
-        vulnerability=flag,
-        session=session
+        vulnerabilities=flag,
+        session=session,
+        session_id=g.session_id
     )
 
 

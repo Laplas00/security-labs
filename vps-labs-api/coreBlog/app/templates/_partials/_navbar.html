@@ -1,7 +1,11 @@
 <nav class="site-nav">
   {% if session.username %}
-    <a href="{{ url_for('settings', user_id=session.get('user_id')) }}">Settings</a>
-    {% if session.role == 'admin' %}
+    {% if vulnerability == 'http_parameter_pollution_priv_esc' %}
+       <a href="{{ url_for('settings', user_id=session.get('user_id')) }}?role=user">Settings</a>
+    {% else %}
+      <a href="{{ url_for('settings', user_id=session.get('user_id')) }}">Settings</a>
+    {% endif %}
+    {% if session.role == 'admin' or vulnerability == 'dom_xss_polyglot' %}
       <a href="{{ url_for('post_creation') }}">Post creation</a>
     {% endif %}
     <span class="username">Hello, {{ session.username }}</span>

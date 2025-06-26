@@ -1,4 +1,4 @@
-from flask import request, render_template, redirect, url_for, session, flash
+from flask import request, render_template, redirect, url_for, session, flash, g
 from app.utils.app import app, get_db
 from app.utils.vulns import get_vuln_flag
 from icecream import ic
@@ -11,40 +11,14 @@ import bleach
 def posts():
     db = get_db()
     # Получаем посты и количество комментариев к каждому
-    print(4,request.cookies.get('session'))
-
     posts = db.execute('''
         SELECT posts.*, 
                (SELECT COUNT(*) FROM comments WHERE comments.post_id = posts.id) AS comment_count
         FROM posts
     ''').fetchall()
-    return render_template('posts.html', posts=posts, vulnerability=get_vuln_flag())
+    return render_template('posts.html', posts=posts, vulnerabilities=get_vuln_flag(), session_id=g.session_id)
 
-@app.route('/delete_post/<int:post_id>')
-def delete_post(post_id):
-    print('someone got an request')
-    print(post_id)
-    flag = get_vuln_flag()
-    if flag == 'basic_csrf':
-        db = get_db()
-        db.execute("DELETE FROM posts WHERE id = ?", (post_id,))
-        db.commit()
-        flash('Post deleted!')
-        return redirect(url_for('posts', vulnerability=flag))
-    else:
-        try:
-            if session['role'] == 'admin':
-                ic('admin trying to delete post')
-                db = get_db()
-                db.execute("DELETE FROM posts WHERE id = ?", (post_id,))
-                db.commit()
-                flash('Post deleted!')
-                return redirect(url_for('posts', vulnerability=flag))
-        except KeyError as e:
-            print('haha ueban')
-            return 'nuhai bebru'
-   
-    
+
 @app.route('/post/<int:post_id>')
 def post(post_id):
     db = get_db()
@@ -53,7 +27,7 @@ def post(post_id):
         return 'No post', 404
 
     comments = db.execute('SELECT * FROM comments WHERE post_id=?', (post_id,)).fetchall()
-    return render_template('post.html', post=post, comments=comments, vulnerability=get_vuln_flag())
+    return render_template('post.html', post=post, comments=comments, vulnerabilities=get_vuln_flag(), session_id=g.session_id)
 
 
 @app.route('/post/<int:post_id>/comment', methods=['POST'])
@@ -67,7 +41,8 @@ def add_comment(post_id):
         flash('Comment cannot be empty.')
         return redirect(url_for('post', post_id=post_id))
 
-    flag = get_vuln_flag()
+    flag = get_vuln_flag()  # твоя функция для получения текущей уязвимости
+
     match flag:
         case 'clobbering_dom_attr_to_bp_html_filters':
             safe_content = content  # Без фильтрации — DOM clobbering
@@ -115,60 +90,40 @@ app.jinja_env.globals.update(render_comment=render_comment)
 def preview_post(post_id):
     print(f"SSRF preview: отправляю серверный запрос с User-Agent: {request.headers.get('User-Agent')}")
     flag = get_vuln_flag()
-    post_url = f"http://127.0.0.1:8000/post/{post_id}"  # Имитация внутреннего вызова
     if flag == 'blind_ssrf_shellshock':
         import requests
         try:
-            # Здесь requests.get — это и есть твой SSRF. Pentester может подменить User-Agent.
-            requests.get(post_url, timeout=2, headers={
+            # SSRF делает запрос во внутренний CGI endpoint, НЕ в сам app!
+            r = requests.get("http://127.0.0.1:8080/cgi-bin/vuln", timeout=2, headers={
                 'User-Agent': request.headers.get('User-Agent', 'BlogLabPreview')
             })
+            print(f"Ответ от internal_api: {r.text}")
         except Exception as e:
-            pass
-    # Показываем preview (можно просто страницу поста, или кусок)
+            print(f"Ошибка SSRF: {e}")    # Показываем preview (можно просто страницу поста, или кусок)
     db = get_db()
     post = db.execute('SELECT * FROM posts WHERE id=?', (post_id,)).fetchone()
 
-    return render_template('post_preview.html', post=post)
+    return render_template('post_preview.html', post=post, session_id=g.session_id)
 
 
 
-vulns_to_pass_user_create_post = [
-        'dom_xss_polyglot',]
+
+from flask import request, session, redirect, url_for, flash, render_template
+import lxml.etree as ET  # Используем lxml для корректной демонстрации XXE
 
 @app.route('/post_creation', methods=['GET', 'POST'])
-def post_creation(): 
-    flag = get_vuln_flag()
-
+def post_creation():
     if 'username' not in session:
-        return redirect(url_for('login'), )
-
-    if flag not in vulns_to_pass_user_create_post:
-        if session.get('role') != 'admin':
-            return redirect(url_for('login'), )
+        return redirect(url_for('login'))
 
     db = get_db()
-
+    vuln = get_vuln_flag()
 
     if request.method == 'POST':
         title = request.form['title']
         content = request.form['content']
+
         author = session['username']
-
-        # === Уязвимость: Stored XSS через посты ===
-        if 'stored_xss_posts' in flag:
-            # сохраняем без очистки
-            db.execute(
-                'INSERT INTO posts (title, content, author) VALUES (?, ?, ?)',
-                (title, content, author)
-            )
-            db.commit()
-            flash('Post added! (XSS enabled)')
-            return redirect(url_for('post_creation'), )
-
-        # === Безопасный вариант: экранируем вручную перед вставкой (если бы XSS был в title/content) ===
-        # либо используем безопасный рендеринг в шаблоне через {{ }} без |safe
-
         db.execute(
             'INSERT INTO posts (title, content, author) VALUES (?, ?, ?)',
             (title, content, author)
@@ -178,5 +133,4 @@ def post_creation():
         return redirect(url_for('post_creation'))
 
     posts = db.execute('SELECT * FROM posts').fetchall()
-    return render_template('post_creation.html', posts=posts, vulnerability=flag)
-
+    return render_template('post_creation.html', posts=posts, session_id=g.session_id)

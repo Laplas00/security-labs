@@ -1,0 +1,12 @@
+<nav class="site-nav" style='height:80px'>
+  {% if session.username %}
+    <a href="{{ url_for('settings', user_id=session.get('user_id'), session_id=session_id) }}">Settings</a>
+    <a href="{{ url_for('post_creation', session_id=session_id) }}">Post creation</a>
+    <span class="username">Hello, {{ session.username }}</span>
+    <a href="{{ url_for('logout', session_id=session_id) }}">Log out</a>
+  {% else %}
+    <a href="{{ url_for('login', session_id=session_id) }}">Login</a>
+    <a href="{{ url_for('register', session_id=session_id) }}">Registration</a>
+  {% endif %}
+</nav>
+

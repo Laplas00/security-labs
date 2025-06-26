@@ -1,9 +1,9 @@
-from flask import request, redirect, url_for, session, flash, render_template, abort
-from app.utils.app import app 
+from flask import request, redirect, url_for, session, flash, render_template, abort 
 from app.utils.vulns import get_vuln_flag
 from icecream import ic
 import lxml.etree as ET
 
+from app.utils.app import app
 
 
 @app.route('/contact', methods=['GET', 'POST'])
