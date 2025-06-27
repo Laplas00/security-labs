@@ -3,14 +3,14 @@
 {% block content %}
 <div class="container mt-4">
 
-  <h1>{{ card.lab_name }}</h1>
-  <p><strong>Tier:</strong> {{ card.tier|title }}</p>
-  <p>{{ card.description }}</p>
+  <h1>{{ lab.lab_name }}</h1>
+  <p><strong>Tier:</strong> {{ lab.tier|title }}</p>
+  <p>{{ lab.description }}</p>
   <hr>
 
   <h2>Объяснение/Решение</h2>
   <div class="explanation">
-    {{ card.full_description|linebreaks }}
+    {{ lab.full_description|linebreaks }}
   </div>
 
   <hr>
@@ -22,20 +22,20 @@
 
     <form action="{% url 'stop_lab' %}" method="POST" style="display: inline">
       {% csrf_token %}
-      <input type="hidden" name="lab" value="{{ card.container_name }}">
+      <input type="hidden" name="lab" value="{{ lab.container_name }}">
       <button type="submit" class="btn btn-danger">🛑 Stop Lab</button>
     </form>
 
     <form action='{% url 'toggle_vuln' %}' method="POST" style="display: inline">
       {% csrf_token %}
-      <input type="hidden" name="lab" value="{{ card.container_name }}">
+      <input type="hidden" name="lab" value="{{ lab.container_name }}">
       <button type="submit" class="btn btn-secondary">⚙️ Toggle Vulnerability</button>
     </form>
 
   {% else %}
     <form target="_blank" action="{% url 'start_lab' %}" method="POST" style="display: inline">
       {% csrf_token %}
-      <input type="hidden" name="lab" value="{{ card.container_name }}">
+      <input type="hidden" name="lab" value="{{ lab.container_name }}">
       <button type="submit" class="btn btn-primary">🚀 Start Lab</button>
     </form>
   {% endif %}

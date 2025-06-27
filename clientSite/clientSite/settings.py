@@ -28,7 +28,8 @@ DEBUG = True
 ALLOWED_HOSTS = [
     'labs-is-here.online',
     'www.labs-is-here.online',
-    '207.231.108.55'
+    '207.231.108.55',
+    '127.0.0.1'
 ]
 CSRF_TRUSTED_ORIGINS = [
     'https://labs-is-here.online',

@@ -9,19 +9,19 @@
 
   {% for card in cards %}
     <div class="card">
-      <img src="{% static 'img/sql-lab.jpg' %}" alt="{{card.name}}">
-        <div class="card-content">
-          <h3 class="card-title">{{card.name}}</h3>
-            <div class="card-tags">
-              <span class="tag">{{card.tier}}</span>
-            </div>
-            <p class="card-desc">{{ card.description }}</p>
+    <img src="{% static 'img/sql-lab.jpg' %}" alt="{{card.name}}">
+      <div class="card-content">
+        <h3 class="card-title">{{card.lab_name}}</h3>
+        <p>{{ card.description }}</p>
+        <div class="card-tags">
+          <span class="tag">{{card.tier}}</span>
         </div>
-        <div class="card-footer">
-            <pre>{{ card.name }}</pre>
-            {% url 'lab_view' card.name as card_url %}
-            <a href="{{ card_url|default:'#' }}" class="btn primary">Start</a>
-        </div>
+      </div>
+      <div class="card-footer">
+        <p>{{card.container_name}}</p>
+        <a href="{% url 'lab_view' card.container_name %}" 
+           class="btn primary">Start</a>
+      </div>  
     </div>
   {% endfor %}
 

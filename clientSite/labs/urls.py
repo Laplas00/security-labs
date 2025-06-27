@@ -9,6 +9,6 @@ urlpatterns = [
     path('stop_lab', labs.stop_lab, name="stop_lab"),
     path('toggle_vuln', labs.toggle_lab_vuln, name="toggle_vuln"),
 
-    path('modules/<str:lab_name>/', views.lab_view, name='lab_view'),
+    path('modules/<str:container_name>/', views.lab_view, name='lab_view'),
    ]
 
