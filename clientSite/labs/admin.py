@@ -6,6 +6,6 @@ from .models import LabModule
 
 @admin.register(LabModule)
 class LabModuleAdmin(admin.ModelAdmin):
-    list_display = ('lab_name', 'container_name', 'tier', 'category_name')
+    list_display = ('lab_name', 'container_name', 'tier', 'category')
     search_fields = ('lab_name', 'container_name')
-    list_filter = ('tier', 'category_name')
+    list_filter = ('tier', 'category')
