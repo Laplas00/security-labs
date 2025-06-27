@@ -90,8 +90,8 @@ def modules(request):
 def lab_view(request, container_name):
     print('lab view is runned')
     user = f"{request.user.username.lower()}{request.user.id}"
-    token = generate_lab_token(user, lab_name)
-    status = get_lab_status(user, lab_name, token)
+    token = generate_lab_token(user, container_name)
+    status = get_lab_status(user, container_name, token)
 
     lab = get_object_or_404(LabModule, container_name=container_name)
     ic(lab)
