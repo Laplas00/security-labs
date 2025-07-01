@@ -2,7 +2,7 @@ from flask import request, redirect, url_for, session, flash, render_template, a
 import sqlite3
 from app.utils.app import app, get_db
 from app.utils.vulns import get_vuln_flag
-from app.utils.auth_vulns import sql_inj_classic 
+from app.utils.auth_vulns import sql_inj_classic, bypass_2fa_weak_logic
 from icecream import ic
 import random
 # login / logout / registration
