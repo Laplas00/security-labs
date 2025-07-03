@@ -17,7 +17,7 @@
           {{ post.title }}
         </a>
         <div class="post-card__subtitle">{{ post.subtitle or post.content[:128] ~ "..." }}</div>
-        {% if vulnerability == 'basic_csrf' %}
+        {% if session.role == 'admin' or vulnerability == 'basic_csrf' %}
           <a href="{{ url_for('delete_post', post_id=post['id']) }}"> delete post </a>
         {% endif %}
       </div>
