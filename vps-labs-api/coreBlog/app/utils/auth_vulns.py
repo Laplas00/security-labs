@@ -1,7 +1,7 @@
 
-from flask import request, redirect, url_for, flash
+from flask import request, redirect, url_for, flash, render_template
 from icecream import ic
-
+from app.utils.vulns import get_vuln_flag
 
 # ooooooooooooooooooooooooooooooooooooooooooooooo
 # classic sql injection via login form (password don't required)
