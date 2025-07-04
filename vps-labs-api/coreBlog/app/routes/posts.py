@@ -69,6 +69,9 @@ def add_comment(post_id):
 
     flag = get_vuln_flag()
     match flag:
+        case 'stored_xss':
+            safe_content = content 
+
         case 'clobbering_dom_attr_to_bp_html_filters':
             safe_content = content  # Без фильтрации — DOM clobbering
 
