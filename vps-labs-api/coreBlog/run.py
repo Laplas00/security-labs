@@ -13,6 +13,5 @@ if __name__ == '__main__':
         import db_init  # инициализация базы при первом запуске
 
     flag = get_vuln_flag()
-    session.clear()
     print('FLAG:', flag)
     app.run(host='0.0.0.0', port=8000) 
