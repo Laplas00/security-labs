@@ -10,18 +10,6 @@ import random
 # Realisation of vulnerables:
 # SQL inj classic
 
-@app.after_request 
-def relax(resp): 
-    if get_vuln_flag()=='reflected_xss':
-        print('relax by flag')
-        resp.headers['CSP'] = "default-src 'self'; script-src 'self' 'unsafe-inline'" 
-        resp.headers['Content-Security-Policy'] = (
-            "default-src 'self'; "
-            "script-src 'self' 'unsafe-inline'; "
-            "object-src 'none'; base-uri 'none'"
-        )
-        return resp
-
 @app.route('/logout')
 def logout():
     session.clear()
