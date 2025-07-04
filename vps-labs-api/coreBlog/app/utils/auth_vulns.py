@@ -58,6 +58,9 @@ def auth_bypass_forgotten_cookie(db, session, request):
 
 # ooooooooooooooooooooooooooooooooooooooooooooooo
 def bypass_2fa_weak_logic(db, session, request):
+    username = request.form['username']
+    password = request.form['password']
+
     user = db.execute(
         'SELECT * FROM users WHERE username=? AND password=?',
         (username, password)
@@ -91,4 +94,3 @@ def bypass_2fa_weak_logic_verification(db, session, request):
 
     return render_template('code_verify.html', pending_user=pending_user, vulnerabilities=get_vuln_flag())
 
-# ooooooooooooooooooooooooooooooooooooooooooooooo

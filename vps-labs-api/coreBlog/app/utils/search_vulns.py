@@ -2,14 +2,14 @@
 from flask import request, redirect, url_for, flash, flash, render_template_string
 
 from icecream import ic
-
-
-def reflected_xss_angularjs_sandbox_escape():
-    ...
+from app.utils.app import get_db
 
 
 # connection(db), cursor
-def reflected_xss(conn, c, q):
+def reflected_xss(q):
+    conn = get_db()
+    c = conn.cursor()
+
     like_query = f"%{q}%"
     c.execute(
         "SELECT title, content, author FROM posts WHERE title LIKE ? OR content LIKE ? OR author LIKE ?", 
@@ -23,7 +23,7 @@ def reflected_xss(conn, c, q):
         """
         {% extends "base.html" %}
         {% block content %}
-        <h2>Результаты поиска для: {{ q|safe }}</h2>
+        <h2>Результаты поиска для: {{ q }}</h2>
         <div class="feed-container">
           {% for post in posts %}
             <div class="post-card">
