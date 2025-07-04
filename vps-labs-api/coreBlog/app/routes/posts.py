@@ -75,7 +75,7 @@ def add_comment(post_id):
         case 'clobbering_dom_attr_to_bp_html_filters':
             safe_content = content  # Без фильтрации — DOM clobbering
 
-        case 'ssti_jinja2':
+        case 'ssti_via_jinja2':
             # Сохраняем как есть, но на этапе вывода подставляем render_template_string
             safe_content = content
 
@@ -101,7 +101,7 @@ def add_comment(post_id):
 def render_comment(content, flag=get_vuln_flag()):
     print(f"RENDER_SSTI: {content}, FLAG={flag}")
 
-    if flag == 'ssti_jinja2':
+    if flag == 'ssti_via_jinja2':
         from flask import render_template_string
         try:
             return render_template_string(content)

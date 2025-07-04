@@ -11,9 +11,9 @@
 <div class="comments-section">
   <h3>Comments ({{ comments|length }})</h3>
   <ul>
-    {% if vulnerabilities == 'ssti_jinja2' %}
+    {% if vulnerability == 'ssti_via_jinja2' %}
       {% for comment in comments %}
-          <div class="comment">{{ render_comment(comment.content) | safe }}</div>
+        <li><strong>{{ comment.author | safe }}</strong>: {{ render_comment(comment.content) | safe }}</li>
       {% endfor %}
     {% else %}
       {% for comment in comments %}
