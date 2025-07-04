@@ -11,7 +11,6 @@
           <span class="post-card__author">{{ post.author }}</span>
           <span class="post-card__date">{{ post.date or '' }}</span>
           <span class="post-card__comments">💬 {{ post.comment_count }} comments</span>
-
         </div>
         <a href="{{ url_for('post', post_id=post['id']) }}" class="post-card__title">
           {{ post.title }}
