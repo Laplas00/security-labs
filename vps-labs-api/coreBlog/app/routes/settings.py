@@ -14,12 +14,12 @@ def settings(user_id):
     db = get_db()
     flag = get_vuln_flag()
     user = db.execute("SELECT * FROM users WHERE id=?", (user_id,)).fetchone()
+    show_admin_panel = False
     if not user:
         abort(404)
     
     match flag:
         case 'idor_bac':
-            show_admin_panel = False
             # imitate admin id, so user can see the admin panel
             if str(user_id) == '1': 
                 show_admin_panel = True

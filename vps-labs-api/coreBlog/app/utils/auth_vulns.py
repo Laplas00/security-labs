@@ -26,6 +26,9 @@ def sql_inj_classic(db, session, request):
 # ooooooooooooooooooooooooooooooooooooooooooooooo
 # imitate forgotten bypass code, that can be finded in cookies
 def auth_bypass_forgotten_cookie(db, session, request):
+    username = request.form['username']
+    password = request.form['password']
+
     if request.cookies.get('debug_bypass') == '1':
         user = db.execute("SELECT * FROM users WHERE username=?", (username,)).fetchone()
         if user:
