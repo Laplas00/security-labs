@@ -7,24 +7,25 @@ from app.utils.app import get_db
 
 # connection(db), cursor
 def reflected_xss(q):
+    print("Query", q)
     conn = get_db()
     c = conn.cursor()
 
     like_query = f"%{q}%"
     c.execute(
-        "SELECT title, content, author FROM posts WHERE title LIKE ? OR content LIKE ? OR author LIKE ?", 
+        "SELECT id, title, content, author FROM posts WHERE title LIKE ? OR content LIKE ? OR author LIKE ?", 
         (like_query, like_query, like_query)
     )
     posts = c.fetchall()
-    conn.close()
     # ВНИМАНИЕ: q инъецируется напрямую (без экранирования!)
     
     return render_template_string(
         """
         {% extends "base.html" %}
         {% block content %}
-        <h2>Результаты поиска для: {{ q }}</h2>
+        <h2>Результаты поиска для: {{ q|safe }}</h2>
         <div class="feed-container">
+        <p>--------------------------</p>
           {% for post in posts %}
             <div class="post-card">
               <div class="post-card__info">

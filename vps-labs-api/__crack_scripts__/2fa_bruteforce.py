@@ -2,7 +2,7 @@
 import requests
 import time
 s = requests.Session()
-url = 'http://127.0.0.1:8000' 
+url = 'http://lap3-2fa_bypass_weak_logic.labs-is-here.online' 
 # 1. Получаем сессию: логинимся обычным пользователем
 login_data = {
     'username': 'laplas',   # логин существующего пользователя
