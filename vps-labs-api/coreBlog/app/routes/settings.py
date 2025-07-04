@@ -54,7 +54,7 @@ def settings(user_id):
 @app.route('/settings/users/<int:user_id>/update', methods=['POST'])
 def update_settings(user_id):
     db = get_db()
-    vulnerabilities = get_vuln_flags()
+    vulnerability = get_vuln_flag()
     new_username = request.form.get('username')
 
     if not new_username:
@@ -62,7 +62,7 @@ def update_settings(user_id):
         return redirect(url_for('settings', user_id=user_id))
 
     # === IDOR: любой может менять чужие настройки ===
-    if 'idor_bac' in vulnerabilities:
+    if vulnerability in ['idor_bac', 'http_parameter_pollution_priv_esc']:
         db.execute(
             "UPDATE users SET username=? WHERE id=?",
             (new_username, user_id)
