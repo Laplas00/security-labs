@@ -8,22 +8,20 @@ api_app = Flask('internal_api')
 def vuln():
     ua = request.headers.get('User-Agent', '')
     print(f"[INTERNAL_API] Получен User-Agent: {ua}", flush=True)
-    if 'shellshock' in ua:
-        # BLIND: запускаем curl на внешний адрес (webhook.site)
-        import os
-        import re
+    # BLIND: запускаем curl на внешний адрес (webhook.site)
+    import os
+    import re
 
-        # Попробуем выцепить адрес из UA — можно прямо заменить YOUR-SERVER на свой, если лабы закрытые
-        # Или просто всегда curl на твой webhook (демка)
-        m = re.search(r'(https?://[^\s]+)', ua)
-        if m:
-            target = m.group(1)
-            os.system(f"curl {target}")
-        else:
-            # Если вдруг не нашли URL — хотя бы вызовем твой webhook статически
-            os.system("curl https://webhook.site/011a51af-70a0-44fd-b8db-728e59646214")
-        # Возвращать флаг не надо — пусть будет blind!
-        return "Hello from CGI!"
+    # Попробуем выцепить адрес из UA — можно прямо заменить YOUR-SERVER на свой, если лабы закрытые
+    # Или просто всегда curl на твой webhook (демка)
+    m = re.search(r'(https?://[^\s]+)', ua)
+    if m:
+        target = m.group(1)
+        os.system(f"curl {target}")
+    else:
+        # Если вдруг не нашли URL — хотя бы вызовем твой webhook статически
+        print('No url. Else statement.')
+    # Возвращать флаг не надо — пусть будет blind!
     return "Hello from CGI!"
 
 def run_internal_api():

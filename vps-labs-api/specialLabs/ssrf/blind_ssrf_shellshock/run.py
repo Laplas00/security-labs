@@ -20,6 +20,7 @@ if __name__ == '__main__':
 
     processes = []
     if flag == 'blind_ssrf_shellshock':
+        print('Run blind_ssrf_shellshock')
         # Запуск internal_api как отдельного процесса
         from app.utils.iternal_api_for_blind_ssrf import run_internal_api
         p = Process(target=run_internal_api)
