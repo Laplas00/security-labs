@@ -13,13 +13,15 @@ def get_last_post():
     if last_post_id:
         post = db.execute('SELECT * FROM posts WHERE id=?', (last_post_id,)).fetchone()
         return post
-    return []
+    return None
 
 
 @app.route('/last_post', methods=['GET'])
 def last_post():
     db = get_db()
     vuln = get_vuln_flag()
+    if vuln == 'http_request_smuggling_cache_poison':
+        return f"Injected by attacker!\nFLAG: LAB_FLAG{{smuggling_worked}}"
     post = get_last_post()
     if post:
         return render_template("post.html", post=post)
