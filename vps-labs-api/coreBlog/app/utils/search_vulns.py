@@ -8,7 +8,7 @@ def reflected_xss_angularjs_sandbox_escape():
 
 
 # connection(db), cursor
-def reflected_xss(conn, c):
+def reflected_xss(conn, c, q):
     like_query = f"%{q}%"
     c.execute(
         "SELECT title, content, author FROM posts WHERE title LIKE ? OR content LIKE ? OR author LIKE ?", 

@@ -13,7 +13,7 @@ def find_post():
     
     match flag:
         case 'reflected_xss':
-            reflected_xss(conn, c)
+            reflected_xss(conn, c, q)
 
         case 'reflected_xss_angularjs_sandbox_escape': 
             print('reflected xss angularjs sandbox escape (front vuln)')
