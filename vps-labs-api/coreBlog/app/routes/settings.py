@@ -6,6 +6,14 @@ from app.utils.vulns import get_vuln_flag
 
 # idor_bac
 
+if get_vuln_flag() == 'circumbent_via_header':
+    print('flag circumbent via header ')
+    @app.before_request
+    def circumbent_via_header():
+        x_url = request.headers.get('X-Original-URL')
+        if x_url == "/admin":
+            # Выдаём контент "админки" (или любой другой секрет)
+            return "<h1>⚠️ Access control bypassed via header!</h1><p>FLAG: circum_bypass</p>"
 
 
 
