@@ -24,6 +24,7 @@ SPECIAL_LABS = [
         'command_injection_basic', #+
         'xxe_via_xml_post', #+
         'session_fixation',
+        'poc_confirming_cl_te',
 
         'insecure_deserialization',
         'open_redirect_to_ssrf_chain',
