@@ -12,11 +12,14 @@ COPY nginx.conf /etc/nginx/nginx.conf
 
 RUN pip install --no-cache-dir -r requirements.txt
 
+# 1. Установка зависимостей, удаление дефолтного конфига (решает проблему dpkg prompt)
 RUN apt-get update && \
     apt-get install -y --no-install-recommends curl nginx && \
+    rm -f /etc/nginx/nginx.conf && \
     rm -rf /var/lib/apt/lists/*
 
-
+# 2. Копирование своего nginx.conf
+COPY nginx.conf /etc/nginx/nginx.conf
 EXPOSE 8000
 EXPOSE 5000
 
