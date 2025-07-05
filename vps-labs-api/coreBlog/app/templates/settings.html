@@ -5,7 +5,7 @@
 
   <h2>Settings for {{ session.username }}</h2>
 
-  <form action="{{ url_for('update_settings', user_id=session.user_id) }}" method="post">
+  <form action="{{ url_for('update_settings', user_id=session.user_id) }}" method="post" name='settings_form'>
     <!-- Поле username (видно всегда) -->
     <div>
       <label for="username">Set new username:</label><br>
@@ -29,41 +29,70 @@
       </script>
       <div id="cookie_status"></div>
     {% endif %}
-    
+  
+    {% if show_admin_panel %}
+      <h3>Admin Controls: Set Roles</h3>
+      <table>
+        <thead>
+          <tr>
+            <th>User ID</th>
+            <th>Username</th>
+            <th>Make Admin?</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for u in all_users %}
+            <tr>
+              <td>{{ u['id'] }}</td>
+              <td>{{ u['username'] }}</td>
+              <td>
+                <input
+                  type="checkbox"
+                  name="is_admin_{{ u['id'] }}"
+                  {% if u['role'] == 'admin' %}checked{% endif %}
+                >
+              </td>
+            </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+      <br>
+    {% endif %}
 
-{% if show_admin_panel %}
-  <h3>Admin Controls: Set Roles</h3>
-  <table>
-    <thead>
-      <tr>
-        <th>User ID</th>
-        <th>Username</th>
-        <th>Make Admin?</th>
-      </tr>
-    </thead>
-    <tbody>
-      {% for u in all_users %}
-        <tr>
-          <td>{{ u['id'] }}</td>
-          <td>{{ u['username'] }}</td>
-          <td>
-            <input
-              type="checkbox"
-              name="is_admin_{{ u['id'] }}"
-              {% if u['role'] == 'admin' %}checked{% endif %}
-            >
-          </td>
-        </tr>
-      {% endfor %}
-    </tbody>
-  </table>
-  <br>
+      <button type="submit">Save Changes</button>
+    </form>
+{% if vulnerability == 'dom_based_open_redirection' %}
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+  console.log("SCRIPT LOADED");
+  var form = document.querySelector('form[name="settings_form"]');
+  console.log("form =", form);
+  if (form) {
+    form.addEventListener('submit', function(e) {
+      var target = location.hash.replace('#', '');
+      console.log("submit, target =", target);
+      if (target) {
+        e.preventDefault();
+        var formData = new FormData(form);
+        fetch(form.action, {
+          method: 'POST',
+          body: formData,
+          credentials: 'same-origin'
+        })
+        .then(resp => resp.text())
+        .then(_ => {
+          setTimeout(function() {
+            window.location = target;
+          }, 400);
+          console.log('timeout 400 ')
+        })
+        .catch(err => alert("Ошибка обновления: " + err));
+      }
+    });
+  }
+});
+</script>
 {% endif %}
-
-
-    <button type="submit">Save Changes</button>
-  </form>
-
   <hr>
   </div>
 {% endblock %}

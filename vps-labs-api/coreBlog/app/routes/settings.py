@@ -65,9 +65,11 @@ def settings(user_id):
 
 @app.route('/settings/users/<int:user_id>/update', methods=['POST'])
 def update_settings(user_id):
+    print('update settings for user', user_id)
     db = get_db()
     vulnerability = get_vuln_flag()
     new_username = request.form.get('username')
+    print(new_username)
 
     if not new_username:
         flash('Username required')
@@ -97,7 +99,7 @@ def update_settings(user_id):
         flash('Settings updated! (IDOR enabled)')
         return redirect(url_for('settings', user_id=user_id))
 
-    # === SAFE: только владелец аккаунта ===
+        # === SAFE: только владелец аккаунта ===
     if 'user_id' not in session or session['user_id'] != user_id:
         abort(403)
 
@@ -122,6 +124,16 @@ def update_settings(user_id):
 
     db.commit()
     session['username'] = new_username
+
+    if vulnerability == 'dom_based_open_redirection':
+        print('vulnerability dom_based_open_redirection runned')
+        flash('Settings updated! (DOM-based Open Redirect enabled)')
+        return render_template(
+                    'settings.html',
+                    vulnerability=vulnerability,
+                    user_id=user_id,
+                    show_admin_panel=False,
+                    session=session)
     flash('Settings updated!')
     return redirect(url_for('settings', user_id=user_id))
 
