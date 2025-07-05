@@ -8,6 +8,7 @@ COPY app /app/app
 COPY db_init.py /app/db_init.py
 COPY requirements.txt /app/requirements.txt
 COPY run.py /app/run.py
+COPY nginx.conf /etc/nginx/nginx.conf
 
 RUN pip install --no-cache-dir -r requirements.txt
 

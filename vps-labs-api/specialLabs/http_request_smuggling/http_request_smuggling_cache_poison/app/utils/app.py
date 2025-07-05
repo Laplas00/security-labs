@@ -16,13 +16,4 @@ def get_db():
     conn.row_factory = sqlite3.Row
     return conn
 
-_CACHE = {}                 # {path: (timestamp, body)}
 
-def cache_get(path):
-    entry = _CACHE.get(path)
-    if entry and time.time() - entry[0] < 60:   # TTL = 60 сек
-        return entry[1]
-    return None
-
-def cache_set(path, body):
-    _CACHE[path] = (time.time(), body)
