@@ -3,6 +3,24 @@ from flask import request, redirect, url_for, flash, render_template
 from icecream import ic
 from app.utils.vulns import get_vuln_flag
 
+
+
+def brute_force(db, session, request):
+    username = request.form['username']
+    password = request.form['password']
+
+    user = db.execute('SELECT * FROM users WHERE username=? AND password=?', (username, password)).fetchone()
+    if user:
+        session['user_id'] = user['id']
+        session['username'] = user['username']
+        session['role'] = user['role']
+        flash("Login successful!")
+        return redirect(url_for('posts'))
+    else:
+        flash('Wrong username or password')
+        return redirect(url_for('login'))
+
+
 # ooooooooooooooooooooooooooooooooooooooooooooooo
 # classic sql injection via login form (password don't required)
 def sql_inj_classic(db, session, request):

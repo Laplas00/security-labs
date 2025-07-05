@@ -3,7 +3,7 @@ import sqlite3
 from app.utils.app import app, get_db
 from app.utils.vulns import get_vuln_flag
 from app.utils.auth_vulns import (
-        sql_inj_classic, bypass_2fa_weak_logic, 
+        sql_inj_classic, bypass_2fa_weak_logic, brute_force, 
         bypass_2fa_weak_logic_verification, auth_bypass_forgotten_cookie)
 from icecream import ic
 import random
@@ -39,6 +39,9 @@ def login():
             case '2fa_bypass_weak_logic':
                 return bypass_2fa_weak_logic(db, session, request)
 
+            case 'brute_force':
+                return brute_force(db, session, request)
+
         # === Безопасная реализация (с обязательным 2FA) ===
         user = db.execute(
             'SELECT * FROM users WHERE username=? AND password=?',
@@ -50,7 +53,7 @@ def login():
             flash('Wrong username or password')
             return redirect(url_for('login'))
 
-    return render_template('login.html',vulnerability=get_vuln_flag())
+    return render_template('login.html', vulnerability=get_vuln_flag())
 
 
 @app.route('/login/verify', methods=['GET', 'POST'])
