@@ -28,19 +28,23 @@ def settings(user_id):
     
     match flag:
         case 'idor_bac':
-            # imitate admin id, so user can see the admin panel
             if str(user_id) == '1': 
                 show_admin_panel = True
         
         case 'http_parameter_pollution_priv_esc':
-            # Берём все переданные role
             roles = request.args.getlist('role')  # e.g. ['user','admin']
-            # Эскалация только если как минимум два параметра и последний = 'admin'
             if len(roles) >= 2 and roles[-1] == 'admin':
                 show_admin_panel = True
             else:
                 show_admin_panel = user['role'] == 'admin'
-            
+
+        case 'dom_based_cookie_manipulation':
+            is_admin_cookie = request.cookies.get("is_admin")
+            if is_admin_cookie == "true":
+                show_admin_panel = True
+            else:
+                show_admin_panel = user['role'] == 'admin'
+
     if not flag:
         if 'user_id' not in session or session['user_id'] != user_id:
             abort(403)

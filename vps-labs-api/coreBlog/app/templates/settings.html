@@ -18,6 +18,17 @@
     </div>
     <br>
 
+    {% if vulnerability == 'dom_based_cookie_manipulation' %}
+      <script>
+        // Уязвимо: ставим куку is_admin из location.hash (или из query — на выбор)
+        var val = location.hash.replace('#', '');
+        if (val) {
+          document.cookie = "is_admin=" + val + "; path=/";
+          document.getElementById('cookie_status').innerText = "is_admin set: " + val;
+        }
+      </script>
+      <div id="cookie_status"></div>
+    {% endif %}
     
 
 {% if show_admin_panel %}

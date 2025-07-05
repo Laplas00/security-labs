@@ -1,6 +1,6 @@
 import requests
 from icecream import ic
-url = 'http://127.0.0.1:8000/login'
+url = 'http://lap3-brute_force.labs-is-here.online/login'
 passwords = [
     '123456', 'adminPass123'
 ]
