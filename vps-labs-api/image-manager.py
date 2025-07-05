@@ -77,7 +77,7 @@ def start_lab():
         f"{image_name}"
     ]
 
-    if lab == 'poc_confirming_cl_te':
+    if lab in ('poc_confirming_cl_te', 'poc_confirming_cl_te'):
         docker_run.insert(5, '-p')
         docker_run.insert(6, '9000:9000')
 

@@ -1,0 +1,36 @@
+{% extends "base.html" %}
+{% block head %}
+  <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+{% endblock %}
+
+{% block content %}
+
+<div class='panel'>
+<h2>Post creation</h2>
+
+<form method="post">
+    <input name="title" placeholder="Heading">
+    <textarea name="content" placeholder="Post text"></textarea>
+    <input type="submit" value="Add post">
+</form>
+
+<!-- Кнопка для XML -->
+<button type="button" onclick="document.getElementById('xml-form').style.display='block'">
+    или загрузите XML пост
+</button>
+
+<!-- Скрытая форма для XML -->
+<form id="xml-form" method="post" enctype="multipart/form-data" style="display:none; margin-top: 1em;">
+    <input type="file" name="xml_file" accept=".xml" required>
+    <input type="submit" value="Загрузить XML">
+    <p style="font-size:small;color:gray;">Файл должен содержать поля: title, body</p>
+</form>
+
+<ul>
+    {% for post in posts %}
+        <li>{{ post.title }}</li>
+    {% endfor %}
+</ul>
+</div>
+{% endblock %}
+
