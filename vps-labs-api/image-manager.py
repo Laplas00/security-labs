@@ -25,6 +25,7 @@ SPECIAL_LABS = [
         'xxe_via_xml_post', #+
         'session_fixation',
         'poc_confirming_cl_te',
+        'poc_confirming_te_cl',
 
         'insecure_deserialization',
         'open_redirect_to_ssrf_chain',
