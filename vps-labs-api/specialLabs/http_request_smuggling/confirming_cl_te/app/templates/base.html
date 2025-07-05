@@ -1,0 +1,54 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>BlogLab</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+  
+  {% block head %}{% endblock %}
+</head>
+<body ng-app>  
+  <header class="site-header">
+    <div class="container header-content">
+      <h1 class="site-title">
+        <a href="{{ url_for('posts') }}">BlogLab</a>
+        <p>{{ vulnerabilities }}</p>
+
+      </h1>
+
+      {% include '_partials/_navbar.html' %}  
+    </div>
+  </header>
+
+  <main class="container main-content">
+    <div id="toast-container"></div>
+
+    {% with messages = get_flashed_messages() %}
+      {% if messages %}
+        <script>
+          window.__flash_messages = {{ messages|tojson }};
+        </script>
+      {% endif %}
+    {% endwith %}
+
+    {% block content %}{% endblock %}
+  </main>
+
+  <footer class="site-footer">
+    <div class="container">
+      <p>&copy; {{ 2025 }} BlogLab. For educational use only.</p>
+    </div>
+  </footer>
+
+  <script>
+    window.vulnerabilities = {{ flags|default([])|tojson|safe }};
+  </script>
+  <script src="{{ url_for('static', filename='script_vulnerables.js') }}"></script>
+  <script src="{{ url_for('static', filename='site.js') }}"></script>
+
+
+
+</body>
+</html>
+

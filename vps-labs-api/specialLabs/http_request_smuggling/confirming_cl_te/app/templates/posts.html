@@ -1,0 +1,33 @@
+{% extends "base.html" %}
+{% block content %}
+
+
+<div class="feed-container">
+
+  <div class="last-read-panel" style="background:#f6f6f6;padding:1em;margin-bottom:2em;border-radius:10px;">
+    <b>Кэшированный пост (Nginx):</b><br>
+    <a href="{{ url_for('last_post') }}" target="_blank">Открыть кеш /last_post</a>
+    <br>
+    <span style="font-size:small;color:#888;">Здесь будет показан кэшируемый ответ, который участвует в атаке Smuggling.</span>
+  </div>
+
+  {% for post in posts %}
+    <div class="post-card">
+      <div class="post-card__info">
+        <div class="post-card__meta">
+          <span class="post-card__author">{{ post.author }}</span>
+          <span class="post-card__date">{{ post.date or '' }}</span>
+          <span class="post-card__comments">💬 {{ post.comment_count }} comments</span>
+        </div>
+
+        <a href="{{ url_for('post', post_id=post['id']) }}" class="post-card__title">
+          {{ post.title }}
+        </a>
+        <div class="post-card__subtitle">{{ post.subtitle or post.content[:128] ~ "..." }}</div>
+      </div>
+    </div>
+  {% endfor %}
+</div>
+
+{% endblock %}
+
