@@ -3,33 +3,24 @@ from app.utils.app import app, get_db
 from app.utils.vulns import get_vuln_flag
 from icecream import ic
 import bleach
+import time
 
-# posts / post_creation
+last_post_html = None
 
-
-def get_last_post():
-    db = get_db()
-    last_post_id = session.get('last_post_id')
-    if last_post_id:
-        post = db.execute('SELECT * FROM posts WHERE id=?', (last_post_id,)).fetchone()
-        return post
-    return None
-
-
-@app.route('/last_post', methods=['GET'])
+@app.route('/last_post', methods=['GET', 'POST'])
 def last_post():
-    db = get_db()
-    vuln = get_vuln_flag()
-    if vuln == 'http_request_smuggling_cache_poison':
-        return f"Injected by attacker!\nFLAG: LAB_FLAG{{smuggling_worked}}"
-    post = get_last_post()
-    if post:
-        return render_template("post.html", post=post)
+    global last_post_html
+    xfh = request.headers.get('X-Forwarded-Host')
+    if request.method == 'POST' and xfh:
+        html = f"<h1>hacked: {xfh}</h1>"
+        last_post_html = html
+    if last_post_html:
+        return last_post_html
     return "Нет постов."
-
 
 @app.route('/')
 def posts():
+    global last_post_html
     db = get_db()
     # Получаем посты и количество комментариев к каждому
     posts = db.execute('''
@@ -37,22 +28,27 @@ def posts():
                (SELECT COUNT(*) FROM comments WHERE comments.post_id = posts.id) AS comment_count
         FROM posts
     ''').fetchall()
-    last_post = get_last_post()
+
     return render_template('posts.html', posts=posts, vulnerabilities=get_vuln_flag(), last_post=last_post)
 
 
-@app.route('/post/<int:post_id>')
+@app.route('/post/<int:post_id>', methods=['GET', 'POST'])
 def post(post_id):
+    global last_post_html
     db = get_db()
     post = db.execute('SELECT * FROM posts WHERE id=?', (post_id,)).fetchone()
+    ic(post)
     if not post:
         return 'No post', 404
 
-    session['last_post_id'] = post_id
+    ic(post_id)
 
     comments = db.execute('SELECT * FROM comments WHERE post_id=?', (post_id,)).fetchall()
-    return render_template('post.html', post=post, comments=comments, vulnerabilities=get_vuln_flag())
-
+    # Рендерим HTML
+    html = render_template('post.html', post=post, comments=comments)
+    # Сохраняем для "last_post"
+    last_post_html = html
+    return html
 
 @app.route('/post/<int:post_id>/comment', methods=['POST'])
 def add_comment(post_id):

