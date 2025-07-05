@@ -13,7 +13,6 @@ def smuggling_guard():
     global last_post_html
     # Считываем body как строку (RAW)
     raw = request.get_data(as_text=True)
-    ic(dir(request))
     ic(request.args)
     ic(request.data)
 

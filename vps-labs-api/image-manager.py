@@ -77,6 +77,10 @@ def start_lab():
         f"{image_name}"
     ]
 
+    if lab == 'poc_confirming_cl_te':
+        docker_run.append('-p')
+        docker_run.append('9000:9000')
+
     output = subprocess.run(docker_run, capture_output=True, text=True)
     print(f'Output: {output}')
     return jsonify({
