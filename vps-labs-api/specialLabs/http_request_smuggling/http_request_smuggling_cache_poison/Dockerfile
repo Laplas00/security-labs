@@ -1,5 +1,3 @@
-
-
 FROM python:3.11
 ENV DEBIAN_FRONTEND=noninteractive
 WORKDIR /app
@@ -12,18 +10,15 @@ COPY nginx.conf /etc/nginx/nginx.conf
 
 RUN pip install --no-cache-dir -r requirements.txt
 
-# 1. Установка зависимостей, удаление дефолтного конфига (решает проблему dpkg prompt)
+# Установка nginx с флагом --force-confold для автоматического выбора "keep current config"
 RUN apt-get update && \
-    apt-get install -y --no-install-recommends curl nginx && \
-    rm -f /etc/nginx/nginx.conf && \
+    apt-get install -y --no-install-recommends curl && \
+    apt-get install -y --no-install-recommends -o Dpkg::Options::="--force-confold" nginx && \
     rm -rf /var/lib/apt/lists/*
 
-# 2. Копирование своего nginx.conf
-COPY nginx.conf /etc/nginx/nginx.conf
 EXPOSE 8000
 EXPOSE 5000
 
-# Bash-скрипт для запуска двух процессов
 COPY start.sh /app/start.sh
 RUN chmod +x /app/start.sh
 
