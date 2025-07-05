@@ -7,6 +7,20 @@ import time
 
 last_post_html = None
 
+@app.before_request
+def smuggling_guard():
+    global last_post_html
+    # Считываем body как строку (RAW)
+    raw = request.get_data(as_text=True)
+    ic(raw)
+    ic(request)
+    # Пример: ловим "GET /hacked" внутри body
+    if "GET /hacked" in raw:
+        print('hacked in raw')
+        last_post_html = "🔥 HACKED PAGE! 🔥"
+
+
+
 @app.route('/last_post', methods=['GET', 'POST'])
 def last_post():
     global last_post_html

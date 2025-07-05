@@ -1,26 +1,21 @@
-FROM python:3.11
-ENV DEBIAN_FRONTEND=noninteractive
+
+
+
+FROM python:3.11-slim
+
 WORKDIR /app
 
 COPY app /app/app
 COPY db_init.py /app/db_init.py
 COPY requirements.txt /app/requirements.txt
 COPY run.py /app/run.py
-COPY nginx.conf /etc/nginx/nginx.conf
 
 RUN pip install --no-cache-dir -r requirements.txt
-
-# Установка nginx с флагом --force-confold для автоматического выбора "keep current config"
-RUN apt-get update && \
-    apt-get install -y --no-install-recommends curl && \
-    apt-get install -y --no-install-recommends -o Dpkg::Options::="--force-confold" nginx && \
-    rm -rf /var/lib/apt/lists/*
+RUN apt-get update && apt-get install -y curl
 
 EXPOSE 8000
 EXPOSE 5000
+# Можно создать БД при билде, но обычно лучше при старте (run.py сам это делает если надо)
 
-COPY start.sh /app/start.sh
-RUN chmod +x /app/start.sh
-
-CMD ["/app/start.sh"]
+CMD ["python", "run.py"]
 
