@@ -2,7 +2,7 @@
 from flask import request, render_template, redirect, url_for, session 
 from app.utils.app import app, get_db
 from app.utils.vulns import get_vuln_flag
-from app.utils.search_vulns import reflected_xss, sql_union_column_number_discovery
+from app.utils.search_vulns import reflected_xss, sql_union_column_number_discovery, blind_sql_injection_time_delay
 
 @app.route("/find-post", methods=["GET"])
 def find_post():
@@ -27,6 +27,10 @@ def find_post():
         case 'sql_union_column_number_discovery':
             print('sql_union_column_number_discovery | Match case')
             return sql_union_column_number_discovery(request)
+
+        case 'blind_sql_injection_time_delay':
+            print('blind_sql_injection_time_delay | Match case')
+            return blind_sql_injection_time_delay(request)
 
     # Безопасный режим
     like_query = f"%{q}%"

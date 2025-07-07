@@ -1,6 +1,7 @@
 import sqlite3
 import random
 
+
 conn = sqlite3.connect('blog.db')
 c = conn.cursor()
 
