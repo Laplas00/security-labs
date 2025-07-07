@@ -26,6 +26,7 @@ SPECIAL_LABS = [
         'session_fixation',
         'poc_confirming_cl_te',
         'poc_confirming_te_cl',
+        'front_end_request_rewriting',
 
         'insecure_deserialization',
         'open_redirect_to_ssrf_chain',
