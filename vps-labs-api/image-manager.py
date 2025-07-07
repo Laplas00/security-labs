@@ -30,6 +30,7 @@ SPECIAL_LABS = [
 
         'insecure_deserialization',
         'modifying_serialized_objects',
+        'modifying_serialized_data_types',
         'open_redirect_to_ssrf_chain',
         ]
 
