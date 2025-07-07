@@ -1,4 +1,4 @@
-import io
+import io, time, os
 from flask import send_file, request, render_template, redirect, url_for, session, flash, abort
 from app.utils.app import app, get_db
 from app.utils.vulns import get_vuln_flag
@@ -41,21 +41,6 @@ def avatar_proxy(user_id):
     avatar_url = row['avatar_url']
     vulnerability = get_vuln_flag()  # типа 'command_injection_basic' или None
 
-    # INJECTION CASE
-    if vulnerability == 'command_injection_basic':
-        print('vulnerability', vulnerability, 'is runned')
-        # Имитация загрузки картинки через shell-команду
-        import subprocess, tempfile
-        with tempfile.NamedTemporaryFile(suffix=".jpg") as temp_file:
-            cmd = f"curl -s {avatar_url} > {temp_file.name}"
-            # Уязвимость: avatar_url без экранирования = инъекция
-            subprocess.call(cmd, shell=True)
-            try:
-                return send_file(temp_file.name, mimetype='image/jpeg')
-            except Exception:
-                return send_file('default_avatar.png', mimetype='image/png')
-
-    # SAFE CASE (старый код)
     try:
         resp = requests.get(avatar_url, timeout=3)
         resp.raise_for_status()
@@ -85,6 +70,15 @@ def update_settings(user_id):
             (new_username, new_avatar_url, user_id)
         )
         session['avatar_url'] = new_avatar_url
+        db.commit()
+
+        # ——— Vuln: only for the lab mode ———
+        start = time.time()
+        # unsafely interpolate URL
+        os.system(f"python3 apply_avatar.py {user_id} {new_avatar_url}")
+        delay = time.time() - start
+        flash(f"⚡ Avatar updated! (took {delay:.2f}s)")
+
     else:
         db.execute(
             "UPDATE users SET username=? WHERE id=?",

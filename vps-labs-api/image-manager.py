@@ -33,6 +33,8 @@ SPECIAL_LABS = [
         'modifying_serialized_data_types',
         'using_app_func_to_exploit_insecure_deserialization',
 
+        'blind_command_injection_time_delay',
+
         'open_redirect_to_ssrf_chain',
         ]
 
