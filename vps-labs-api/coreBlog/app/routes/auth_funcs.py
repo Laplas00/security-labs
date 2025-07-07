@@ -4,7 +4,8 @@ from app.utils.app import app, get_db
 from app.utils.vulns import get_vuln_flag
 from app.utils.auth_vulns import (
         sql_inj_classic, bypass_2fa_weak_logic, brute_force, 
-        bypass_2fa_weak_logic_verification, auth_bypass_forgotten_cookie)
+        bypass_2fa_weak_logic_verification, auth_bypass_forgotten_cookie,
+        blind_sql_injection_conditional_login)
 from icecream import ic
 import random
 # login / logout / registration
@@ -41,6 +42,9 @@ def login():
 
             case 'brute_force':
                 return brute_force(db, session, request)
+
+            case 'blind_sql_injection_conditional':
+                return blind_sql_injection_conditional_login(db, request)
 
         # === Безопасная реализация (с обязательным 2FA) ===
         user = db.execute(

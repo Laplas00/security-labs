@@ -1,9 +1,41 @@
 
-from flask import request, redirect, url_for, flash, render_template
+from flask import request, redirect, url_for, flash, render_template, session
 from icecream import ic
 from app.utils.vulns import get_vuln_flag
 
+def blind_sql_injection_conditional_login(db, request):
+    print('blind sql injection conditional login')
+    username = request.form['username']
+    password = request.form['password']
 
+    # Build a query that will return at least one row if the injected condition is TRUE
+    # We deliberately wrap password in a LIKE pattern for maximal flexibility.
+    sql = (
+        f"SELECT * FROM users "
+        f"WHERE username = '{username}' "
+        f"AND '{password}' LIKE password"
+    )
+
+    try:
+        print(1)
+        rows = db.execute(sql).fetchall()
+        print('Rows completed')
+    except Exception as e:
+        print(e)
+        # Suppress any SQL errors entirely (blind injection)
+        rows = []
+
+    # Branch purely on whether we got any row(s)
+    if rows:
+        # Condition evaluated to TRUE → login
+        session['user_id']   = rows[0]['id']
+        session['username']  = rows[0]['username']
+        session['role']      = rows[0]['role']
+        flash("✅ Login successful!")
+        return redirect(url_for('posts'))
+    else:
+        flash("❌ Wrong username or password")
+        return redirect(url_for('login'))
 
 def brute_force(db, session, request):
     username = request.form['username']
