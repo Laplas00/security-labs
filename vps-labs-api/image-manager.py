@@ -29,6 +29,7 @@ SPECIAL_LABS = [
         'front_end_request_rewriting',
 
         'insecure_deserialization',
+        'modifying_serialized_objects',
         'open_redirect_to_ssrf_chain',
         ]
 
