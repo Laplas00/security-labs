@@ -1,0 +1,40 @@
+
+{% extends "base.html" %}
+{% block head %}
+  <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+{% endblock %}
+
+{% block content %}
+<div class='panel'>
+  <h2>Post creation</h2>
+
+  <form method="post">
+      <input name="title" placeholder="Heading" required>
+      <textarea name="content" placeholder="Post text" required></textarea>
+      <input type="submit" value="Add post">
+      <!-- Кнопка сохранить как черновик -->
+      <button name="action" value="save_draft"
+              formaction="{{ url_for('save_draft') }}"
+              formmethod="post">
+        Save as draft
+      </button>
+  </form>
+
+  <!-- Загрузка черновика -->
+  <button type="button" onclick="document.getElementById('draft-form').style.display='block'" style="margin-top:1em">
+    Загрузить черновик
+  </button>
+  <form id="draft-form" method="post" enctype="multipart/form-data" style="display:none; margin-top: 1em;">
+      <input type="file" name="draft_file" accept=".draft,.pkl" required>
+      <input type="submit" value="Загрузить черновик">
+      <p style="font-size:small;color:gray;">Загрузите ранее сохранённый файл-черновик</p>
+  </form>
+
+  <ul>
+      {% for post in posts %}
+          <li>{{ post.title }}</li>
+      {% endfor %}
+  </ul>
+</div>
+{% endblock %}
+
