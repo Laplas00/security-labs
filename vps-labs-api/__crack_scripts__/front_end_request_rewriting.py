@@ -1,9 +1,9 @@
 import socket
 
-# HOST = 'lap3-front_end_request_rewriting.labs-is-here.online' 
-HOST = '0.0.0.0'
-PORT = 8000
-# PORT = 9000        # Порт (если Flask dev-сервер, то 5000)
+HOST = 'lap3-front_end_request_rewriting.labs-is-here.online' 
+# HOST = '0.0.0.0'
+# PORT = 8000
+PORT = 9000        # Порт (если Flask dev-сервер, то 5000)
 
 
 payload = (
