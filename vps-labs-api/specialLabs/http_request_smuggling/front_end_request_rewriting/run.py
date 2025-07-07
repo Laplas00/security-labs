@@ -8,6 +8,7 @@ from app.routes.settings import *
 from app.utils.vulns import get_vuln_flag
 from flask import current_app
 import threading
+import re
 
 def run_main_app(shared_flag):
     app.config['shared_flag'] = shared_flag
