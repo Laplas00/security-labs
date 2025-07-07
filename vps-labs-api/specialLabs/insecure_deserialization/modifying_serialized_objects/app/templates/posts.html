@@ -1,0 +1,45 @@
+{% extends "base.html" %}
+{% block content %}
+
+
+<div class="feed-container">
+
+  {% for post in posts %}
+    <div class="post-card">
+      <div class="post-card__info">
+        <div class="post-card__meta">
+          <span class="post-card__author">{{ post.author }}</span>
+          <span class="post-card__date">{{ post.date or '' }}</span>
+          <span class="post-card__comments">💬 {{ post.comment_count }} comments</span>
+
+          {% if vulnerabilities == 'blind_ssrf_shellshock' %}
+          
+            <!-- modal -->
+            <div id="preview-modal" style="display:none; position:fixed; top:5%; left:10%; width:80vw; height:80vh; background:white; border-radius:8px; box-shadow:0 0 20px #0008; z-index:1000;">
+              <button onclick="document.getElementById('preview-modal').style.display='none'">Close</button>
+              <iframe id="preview-frame" style="width:100%;height:90%;border:0"></iframe>
+            </div>
+
+            <script>
+              function openPreview(url) {
+                document.getElementById('preview-frame').src = url;
+                document.getElementById('preview-modal').style.display = 'block';
+              }
+            </script>
+           <!-- тут показываем кнопку preview  -->
+           
+            <button onclick="openPreview('{{ url_for('preview_post', post_id=post.id) }}')">Preview</button> 
+          {% endif %}
+
+        </div>
+        <a href="{{ url_for('post', post_id=post['id']) }}" class="post-card__title">
+          {{ post.title }}
+        </a>
+        <div class="post-card__subtitle">{{ post.subtitle or post.content[:128] ~ "..." }}</div>
+      </div>
+    </div>
+  {% endfor %}
+</div>
+
+{% endblock %}
+

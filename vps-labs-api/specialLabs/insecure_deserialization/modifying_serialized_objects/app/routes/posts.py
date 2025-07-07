@@ -1,4 +1,6 @@
-from flask import request, render_template, redirect, url_for, session, flash, send_file
+from flask import (Blueprint, request, render_template, redirect, 
+                   url_for, session, flash, send_file, current_app
+                   )
 from app.utils.app import app, get_db
 from app.utils.vulns import get_vuln_flag
 from icecream import ic
@@ -7,6 +9,7 @@ import lxml.etree as ET  # Используем lxml для корректной
 import io
 import pickle
 import json
+import hmac, hashlib
 
 
 @app.route('/')
@@ -98,32 +101,26 @@ def preview_post(post_id):
     return render_template('post_preview.html', post=post)
 
 
+
 @app.route('/save_draft', methods=['POST'])
 def save_draft():
-    vuln = get_vuln_flag()
-    title = request.form.get('title', '').strip()
-    content = request.form.get('content', '').strip()
+    # Забираем заголовок/контент из формы
+    title   = request.form.get('title',  '').strip()
+    content = request.form.get('content','').strip()
     if not title or not content:
         flash('Title and content required to save draft.')
-        return redirect(url_for('post_creation'))
+        return redirect(url_for('posts.post_creation'))
 
-    draft = {
-        'title': title,
-        'content': content
-    }
-    if vuln == 'insecure_deserialization':
-        buf = io.BytesIO()
-        pickle.dump(draft, buf)
-    else:
-        buf = io.BytesIO(json.dumps(draft).encode())
-    buf.seek(0)    
+    # Сериализуем в чистый JSON без подписи
+    draft = {'title': title, 'content': content}
+    buf = io.BytesIO(json.dumps(draft).encode())
+    buf.seek(0)
 
     return send_file(
         buf,
         as_attachment=True,
         download_name='post.draft',
-        mimetype='application/octet-stream'
-    )
+        mimetype='application/octet-stream')
 
 @app.route('/post_creation', methods=['GET', 'POST'])
 def post_creation():
@@ -134,24 +131,30 @@ def post_creation():
     vuln = get_vuln_flag()
 
     if request.method == 'POST':
-        if 'draft_file' in request.files and request.files['draft_file'].filename:
-            draft_data = request.files['draft_file'].read()
+        # 1) Импорт из файла
+        f = request.files.get('draft_file')
+        if f and f.filename:
+            data = f.read()
             try:
-                draft = pickle.loads(draft_data)
-                title = draft.get('title', 'Draft')
-                content = draft.get('content', '')
+                # В лабаротории именно JSON-драфт без подписи
+                draft = json.loads(data)
+                # берём любые два поля — student может добавить что угодно
+                title   = draft.get('title',   '').strip()
+                content = draft.get('content', '').strip()
+                if not title or not content:
+                    raise ValueError("Empty title or content")
             except Exception as e:
                 flash('Ошибка загрузки черновика: ' + str(e))
-                return redirect(url_for('post_creation'))
+                return redirect(url_for('posts.post_creation'))
 
-            author = session['username']
+            # сохраняем как новый пост
             db.execute(
                 'INSERT INTO posts (title, content, author) VALUES (?, ?, ?)',
-                (title, content, author)
+                (title, content, session['username'])
             )
             db.commit()
-            flash('Draft imported as post!')
-            return redirect(url_for('post_creation'))
+            flash('✅ Draft imported as post!')
+            return redirect(url_for('post_creation'))        
         else:
             # Обычное создание поста (через форму)
             title = request.form.get('title', '').strip()
