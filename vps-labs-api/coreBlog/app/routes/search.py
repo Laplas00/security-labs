@@ -2,7 +2,7 @@
 from flask import request, render_template, redirect, url_for, session 
 from app.utils.app import app, get_db
 from app.utils.vulns import get_vuln_flag
-from app.utils.search_vulns import reflected_xss
+from app.utils.search_vulns import reflected_xss, sql_union_column_number_discovery
 
 @app.route("/find-post", methods=["GET"])
 def find_post():
@@ -22,8 +22,11 @@ def find_post():
             return render_template(
                 "posts.html",
                 q=q,
-                vulnerabilities=get_vuln_flag()
-            )
+                vulnerabilities=get_vuln_flag())
+
+        case 'sql_union_column_number_discovery':
+            print('sql_union_column_number_discovery | Match case')
+            return sql_union_column_number_discovery(request)
 
     # Безопасный режим
     like_query = f"%{q}%"
