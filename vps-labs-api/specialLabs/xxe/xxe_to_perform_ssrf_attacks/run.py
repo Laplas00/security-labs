@@ -11,7 +11,7 @@ from flask import current_app
 def run_main_app(shared_flag):
     ic('runned main app')
     app.config['passed'] = shared_flag
-    app.run(host='0.0.0.0', port=8000, debug=False, use_reloader=False)
+    app.run(host='0.0.0.0', port=8000)
 
 def internal_listener(shared_flag):
     ic('iternal litener launched')
