@@ -44,7 +44,7 @@ SPECIAL_LABS = [
         'command_injection_filter_bypass',
         ]
 labs_to_open_9000port = ('poc_confirming_cl_te', 'poc_confirming_te_cl', 
-                         'front_end_request_rewriting')
+                         'front_end_request_rewriting', 'xxe_to_perform_ssrf_attacks')
 
 @app.route("/start_lab", methods=["POST"])
 def start_lab():
