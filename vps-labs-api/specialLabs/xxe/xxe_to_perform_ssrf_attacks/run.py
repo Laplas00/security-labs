@@ -9,6 +9,7 @@ from app.utils.vulns import get_vuln_flag
 from flask import current_app
 
 def run_main_app(shared_flag):
+    print('runned main app')
     app.config['shared_flag'] = shared_flag
     app.run(host='0.0.0.0', port=8000, debug=False, use_reloader=False)
 

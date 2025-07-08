@@ -93,6 +93,7 @@ def start_lab():
     ]
 
     if lab in labs_to_open_9000port:
+        print('lab for 9000 port')
         docker_run.insert(5, '-p')
         docker_run.insert(6, '9000:9000')
 
