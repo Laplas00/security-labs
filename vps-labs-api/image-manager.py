@@ -24,9 +24,11 @@ SPECIAL_LABS = [
         'open_redirect_to_ssrf_chain',
 
         'xxe_repurpose_local_dtd',#+
+        'blind_xxe_to_retrieve_data_via_error_messages',
+        'xxe_via_xml_post', #+
+
         'http_request_smuggling_cache_poison',#+
         'command_injection_basic', #+
-        'xxe_via_xml_post', #+
         'session_fixation',
         'poc_confirming_cl_te',
         'poc_confirming_te_cl',
