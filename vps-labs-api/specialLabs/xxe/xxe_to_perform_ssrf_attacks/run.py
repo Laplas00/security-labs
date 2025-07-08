@@ -30,7 +30,7 @@ def internal_listener(shared_flag):
                 # ловим точный GET /write_log?...
                 if b"GET /write_log" in data:
                     print('user passed1!!@##$!@#$!@#$!@#')
-                    shared['passed'] = True
+                    shared_flag['passed'] = True
                 conn.sendall(b"HTTP/1.1 200 OK\r\nContent-Length:0\r\n\r\n")
                 conn.close()
 
