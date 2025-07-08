@@ -14,7 +14,7 @@ RUN pip install --no-cache-dir -r requirements.txt
 RUN apt-get update && apt-get install -y curl
 
 EXPOSE 8000
-EXPOSE 443
+EXPOSE 80
 # Можно создать БД при билде, но обычно лучше при старте (run.py сам это делает если надо)
 
 CMD ["python", "run.py"]

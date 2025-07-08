@@ -81,14 +81,14 @@ def start_lab():
         image_name = "cyberlab_main"
 
     docker_run = [
-        'docker', 'run', '-d', '--name', f'{subdomain}',
+        'docker', 'run', '-d', '--name', f'{subdomain}', '-p', '80:80',
         '--network', 'traefik-net', 
         '-l', 'traefik.enable=true',
         '-l', f'traefik.http.routers.{subdomain}.rule=Host(\"{subdomain}.{DOMAIN}\")',
         '-l', f'traefik.http.routers.{subdomain}.entrypoints=web',
         '-l', f'traefik.http.services.{subdomain}.loadbalancer.server.port=8000',
         '-e', f'vulnerability={vulnerability}',
-        '--memory', '150m', '--cpus', '0.05', 
+        '--memory', '150m', '--cpus', '0.05',
         f"{image_name}"
     ]
 

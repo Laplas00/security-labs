@@ -100,9 +100,14 @@ def post_creation():
                 root = ET.fromstring(xml_data, parser)
                 print(parser.error_log)
 
+
                 title     = root.findtext('title')
                 body_text = root.findtext('body')
                 content = body_text
+                # Dump the first 500 characters of what came back
+                print("Expanded body_text (first 500 chars):")
+                print(body_text)
+
 
             except Exception as e:
                 flash('Error')
