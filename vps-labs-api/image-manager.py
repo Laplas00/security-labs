@@ -88,7 +88,7 @@ def start_lab():
         '-l', f'traefik.http.routers.{subdomain}.entrypoints=web',
         '-l', f'traefik.http.services.{subdomain}.loadbalancer.server.port=8000',
         '-e', f'vulnerability={vulnerability}',
-        '--memory', '150m', '--cpus', '0.05', '-p', '443:443',
+        '--memory', '150m', '--cpus', '0.05', 
         f"{image_name}"
     ]
 
