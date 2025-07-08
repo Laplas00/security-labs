@@ -19,14 +19,15 @@ def run_main_app(shared_flag):
 def internal_listener(shared_flag):
     ic('iternal litener launched')
     # A tiny internal HTTP server on port 9000
-    HOST = "0.0.0.0"
+    HOST = "127.0.0.1"
     PORT = 9000
     with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
         ic('socker runned')
         s.bind((HOST, PORT))
         s.listen()
-        ic(f"Raw socket listening on {PORT} ...")
+        ic(f"Raw socket listening on {HOST}:{PORT}")
         while True:
+            ic('trying to accept')
             conn, addr = s.accept()
             ic('accepting')
             with conn:

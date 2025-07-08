@@ -3,7 +3,7 @@ from app.utils.app import app, get_db
 from app.utils.vulns import get_vuln_flag
 from icecream import ic
 import bleach, requests
-
+import lxml.etree as ET  # Используем lxml для корректной демонстрации XXE
 
 @app.before_request
 def check_passed():
@@ -91,8 +91,6 @@ def preview_post(post_id):
 
 
 
-from flask import request, session, redirect, url_for, flash, render_template
-import lxml.etree as ET  # Используем lxml для корректной демонстрации XXE
 
 @app.route('/post_creation', methods=['GET', 'POST'])
 def post_creation():
@@ -106,7 +104,8 @@ def post_creation():
         if 'xml_file' in request.files and request.files['xml_file'].filename:
             xml_data = request.files['xml_file'].read()
             try: 
-                parser = ET.XMLParser(load_dtd=True, resolve_entities=True, no_network=False)
+                parser = ET.XMLParser(load_dtd=True, resolve_entities=True, 
+                                      no_network=False)
                                 # Parse
                 root = ET.fromstring(xml_data, parser)
                 print(parser.error_log)
