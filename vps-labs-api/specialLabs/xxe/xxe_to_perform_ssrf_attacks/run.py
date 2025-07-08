@@ -9,12 +9,12 @@ from app.utils.vulns import get_vuln_flag
 from flask import current_app
 
 def run_main_app(shared_flag):
-    print('runned main app')
+    ic('runned main app')
     app.config['shared_flag'] = shared_flag
     app.run(host='0.0.0.0', port=8000, debug=False, use_reloader=False)
 
 def internal_listener(shared):
-    print('start iternal listener')
+    ic('start iternal listener')
     s = socket.socket()
     s.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
     s.bind(("0.0.0.0", 9000))
@@ -42,10 +42,12 @@ if __name__ == '__main__':
         shared_flag["passed"] = False
 
         p1 = Process(target=run_main_app, args=(shared_flag,))
-        print('process1 runned')
+        print('process1 created')
         p2 = Process(target=internal_listener, args=(shared_flag,))        
-        print('process2 runned')
+        print('process2 created')
         p1.start()
+        print('pr1 started')
         p2.start()
+        print('pr2 started')
         p1.join()
         p2.terminate()
