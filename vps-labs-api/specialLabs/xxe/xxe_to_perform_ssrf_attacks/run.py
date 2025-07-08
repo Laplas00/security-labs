@@ -13,6 +13,7 @@ def run_main_app(shared_flag):
     app.run(host='0.0.0.0', port=8000, debug=False, use_reloader=False)
 
 def internal_listener(shared):
+    print('start iternal listener')
     s = socket.socket()
     s.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
     s.bind(("0.0.0.0", 9000))
