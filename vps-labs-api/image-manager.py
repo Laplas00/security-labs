@@ -26,6 +26,7 @@ SPECIAL_LABS = [
         'xxe_repurpose_local_dtd',#+
         'blind_xxe_to_retrieve_data_via_error_messages',
         'xxe_via_xml_post', #+
+        'xxe_to_perform_ssrf_attacks',
 
         'http_request_smuggling_cache_poison',#+
         'command_injection_basic', #+
