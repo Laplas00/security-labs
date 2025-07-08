@@ -4,7 +4,7 @@ import re
 from pathlib import Path
 
 # === CONFIG ===
-ACCESS_LOG_PATH = "/root/traefik_logs/access.log"  # измени при необходимости
+ACCESS_LOG_PATH = "/root/security-labs/nodesWork/traefik_logs"  # измени при необходимости
 AFK_TIMEOUT_MINUTES = 30
 
 # === REGEX: log format ===
@@ -39,6 +39,7 @@ def get_last_seen_containers():
 def get_afk_containers(last_seen):
     now = datetime.now(tz=next(iter(last_seen.values())).tzinfo)
     threshold = now - timedelta(minutes=AFK_TIMEOUT_MINUTES)
+    ic(threshold)
     return [name for name, ts in last_seen.items() if ts < threshold]
 
 # === Удаление контейнера
