@@ -6,10 +6,12 @@ import bleach, requests
 
 
 @app.before_request
-def smuggling_guard():
-    current_app.logger.info("before_request fired")    # Пример: ловим "GET /hacked" внутри body
+def check_passed():
+    ic("before_request fired")    # Пример: ловим "GET /hacked" внутри body
     shared_flag = current_app.config['passed']
     print(shared_flag)
+    ic(shared_flag['passed'])
+
     if shared_flag["passed"]:        
         flash("✅ Vulnerability passed!")
 

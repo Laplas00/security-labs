@@ -8,6 +8,9 @@ from app.routes.settings import *
 from app.utils.vulns import get_vuln_flag
 from flask import current_app
 
+
+
+
 def run_main_app(shared_flag):
     ic('runned main app')
     app.config['passed'] = shared_flag
@@ -25,8 +28,10 @@ def internal_listener(shared_flag):
         ic(f"Raw socket listening on {PORT} ...")
         while True:
             conn, addr = s.accept()
+            ic('accepting')
             with conn:
                 data = conn.recv(4096)
+                ic(data)
                 # ловим точный GET /write_log?...
                 if b"GET /write_log" in data:
                     print('user passed1!!@##$!@#$!@#$!@#')
