@@ -42,8 +42,9 @@ if __name__ == '__main__':
         shared_flag["passed"] = False
 
         p1 = Process(target=run_main_app, args=(shared_flag,))
+        print('process1 runned')
         p2 = Process(target=internal_listener, args=(shared_flag,))        
-
+        print('process2 runned')
         p1.start()
         p2.start()
         p1.join()
