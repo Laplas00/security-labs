@@ -13,22 +13,26 @@ def run_main_app(shared_flag):
     app.config['shared_flag'] = shared_flag
     app.run(host='0.0.0.0', port=8000, debug=False, use_reloader=False)
 
-def internal_listener(shared):
-    ic('start iternal listener')
-    s = socket.socket()
-    s.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
-    s.bind(("0.0.0.0", 9000))
-    s.listen()
-    while True:
-        print('iternal listener runned')
-        conn, _ = s.accept()
-        data = conn.recv(4096)
-        # ловим точный GET /write_log?...
-        if b"GET /write_log" in data:
-            print('user passed1!!@##$!@#$!@#$!@#')
-            shared['passed'] = True
-        conn.sendall(b"HTTP/1.1 200 OK\r\nContent-Length:0\r\n\r\n")
-        conn.close()
+def internal_listener(shared_flag):
+    ic('iternal litener launched')
+    # A tiny internal HTTP server on port 9000
+    HOST = "0.0.0.0"
+    PORT = 9000
+    with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
+        ic('socker runned')
+        s.bind((HOST, PORT))
+        s.listen()
+        ic(f"Raw socket listening on {PORT} ...")
+        while True:
+            conn, addr = s.accept()
+            with conn:
+                data = conn.recv(4096)
+                # ловим точный GET /write_log?...
+                if b"GET /write_log" in data:
+                    print('user passed1!!@##$!@#$!@#$!@#')
+                    shared['passed'] = True
+                conn.sendall(b"HTTP/1.1 200 OK\r\nContent-Length:0\r\n\r\n")
+                conn.close()
 
 if __name__ == '__main__':
     if not os.path.exists('blog.db'):
