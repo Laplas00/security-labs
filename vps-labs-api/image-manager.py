@@ -82,13 +82,13 @@ def start_lab():
 
     docker_run = [
         'docker', 'run', '-d', '--name', f'{subdomain}',
-        '--network', 'traefik-net', '-p', '443:443',
+        '--network', 'traefik-net', 
         '-l', 'traefik.enable=true',
         '-l', f'traefik.http.routers.{subdomain}.rule=Host(\"{subdomain}.{DOMAIN}\")',
         '-l', f'traefik.http.routers.{subdomain}.entrypoints=web',
         '-l', f'traefik.http.services.{subdomain}.loadbalancer.server.port=8000',
         '-e', f'vulnerability={vulnerability}',
-        '--memory', '150m', '--cpus', '0.05',
+        '--memory', '150m', '--cpus', '0.05', '-p', '443:443',
         f"{image_name}"
     ]
 
