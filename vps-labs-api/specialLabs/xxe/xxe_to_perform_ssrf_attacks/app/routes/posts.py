@@ -96,8 +96,9 @@ def post_creation():
             xml_data = request.files['xml_file'].read()
             try: 
                 parser = ET.XMLParser(load_dtd=True, resolve_entities=True, no_network=False)
-                # Parse
+                                # Parse
                 root = ET.fromstring(xml_data, parser)
+                print(parser.error_log)
 
                 title     = root.findtext('title')
                 body_text = root.findtext('body')
