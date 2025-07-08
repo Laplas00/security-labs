@@ -1,8 +1,17 @@
-from flask import request, render_template, redirect, url_for, session, flash 
+from flask import request, render_template, redirect, url_for, session, flash, current_app
 from app.utils.app import app, get_db
 from app.utils.vulns import get_vuln_flag
 from icecream import ic
 import bleach, requests
+
+
+@app.before_request
+def smuggling_guard():
+    # Пример: ловим "GET /hacked" внутри body
+    shared_flag = current_app.config['shared_flag']
+    print(shared_flag)
+    if shared_flag["passed"]:        
+        flash("✅ Vulnerability passed!")
 
 
 

@@ -81,7 +81,7 @@ def start_lab():
         image_name = "cyberlab_main"
 
     docker_run = [
-        'docker', 'run', '-d', '--name', f'{subdomain}', '-p', '80:80',
+        'docker', 'run', '-d', '--name', f'{subdomain}',
         '--network', 'traefik-net', 
         '-l', 'traefik.enable=true',
         '-l', f'traefik.http.routers.{subdomain}.rule=Host(\"{subdomain}.{DOMAIN}\")',
