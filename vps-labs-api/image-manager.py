@@ -42,9 +42,9 @@ SPECIAL_LABS = [
 
         'blind_command_injection',
         'command_injection_filter_bypass',
-
         ]
-
+labs_to_open_9000port = ('poc_confirming_cl_te', 'poc_confirming_te_cl', 
+                         'front_end_request_rewriting')
 
 @app.route("/start_lab", methods=["POST"])
 def start_lab():
@@ -92,7 +92,7 @@ def start_lab():
         f"{image_name}"
     ]
 
-    if lab in ('poc_confirming_cl_te', 'poc_confirming_te_cl', 'front_end_request_rewriting'):
+    if lab in labs_to_open_9000port:
         docker_run.insert(5, '-p')
         docker_run.insert(6, '9000:9000')
 
