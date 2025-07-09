@@ -23,10 +23,9 @@ def modules(request):
     ic(runned)
 
     cards = LabModule.objects.all()
-    categories = []
-    fast_flash = [categories.append(x.category) for x in cards if x.category not in categories]
-    ic(cards)
-    ic(fast_flash)
+    categories = list({card.category for card in cards if card.category})   
+    ic(categories)
+
     return render(request, 'cards.html', context={'cards': cards,
                                                   'runned':runned})
 
