@@ -31,7 +31,9 @@ def get_runned_container(user):
     data = r.json()
     if data['message'] == []:
         return ''
-    return data['message'][0]
+    if data['message'][0].starswith('Error'):
+        return ''
+    return data['message'][0].split('-')[1]
 
 
 def generate_lab_token(user: str, lab: str):
