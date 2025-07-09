@@ -1,10 +1,12 @@
-import requests
-import jwt
-from datetime import datetime, timedelta
 from django.conf import settings
 from django.http import JsonResponse
 from django.contrib.auth.decorators import login_required
 from django.views.decorators.csrf import csrf_exempt
+from django.shortcuts import redirect
+from django.urls import reverse
+
+from datetime import datetime, timedelta
+import requests, jwt
 from icecream import ic
 
 
@@ -19,6 +21,8 @@ def get_lab_status(user, lab, token):
         "token": token
     }
     r = requests.post(f"{EDGE_IP}/get_lab_status_for_user", json=data, timeout=5)
+    print('----')
+    ic(r.json())
     return r.json()
 
 def get_runned_container(user):
@@ -78,7 +82,8 @@ def start_lab(request):
         r = requests.post(f"{EDGE_IP}/start_lab", json=data)
         print('start lab request.post')
         print(r)
-        return JsonResponse(r.json())
+        return redirect('lab_view', container_name=lab)
+
     except Exception as e:
         print('erorr while starting lab')
         print(e)
@@ -100,7 +105,8 @@ def stop_lab(request):
 
     try:
         r = requests.post(f"{EDGE_IP}/stop_lab", json=data)
-        return JsonResponse(r.json())
+        return redirect('lab_view', container_name=lab)
+
     except Exception as e:
         ic(e)
         return JsonResponse({"error": str(e)})

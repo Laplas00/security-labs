@@ -108,72 +108,6 @@ def start_lab():
 
 
 
-@app.route("/toggle_vuln", methods=["POST"])
-def toggle_vuln():
-    data = request.get_json()
-    token = data.get("jwttoken") or data.get("token")
-    user = data.get("user").lower()
-    lab = data.get("lab")
-    vulnerability = data.get("vulnerability", "")
-
-    try:
-        jwt.decode(token, SECRET_KEY, algorithms=[ALGORITHM])
-    except jwt.ExpiredSignatureError:
-        return jsonify({"error": "Token expired"}), 403
-    except Exception as e:
-        return jsonify({"error": f"Invalid token: {e}"}), 403
-
-    if not all([user, lab]):
-        return jsonify({"error": "user and lab required"}), 400
-
-    subdomain = f"{user}-{lab}"
-
-    # Проверка текущих ENV
-    inspect_cmd = [
-        "docker", "inspect", "-f",
-        '{{range .Config.Env}}{{println .}}{{end}}',
-        subdomain
-    ]
-    env_result = subprocess.run(inspect_cmd, capture_output=True, text=True)
-    env_lines = env_result.stdout.splitlines()
-    already_has_vulns = any(
-        line.startswith("vulnerability=") and line.strip() != "vulnerability=" for line in env_lines
-    )
-
-    # Переключение уязвимости
-    new_vulns = "" if already_has_vulns else vulnerability
-
-    # Удаляем старый контейнер
-    subprocess.run(["docker", "rm", "-f", subdomain])
-
-    # Определяем образ
-    if lab in SPECIAL_LABS:
-        image_name = lab  # Например: "xxe_repurpose_local_dtd"
-    else:
-        image_name = "cyberlab_main"
-
-    docker_run = [
-        'docker', 'run', '-d', '--name', f'{subdomain}',
-        '--network', 'traefik-net',
-        '-l', 'traefik.enable=true',
-        '-l', f'traefik.http.routers.{subdomain}.rule=Host(\"{subdomain}.{DOMAIN}\")',
-        '-l', f'traefik.http.routers.{subdomain}.entrypoints=web',
-        '-l', f'traefik.http.services.{subdomain}.loadbalancer.server.port=8000',
-        '-e', f'vulnerability={new_vulns}',
-        '--memory', '150m', '--cpus', '0.05',
-        image_name
-    ]
-
-    output = subprocess.run(docker_run, capture_output=True, text=True)
-    sleep(2)
-    return jsonify({
-        "status": "ok",
-        "vulnerability": new_vulns,
-        "url": f"http://{subdomain}.{DOMAIN}",
-        "docker_output": output.stdout,
-    })
-
-
 @app.route("/stop_lab", methods=["POST"])
 def stop_lab():
     data = request.get_json()
@@ -206,6 +140,7 @@ def stop_lab():
             "container": subdomain,
             "message": "No such lab container running for this user"
         }), 404
+
 
 @app.route("/get_runned_container", methods=['POST'])
 def get_runned_container():
@@ -274,6 +209,7 @@ def get_lab_status_for_user():
             return jsonify({
                 "status": "not_running"
             })
+
     except jwt.ExpiredSignatureError:
         return jsonify({'error': 'Token expired'}), 401
     except Exception as e:

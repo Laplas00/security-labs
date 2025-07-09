@@ -14,8 +14,7 @@
   </div>
 
   <hr>
-  <p>Status: {{ vuln_mode }}</p>
-  <p>App status: {{ status.status }}</p>
+  <p>App status: {{ status }}</p>
 
   {% if status.status == "running" %}
     <p><a href="{{ status.url }}" target="_blank" class="btn btn-success">Try to hack!</a></p>
@@ -26,14 +25,8 @@
       <button type="submit" class="btn btn-danger">🛑 Stop Lab</button>
     </form>
 
-    <form action='{% url 'toggle_vuln' %}' method="POST" style="display: inline">
-      {% csrf_token %}
-      <input type="hidden" name="lab" value="{{ lab.container_name }}">
-      <button type="submit" class="btn btn-secondary">⚙️ Toggle Vulnerability</button>
-    </form>
-
   {% else %}
-    <form target="_blank" action="{% url 'start_lab' %}" method="POST" style="display: inline">
+    <form  action="{% url 'start_lab' %}" method="POST" style="display: inline">
       {% csrf_token %}
       <input type="hidden" name="lab" value="{{ lab.container_name }}">
       <button type="submit" class="btn btn-primary">🚀 Start Lab</button>
