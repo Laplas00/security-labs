@@ -40,7 +40,8 @@ SPECIAL_LABS = [
         'modifying_serialized_data_types',
         'using_app_func_to_exploit_insecure_deserialization',
 
-        'blind_command_injection',
+        'blind_command_injection_time_delay',
+        'blind_command_injection_oob_interaction',
         'command_injection_filter_bypass',
         ]
 labs_to_open_9000port = ['poc_confirming_cl_te', 'poc_confirming_te_cl', 
@@ -79,6 +80,10 @@ def start_lab():
         image_name = lab  # Предполагаем, что образ называется как lab (можно вынести в мапу)
     else:
         image_name = "cyberlab_main"
+
+    if lab in ['blind_command_injection_time_delay', 'blind_command_injection_oob_interaction']:
+        image_name = "blind_command_injection"
+
 
     docker_run = [
         'docker', 'run', '-d', '--name', f'{subdomain}',
