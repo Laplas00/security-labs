@@ -93,7 +93,7 @@ def start_lab():
     ]
 
     if lab in labs_to_open_9000port:
-        print('lab for 9000 port')
+        print('')
         docker_run.insert(5, '-p')
         docker_run.insert(6, '9000:9000')
 
@@ -206,6 +206,30 @@ def stop_lab():
             "container": subdomain,
             "message": "No such lab container running for this user"
         }), 404
+
+@app.route("/get_runned_container", methods=['POST'])
+def get_runned_container():
+    data = request.get_json()
+    token = data.get("token")
+
+    try:
+        payload = jwt.decode(token, SECRET_KEY, algorithms=[ALGORITHM])
+        user = data.get("user", False)
+
+        result = subprocess.run(
+            ["docker", "ps", "--format", "{{.Names}}"],
+            capture_output=True, text=True
+        )
+        names = result.stdout.strip().splitlines()
+        ic(names)
+        # Оставляем только те, которые с дефисом (user-lab)
+        working_lab = [n for n in names if f"{user}-" in n] else None  
+        return {'working_lab': working_lab}
+    
+    except Exception as e:
+        print("Erorr:", e)
+        return {"messageError":e} 
+
 
 @app.route("/get_lab_status_for_user", methods=["POST"])
 def get_lab_status_for_user():

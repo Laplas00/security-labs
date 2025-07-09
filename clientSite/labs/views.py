@@ -8,13 +8,19 @@ from django.shortcuts import render, get_object_or_404
 
 
 @login_required
-def dashboard(request):
-    return render(request, 'dashboard.html')
+def dashboard(request): 
+    runned = get_runned_container(user, token)
+    ic(runned)
+    return render(request, 'dashboard.html', {'runned':runned})
 
 @login_required
 def modules(request):
+    runned = get_runned_container(user, token)
+    ic(runned)
+
     cards = LabModule.objects.all().order_by('tier', 'lab_name')
-    return render(request, 'cards.html', context={'cards': cards})
+    return render(request, 'cards.html', context={'cards': cards,
+                                                  'runned':runned})
 
 @login_required
 def lab_view(request, container_name):
@@ -32,6 +38,3 @@ def lab_view(request, container_name):
     })
 
 
-@login_required
-def template_site(request):
-    user = request.user.username.lower()
