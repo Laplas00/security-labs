@@ -16,7 +16,8 @@ def dashboard(request):
 
 @login_required
 def modules(request):
-    runned = get_runned_container(user, token)
+    user = f"{request.user.username.lower()}{request.user.id}"
+    runned = get_runned_container(user)
     ic(runned)
 
     cards = LabModule.objects.all().order_by('tier', 'lab_name')

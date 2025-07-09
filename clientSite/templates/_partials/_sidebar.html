@@ -1,9 +1,12 @@
 <!-- Sidebar с темами -->
 <aside class="sidebar">
+    {% if runned != [] %}
+      <p>Runned contained {{ runned }}</p>
+    {% endif %}
+
     <h2>Topics</h2>
     <ul class="topics-list">
     <li><a href="{% url 'modules' %}">All</a></li>
     </ul>
 </aside>
 
-<p>Runned contained {{ runned }}</p>
