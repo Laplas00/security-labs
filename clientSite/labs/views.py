@@ -12,6 +12,8 @@ def dashboard(request):
     user = f"{request.user.username.lower()}{request.user.id}"
     runned = get_runned_container(user)
     ic(runned)
+    cards = LabModule.objects.all().order_by('tier', 'lab_name')
+    ic(cards)
     return render(request, 'dashboard.html', {'runned':runned})
 
 @login_required
@@ -21,6 +23,7 @@ def modules(request):
     ic(runned)
 
     cards = LabModule.objects.all().order_by('tier', 'lab_name')
+    ic(cards)
     return render(request, 'cards.html', context={'cards': cards,
                                                   'runned':runned})
 
