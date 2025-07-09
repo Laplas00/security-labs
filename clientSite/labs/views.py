@@ -39,7 +39,7 @@ def lab_view(request, container_name):
     ic(lab)
     return render(request, 'labs/lab_detail.html', {
         'lab':lab,
-        'status': status,
+        'status': status['status'],
         'runned': '',
         'categories': get_category_with_labs(),
         # 'vuln_mode': status.get('mode', ''), 
