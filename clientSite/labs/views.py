@@ -22,7 +22,7 @@ def modules(request):
     runned = get_runned_container(user)
     ic(runned)
 
-    cards = LabModule.objects.all().order_by('tier', 'lab_name')
+    cards = (x.category for x in LabModule.objects.all())
     ic(cards)
     return render(request, 'cards.html', context={'cards': cards,
                                                   'runned':runned})
