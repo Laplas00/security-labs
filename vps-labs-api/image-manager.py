@@ -162,7 +162,7 @@ def get_runned_container():
     
     except Exception as e:
         print("Erorr:", e)
-        return {"messageError":e} 
+        return {"error":e} 
 
 
 @app.route("/get_lab_status_for_user", methods=["POST"])

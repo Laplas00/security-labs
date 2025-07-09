@@ -21,7 +21,7 @@
     <textarea name="content" placeholder="Write a comment..." required></textarea>
     <button type="submit">Add Comment</button>
   </form>
-  {% else %}
+ {% else %}
     <p><a href="{{ url_for('login') }}">Log in</a> to leave a comment.</p>
   {% endif %}
 </div>

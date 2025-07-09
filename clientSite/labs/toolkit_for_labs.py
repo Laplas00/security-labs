@@ -31,9 +31,10 @@ def get_runned_container(user):
     data = r.json()
     ic(data)
     working_lab = ''
-    if len(data) > 0:
-        working_lab = data[0].split('-')[1]
-    
+    if 'working_lab' in data:    
+        if len(data) > 0:
+            working_lab = data[0].split('-')[1]
+ 
     return working_lab
 
 def generate_lab_token(user: str, lab: str):
