@@ -24,7 +24,12 @@ def get_lab_status(user, lab, token):
 def get_runned_container(user):
     data = {"user": user,}
     r = requests.post(f"{EDGE_IP}/get_runned_container", json=data, timeout=5)
-    return r.json()['working_lab'][0]
+    data = r.json()['working_lab']
+    working_lab = ''
+    if len(data) > 0:
+        working_lab = data[0]
+    
+    return working_lab
 
 def generate_lab_token(user: str, lab: str):
     payload = {
@@ -82,17 +87,21 @@ def start_lab(request):
 @login_required
 def stop_lab(request):
     user = f"{request.user.username}{request.user.id}"
+    ic(user)
     lab = request.POST.get("lab")
+    ic(lab)
 
     data = {
         "user": user,
         "lab": lab,
         "jwttoken": generate_lab_token(user, lab),
     }
+    ic(data)
 
     try:
         r = requests.post(f"{EDGE_IP}/stop_lab", json=data)
         return JsonResponse(r.json())
     except Exception as e:
+        ic(e)
         return JsonResponse({"error": str(e)})
 
