@@ -44,6 +44,7 @@ users = [
     ('carol', 'carolpassPP00PP', 'user', 'carol@email.com', f"{random.randint(1000, 9999):04d}"),
     ('dave', 'davepassIJIJI22', 'user', 'dave@email.com', f"{random.randint(1000, 9999):04d}"),
     ('eve', '0o0oOOevepass', 'user', 'eve@email.com', f"{random.randint(1000, 9999):04d}"),
+    ('testuser', 'testpass', 'user', 'test@email.com', "1234"),
 ]
 for username, password, role, email, verif in users:
     c.execute("INSERT OR IGNORE INTO users (username, password, role, email, verif_code) VALUES (?, ?, ?, ?, ?)", (username, password, role, email, verif))
