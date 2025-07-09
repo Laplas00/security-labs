@@ -4,56 +4,72 @@ import re
 from pathlib import Path
 
 # === CONFIG ===
-ACCESS_LOG_PATH = "/root/security-labs/nodesWork/traefik_logs"  # измени при необходимости
-AFK_TIMEOUT_MINUTES = 30
+ACCESS_LOG_PATH = "/root/security-labs/nodesWork/traefik_logs/access.log"  # измени при необходимости
+AFK_TIMEOUT_MINUTES = 1
 
-# === REGEX: log format ===
-log_pattern = re.compile(r'\[(.*?)\].*?"\S+@\w+"\s".*?"\s".*?"\s\d+\s"(.*?)@"')
 
-# === TIME PARSING ===
-def parse_log_timestamp(raw_ts):
+def parse_log_timestamp(raw: str) -> datetime | None:
     try:
-        return datetime.strptime(raw_ts, "%d/%b/%Y:%H:%M:%S %z")
-    except ValueError:
+        # adjust this to match your actual log format
+        # e.g. 2025-07-09T14:33:22+00:00 or whatever you log
+        return datetime.fromisoformat(raw)
+    except Exception as e:
+        ic(f"Failed to parse timestamp {raw!r}: {e}")
         return None
 
-# === Чтение access.log
-def get_last_seen_containers():
-    last_seen = {}
+def get_last_seen_containers() -> dict[str, datetime]:
+    last_seen: dict[str, datetime] = {}
     try:
         lines = Path(ACCESS_LOG_PATH).read_text().splitlines()
     except FileNotFoundError:
-        print("❌ Log file not found")
+        print("❌ Log file not found:", ACCESS_LOG_PATH)
         return last_seen
 
     for line in lines:
-        match = re.search(r'\[(.*?)\].*?"(\S+)@\w+"', line)
-        if match:
-            ts_raw, container = match.groups()
-            ts = parse_log_timestamp(ts_raw)
-            if ts:
-                last_seen[container] = ts
+        # tweak this regex to match your actual log entries
+        match = re.search(r'\[([^\]]+)\].*?"(\S+)@\w+"', line)
+        if not match:
+            continue
+
+        ts_raw, container = match.groups()
+        ts = parse_log_timestamp(ts_raw)
+        if ts:
+            last_seen[container] = ts
+
     return last_seen
 
-# === AFK фильтр
-def get_afk_containers(last_seen):
-    now = datetime.now(tz=next(iter(last_seen.values())).tzinfo)
+def get_afk_containers(last_seen: dict[str, datetime]) -> list[str]:
+    if not last_seen:
+        print("ℹ️  No containers seen in logs; nothing to kill.")
+        return []
+
+    # pick any tzinfo from your timestamps
+    tz = next(iter(last_seen.values())).tzinfo
+    now = datetime.now(tz=tz)
     threshold = now - timedelta(minutes=AFK_TIMEOUT_MINUTES)
-    ic(threshold)
+    ic("AFK threshold:", threshold.isoformat())
+
     return [name for name, ts in last_seen.items() if ts < threshold]
 
-# === Удаление контейнера
-def stop_container(container):
+def stop_container(container: str):
     print(f"🗑 Killing AFK container: {container}")
-    subprocess.run(["docker", "rm", "-f", container])
+    try:
+        subprocess.run(
+            ["docker", "rm", "-f", container],
+            check=True,
+            stdout=subprocess.PIPE,
+            stderr=subprocess.PIPE,
+            text=True
+        )
+        print(f"✅ Successfully killed {container}")
+    except subprocess.CalledProcessError as e:
+        print(f"❌ Failed to kill {container}: {e.stderr.strip()}")
 
-# === MAIN
 if __name__ == "__main__":
     last_seen = get_last_seen_containers()
     afk = get_afk_containers(last_seen)
 
-    for container in afk:
-        stop_container(container)
+    for c in afk:
+        stop_container(c)
 
-    print(f"✅ Checked {len(last_seen)} containers. Killed {len(afk)}.")
-
+    print(f"✅ Checked {len(last_seen)} containers; killed {len(afk)}.")
