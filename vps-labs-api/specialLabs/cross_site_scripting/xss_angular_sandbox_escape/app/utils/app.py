@@ -6,6 +6,7 @@ app = Flask(__name__,
             template_folder=os.path.join(os.path.dirname(__file__), '..', 'templates'),
             static_folder=os.path.join(os.path.dirname(__file__), '..', 'static'))
 app.secret_key = "FlaskUniqueSecretKey(it's a joke)"
+app.config['SECRET_KEY'] = secrets.token_hex(32)
 
 
 
