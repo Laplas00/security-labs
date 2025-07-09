@@ -1,5 +1,6 @@
 from flask import Flask
 import os, secrets, sqlite3
+import secrets
 
 app = Flask(__name__,
             template_folder=os.path.join(os.path.dirname(__file__), '..', 'templates'),
