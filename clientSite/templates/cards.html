@@ -5,30 +5,32 @@
 
 {% block content %}
 
-<div class="cards-container">
   {% for category, labs in groups.items %}
     <h2>{{ category|default:"No category:" }}</h2>
-    <ul>
-      {% for card in labs %}
-        <div class="card">
-          <img src="{% static 'img/sql-lab.jpg' %}" alt="{{card.name}}">
-          <div class="card-content">
-            <h3 class="card-title">{{card.lab_name}}</h3>
-            <p>{{ card.description }}</p>
-            <div class="card-tags">
-              <span class="tag">{{card.tier}}</span>
+      <div class="cards-container">
+
+      <ul>
+        {% for card in labs %}
+          <div class="card">
+            <img src="{% static 'img/sql-lab.jpg' %}" alt="{{card.name}}">
+            <div class="card-content">
+              <h3 class="card-title">{{card.lab_name}}</h3>
+              <p>{{ card.description }}</p>
+              <div class="card-tags">
+                <span class="tag">{{card.tier}}</span>
+              </div>
             </div>
-          </div>
-          <div class="card-footer">
-            <p>{{card.container_name}}</p>
-            <a href="{% url 'lab_view' card.container_name %}" 
-               class="btn primary">Start</a>
-          </div>  
-        </div>      
-      {% endfor %}
-    </ul>
+            <div class="card-footer">
+              <p>{{card.container_name}}</p>
+              <a href="{% url 'lab_view' card.container_name %}" 
+                 class="btn primary">Start</a>
+            </div>  
+          </div>      
+        {% endfor %}
+      </ul>
+    </div>
+
   {% endfor %}
 
-</div>
 
 {% endblock %}
