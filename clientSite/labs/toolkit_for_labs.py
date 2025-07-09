@@ -27,7 +27,7 @@ def get_runned_container(user):
     data = r.json()['working_lab']
     working_lab = ''
     if len(data) > 0:
-        working_lab = data[0]
+        working_lab = data[0].split('-')[1]
     
     return working_lab
 
