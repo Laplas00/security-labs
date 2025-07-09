@@ -20,7 +20,7 @@ def get_running_lab_containers():
     names = result.stdout.strip().splitlines()
     ic(names)
     # Оставляем только те, которые с дефисом (user-lab)
-    return [n for n in names if "-" in n]
+    return [n for n in names if "-" in n if n != 'nodeswork-traefik-1']
 
 def get_container_start_time(name: str):
     """
@@ -34,7 +34,12 @@ def get_container_start_time(name: str):
     iso_ts = result.stdout.strip()
     try:
         # Преобразуем Z в +00:00 для fromisoformat
-        return datetime.fromisoformat(iso_ts.replace("Z", "+00:00"))
+        ts = raw_ts.replace("Z", "+00:00")
+        if "." in ts:
+            base, rest = ts.split(".", 1)           # ['2025-07-09T11:08:05', '910924435+00:00']
+            frac, zone = rest.split("+", 1)         # frac='910924435', zone='00:00'
+            ts = f"{base}.{frac[:6]}+{zone}"        # '2025-07-09T11:08:05.910924+00:00'
+        return datetime.fromisoformat(ts)
     except Exception as e:
         print(f"[!] Не смогли получить время старта для {name}: {e}")
         return None
