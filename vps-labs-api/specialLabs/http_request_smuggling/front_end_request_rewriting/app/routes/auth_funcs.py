@@ -11,9 +11,10 @@ import random
 # SQL inj classic
 
 if get_vuln_flag() == 'front_end_request_rewriting':
-    print('flag request_rewriting via header ')
+    ic('flag request_rewriting via header ')
     @app.before_request
     def front_end_request_rewriting():
+        ic('function front_end_request_rewriting runned')
         x_url = request.headers.get('X-Original-URL')
         if x_url == "/admin":
             print('flag request_rewriting via header')

