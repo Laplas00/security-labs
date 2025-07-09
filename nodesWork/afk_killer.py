@@ -8,7 +8,7 @@ from datetime import datetime, timedelta
 AFK_TIMEOUT_MINUTES = 30        # Порог простоя в минутах
 CHECK_INTERVAL_SECONDS = 60     # Как часто проверять (секунды)
 
-def get_running_lab_containers() -> list[str]:
+def get_running_lab_containers():
     """
     Возвращает список имён запущенных контейнеров.
     Отфильтровываем по наличию '-' в имени (user-lab).
@@ -61,6 +61,9 @@ def stop_and_remove(name: str):
     subprocess.run(["docker", "rm", name], stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
     print(f"🗑 Контейнер {name} удалён как AFK")
 
+
+from icecream import ic
+
 def afk_cleaner_loop():
     """
     Основной цикл: каждые CHECK_INTERVAL_SECONDS секунд
@@ -71,6 +74,7 @@ def afk_cleaner_loop():
         now = datetime.utcnow()
         timeout_delta = timedelta(minutes=AFK_TIMEOUT_MINUTES)
         running = get_running_lab_containers()
+        ic(running)
         killed = 0
 
         for name in running:
