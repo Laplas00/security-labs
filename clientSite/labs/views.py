@@ -3,7 +3,7 @@ from django.contrib.auth.decorators import login_required
 from .toolkit_for_labs import generate_lab_token,  get_lab_status, get_runned_container
 from icecream import ic
 from .models import LabModule
-from django.shortcuts import render, get_object_or_404
+from django.shortcuts import render, get_object_or_404, get_list_or_404
 from itertools import groupby
 from operator import attrgetter
 
@@ -35,7 +35,8 @@ def lab_view(request, container_name):
     token = generate_lab_token(user, container_name)
     status = get_lab_status(user, container_name, token)
 
-    lab = get_object_or_404(LabModule, container_name=container_name).first()
+    labs = get_list_or_404(LabModule, container_name=container_name).first()
+    lab = labs[0]
     ic(lab)
     return render(request, 'labs/lab_detail.html', {
         'lab':lab,

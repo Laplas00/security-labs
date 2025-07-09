@@ -2,7 +2,7 @@ from django.conf import settings
 from django.http import JsonResponse
 from django.contrib.auth.decorators import login_required
 from django.views.decorators.csrf import csrf_exempt
-from django.shortcuts import redirect
+from django.shortcuts import redirect, get_list_or_404
 from django.urls import reverse
 
 from datetime import datetime, timedelta
