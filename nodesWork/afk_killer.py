@@ -38,7 +38,8 @@ def get_container_start_time(name: str):
             base, rest = ts.split(".", 1)           # ['2025-07-09T11:08:05', '910924435+00:00']
             frac, zone = rest.split("+", 1)         # frac='910924435', zone='00:00'
             ts = f"{base}.{frac[:6]}+{zone}"        # '2025-07-09T11:08:05.910924+00:00'
-        return datetime.fromisoformat(ts)
+        otime = datetime.fromisoformat(ts)
+        return otime.replace(tzinfo=None)
 
     except Exception as e:
         print(f"[!] Не смогли получить время старта для {name}: {e}")
