@@ -223,7 +223,8 @@ def get_runned_container():
         names = result.stdout.strip().splitlines()
         ic(names)
         # Оставляем только те, которые с дефисом (user-lab)
-        working_lab = [n for n in names if f"{user}-" in n] else None  
+        working_lab = [n for n in names if f"{user}-" in n] 
+        
         return {'working_lab': working_lab}
     
     except Exception as e:
