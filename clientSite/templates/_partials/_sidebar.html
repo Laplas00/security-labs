@@ -1,7 +1,16 @@
 <!-- Sidebar с темами -->
 <aside class="sidebar">
     {% if runned != '' %}
-      <p>Runned contained {{ runned }}</p>
+      <p>Runned contained</p>
+      <p>{{ runned }}</p>
+
+      <form action="{% url 'stop_lab' %}" method="POST" style="display: inline">
+        {% csrf_token %}
+        <input type="hidden" name="lab" value="{{ runned }}">
+        <button type="submit" class="btn btn-danger">🛑 Stop Lab</button>
+      </form>
+
+
     {% endif %}
 
     <h2>Topics</h2>
