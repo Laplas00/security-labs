@@ -36,6 +36,7 @@ def lab_view(request, container_name):
     return render(request, 'labs/lab_detail.html', {
         'lab':lab,
         'status': status,
+        'runned': '',
         # 'vuln_mode': status.get('mode', ''), 
     })
 
