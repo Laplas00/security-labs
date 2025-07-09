@@ -17,7 +17,7 @@ def dashboard(request):
     cards = LabModule.objects.all()
     categories = list({card.category for card in cards if card.category})
 
-    return render(request, 'dashboard.html', {'runned':runned, categories})
+    return render(request, 'dashboard.html', {'runned':runned, 'categories':categories})
 
 @login_required
 def modules(request):
