@@ -24,7 +24,7 @@ def get_lab_status(user, lab, token):
 def get_runned_container(user):
     data = {"user": user,}
     r = requests.post(f"{EDGE_IP}/get_runned_container", json=data, timeout=5)
-    return r.json()
+    return r.json()['working_lab']
 
 def generate_lab_token(user: str, lab: str):
     payload = {
