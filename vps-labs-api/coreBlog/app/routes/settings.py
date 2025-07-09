@@ -11,6 +11,8 @@ if get_vuln_flag() == 'circumbent_via_header':
     @app.before_request
     def circumbent_via_header():
         x_url = request.headers.get('X-Original-URL')
+        print(request)
+        print(request.headers)
         if x_url == "/admin":
             # Выдаём контент "админки" (или любой другой секрет)
             return "<h1>⚠️ Access control bypassed via header!</h1><p>FLAG: circum_bypass</p>"
