@@ -4,7 +4,8 @@ from .toolkit_for_labs import generate_lab_token,  get_lab_status, get_runned_co
 from icecream import ic
 from .models import LabModule
 from django.shortcuts import render, get_object_or_404
-
+from itertools import groupby
+from operator import attrgetter
 
 
 @login_required
@@ -12,9 +13,11 @@ def dashboard(request):
     user = f"{request.user.username.lower()}{request.user.id}"
     runned = get_runned_container(user)
     ic(runned)
-    cards = LabModule.objects.all().order_by('tier', 'lab_name')
-    ic(cards)
-    return render(request, 'dashboard.html', {'runned':runned})
+    
+    cards = LabModule.objects.all()
+    categories = list({card.category for card in cards if card.category})
+
+    return render(request, 'dashboard.html', {'runned':runned, categories})
 
 @login_required
 def modules(request):
@@ -22,11 +25,11 @@ def modules(request):
     runned = get_runned_container(user)
     ic(runned)
 
-    cards = LabModule.objects.all()
-    categories = list({card.category for card in cards if card.category})   
-    ic(categories)
-
-    return render(request, 'cards.html', context={'cards': cards,
+    groups = {
+        category: list(group)
+        for category, group in groupby(cards, key=attrgetter('category'))
+    }
+    return render(request, 'cards.html', context={'groups': groups,
                                                   'runned':runned})
 
 @login_required
