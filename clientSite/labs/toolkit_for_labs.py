@@ -33,7 +33,7 @@ def get_runned_container(user):
     working_lab = ''
     if 'working_lab' in data:    
         if len(data) > 0:
-            working_lab = data[0].split('-')[1]
+            working_lab = data['working_lab'][0].split('-')[1]
  
     return working_lab
 
