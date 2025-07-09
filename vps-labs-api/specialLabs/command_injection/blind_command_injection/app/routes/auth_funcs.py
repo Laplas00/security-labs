@@ -2,7 +2,6 @@ from flask import request, redirect, url_for, session, flash, render_template, a
 import sqlite3
 from app.utils.app import app, get_db
 from app.utils.vulns import get_vuln_flag
-from app.utils.auth_vulns import sql_inj_classic
 from icecream import ic
 import random
 # login / logout / registration
@@ -27,17 +26,6 @@ def login():
         flag = get_vuln_flag()
         ic('Login function is running')
         ic(flag)
-
-        match flag:
-            case 'sql_inj_classic':
-                return sql_inj_classic(db, session, request)
-
-            case 'auth_bypass_forgotten_cookie':
-                return auth_bypass_forgotten_cookie(db, session, request)
-                
-            case '2fa_bypass_weak_logic':
-                return bypass_2fa_weak_logic(db, session, request)
-
         # === Безопасная реализация (с обязательным 2FA) ===
         user = db.execute(
             'SELECT * FROM users WHERE username=? AND password=?',
@@ -56,10 +44,6 @@ def login():
 def login_verify():
     db = get_db()
     flag = get_vuln_flag()
-    match flag:
-        case '2fa_bypass_weak_logic':
-            return bypass_2fa_weak_logic_verification(db, session, request)
-
     # --- Безопасная логика ---
     pending_user = session.get('pending_user')
     if not pending_user:

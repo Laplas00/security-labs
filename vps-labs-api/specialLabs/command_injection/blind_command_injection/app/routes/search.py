@@ -2,7 +2,6 @@
 from flask import request, render_template, redirect, url_for, session, flash, render_template_string
 from app.utils.app import app, get_db
 from app.utils.vulns import get_vuln_flag
-from app.utils.search_vulns import reflected_xss, reflected_xss_angularjs_sandbox_escape
 
 @app.route("/find-post", methods=["GET"])
 def find_post():
@@ -11,19 +10,6 @@ def find_post():
     conn = get_db()
     c = conn.cursor()
     
-    match flag:
-        case 'reflected_xss':
-            reflected_xss(conn, c)
-
-        case 'reflected_xss_angularjs_sandbox_escape': 
-            print('reflected xss angularjs sandbox escape (front vuln)')
-            q = request.args.get("q", "")
-            return render_template(
-                "posts.html",
-                q=q,
-                vulnerabilities=get_vuln_flag()
-            )
-
     # Безопасный режим
     like_query = f"%{q}%"
     c.execute(

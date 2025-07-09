@@ -20,8 +20,6 @@ def get_last_post():
 def last_post():
     db = get_db()
     vuln = get_vuln_flag()
-    if vuln == 'http_request_smuggling_cache_poison':
-        return f"Injected by attacker!\nFLAG: LAB_FLAG{{smuggling_worked}}"
     post = get_last_post()
     if post:
         return render_template("post.html", post=post)
@@ -67,22 +65,12 @@ def add_comment(post_id):
 
     flag = get_vuln_flag()  # твоя функция для получения текущей уязвимости
 
-    match flag:
-        case 'clobbering_dom_attr_to_bp_html_filters':
-            safe_content = content  # Без фильтрации — DOM clobbering
-
-        case 'ssti_jinja2':
-            # Сохраняем как есть, но на этапе вывода подставляем render_template_string
-            safe_content = content
-
-        case _:
-            # Безопасный режим — чистим всё опасное
-            import bleach
-            safe_content = bleach.clean(
-                content,
-                tags=['b', 'i', 'u', 'em', 'strong', 'a', 'p', 'br'],
-                attributes=['href']
-            )
+    import bleach
+    safe_content = bleach.clean(
+        content,
+        tags=['b', 'i', 'u', 'em', 'strong', 'a', 'p', 'br'],
+        attributes=['href']
+    )
 
     db = get_db()
     db.execute(
@@ -97,14 +85,7 @@ def add_comment(post_id):
 def render_comment(content, flag=get_vuln_flag()):
     print(f"RENDER_SSTI: {content}, FLAG={flag}")
 
-    if flag == 'ssti_jinja2':
-        from flask import render_template_string
-        try:
-            return render_template_string(content)
-        except Exception as e:
-            return f"<span style='color:red'>SSTI error: {e}</span>"
-    else:
-        return content
+    return content
 
 app.jinja_env.globals.update(render_comment=render_comment)
 # =========
@@ -114,16 +95,15 @@ app.jinja_env.globals.update(render_comment=render_comment)
 def preview_post(post_id):
     print(f"SSRF preview: отправляю серверный запрос с User-Agent: {request.headers.get('User-Agent')}")
     flag = get_vuln_flag()
-    if flag == 'blind_ssrf_shellshock':
-        import requests
-        try:
-            # SSRF делает запрос во внутренний CGI endpoint, НЕ в сам app!
-            r = requests.get("http://127.0.0.1:8080/cgi-bin/vuln", timeout=2, headers={
-                'User-Agent': request.headers.get('User-Agent', 'BlogLabPreview')
-            })
-            print(f"Ответ от internal_api: {r.text}")
-        except Exception as e:
-            print(f"Ошибка SSRF: {e}")    # Показываем preview (можно просто страницу поста, или кусок)
+    import requests
+    try:
+        # SSRF делает запрос во внутренний CGI endpoint, НЕ в сам app!
+        r = requests.get("http://127.0.0.1:8080/cgi-bin/vuln", timeout=2, headers={
+            'User-Agent': request.headers.get('User-Agent', 'BlogLabPreview')
+        })
+        print(f"Ответ от internal_api: {r.text}")
+    except Exception as e:
+        print(f"Ошибка SSRF: {e}")    # Показываем preview (можно просто страницу поста, или кусок)
     db = get_db()
     post = db.execute('SELECT * FROM posts WHERE id=?', (post_id,)).fetchone()
 

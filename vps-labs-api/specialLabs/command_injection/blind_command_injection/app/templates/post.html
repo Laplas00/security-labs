@@ -11,15 +11,9 @@
 <div class="comments-section">
   <h3>Comments ({{ comments|length }})</h3>
   <ul>
-    {% if vulnerabilities == 'ssti_jinja2' %}
-      {% for comment in comments %}
-          <div class="comment">{{ render_comment(comment.content) | safe }}</div>
-      {% endfor %}
-    {% else %}
-      {% for comment in comments %}
-        <li><strong>{{ comment.author | safe }}</strong>: {{ comment.content | safe }}</li>
-      {% endfor %}
-    {% endif %}
+    {% for comment in comments %}
+      <li><strong>{{ comment.author | safe }}</strong>: {{ comment.content | safe }}</li>
+    {% endfor %}
   </ul>
 
   {% if session.username %}
