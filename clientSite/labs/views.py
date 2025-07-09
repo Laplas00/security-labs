@@ -35,7 +35,7 @@ def lab_view(request, container_name):
     token = generate_lab_token(user, container_name)
     status = get_lab_status(user, container_name, token)
 
-    lab = get_object_or_404(LabModule, container_name=container_name)
+    lab = get_object_or_404(LabModule, container_name=container_name).first()
     ic(lab)
     return render(request, 'labs/lab_detail.html', {
         'lab':lab,
