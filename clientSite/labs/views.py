@@ -10,8 +10,7 @@ from django.shortcuts import render, get_object_or_404
 @login_required
 def dashboard(request): 
     user = f"{request.user.username.lower()}{request.user.id}"
-    token = generate_lab_token(user, container_name)
-    runned = get_runned_container(user, token)
+    runned = get_runned_container(user)
     ic(runned)
     return render(request, 'dashboard.html', {'runned':runned})
 

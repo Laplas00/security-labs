@@ -210,10 +210,8 @@ def stop_lab():
 @app.route("/get_runned_container", methods=['POST'])
 def get_runned_container():
     data = request.get_json()
-    token = data.get("token")
 
     try:
-        payload = jwt.decode(token, SECRET_KEY, algorithms=[ALGORITHM])
         user = data.get("user", False)
 
         result = subprocess.run(
