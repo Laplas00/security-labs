@@ -14,11 +14,11 @@
   </div>
 
   <hr>
-  {% if status != 'not_running' %}
+  {% if status.status != 'not_running' %}
     <p>App status: {{ status.status }}</p>
   {% endif %}
 
-  {% if status == "running" %}
+  {% if status.status == "running" %}
     <p><a href="{{ status.url }}" target="_blank" class="btn btn-success">Try to hack!</a></p>
 
     <form action="{% url 'stop_lab' %}" method="POST" style="display: inline">
