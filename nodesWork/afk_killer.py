@@ -21,7 +21,7 @@ def get_running_lab_containers():
     # Оставляем только те, которые с дефисом (user-lab)
     return [n for n in names if "-" in n]
 
-def get_container_start_time(name: str) -> datetime | None:
+def get_container_start_time(name: str):
     """
     Через docker inspect получаем время старта контейнера.
     Возвращаем None, если не удалось распарсить.
