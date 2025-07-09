@@ -18,6 +18,7 @@ def get_running_lab_containers():
         capture_output=True, text=True
     )
     names = result.stdout.strip().splitlines()
+    ic(names)
     # Оставляем только те, которые с дефисом (user-lab)
     return [n for n in names if "-" in n]
 
