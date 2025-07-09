@@ -23,6 +23,7 @@ def modules(request):
     ic(runned)
 
     cards = LabModule.objects.all()
+    ic(cards[0].category)
     ic(cards)
     return render(request, 'cards.html', context={'cards': cards,
                                                   'runned':runned})
