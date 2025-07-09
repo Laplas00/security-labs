@@ -24,7 +24,7 @@ def modules(request):
     user = f"{request.user.username.lower()}{request.user.id}"
     runned = get_runned_container(user)
     ic(runned)
-
+    cards = LabModule.objects.order_by('category', 'container_name')
     groups = {
         category: list(group)
         for category, group in groupby(cards, key=attrgetter('category'))
