@@ -5,7 +5,7 @@ import time
 from datetime import datetime, timedelta
 
 # === КОНФИГ ===
-AFK_TIMEOUT_MINUTES = 30        # Порог простоя в минутах
+AFK_TIMEOUT_MINUTES = 2        # Порог простоя в минутах
 CHECK_INTERVAL_SECONDS = 60     # Как часто проверять (секунды)
 
 def get_running_lab_containers():
