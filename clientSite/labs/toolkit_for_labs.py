@@ -29,8 +29,9 @@ def get_runned_container(user):
     data = {"user": user,}
     r = requests.post(f"{EDGE_IP}/get_runned_container", json=data, timeout=5)
     data = r.json()
-    ic(data)
-    return data['message']
+    if data['message'] == []:
+        return ''
+    return data['message'][0]
 
 
 def generate_lab_token(user: str, lab: str):
