@@ -81,9 +81,6 @@ def start_lab():
     else:
         image_name = "cyberlab_main"
 
-    if lab in ['blind_command_injection_time_delay', 'blind_command_injection_oob_interaction']:
-        image_name = "blind_command_injection"
-
 
     docker_run = [
         'docker', 'run', '-d', '--name', f'{subdomain}',
