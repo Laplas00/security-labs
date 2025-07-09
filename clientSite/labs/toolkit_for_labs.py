@@ -28,7 +28,8 @@ def get_lab_status(user, lab, token):
 def get_runned_container(user):
     data = {"user": user,}
     r = requests.post(f"{EDGE_IP}/get_runned_container", json=data, timeout=5)
-    data = r.json()['working_lab']
+    data = r.json()
+    ic(data)
     working_lab = ''
     if len(data) > 0:
         working_lab = data[0].split('-')[1]
