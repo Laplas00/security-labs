@@ -31,7 +31,7 @@ def get_runned_container(user):
     data = r.json()
     if data['message'] == []:
         return ''
-    if data['message'][0].starswith('Error'):
+    if data['message'][0].startswith('Error'):
         return ''
     return data['message'][0].split('-')[1]
 
