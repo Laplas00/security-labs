@@ -106,7 +106,7 @@ def stop_lab(request):
 
     try:
         r = requests.post(f"{EDGE_IP}/stop_lab", json=data)
-        return redirect('lab_view', container_name=lab)
+        return redirect('modules')
 
     except Exception as e:
         ic(e)
