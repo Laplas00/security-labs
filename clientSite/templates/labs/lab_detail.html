@@ -15,7 +15,7 @@
 
   <hr>
   {% if status != 'not_running' %}
-    <p>App status: {{ status }}</p>
+    <p>App status: {{ status.status }}</p>
   {% endif %}
 
   {% if status == "running" %}
