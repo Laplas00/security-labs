@@ -14,8 +14,13 @@
     {% endif %}
 
     <h2>Topics</h2>
+
     <ul class="topics-list">
-    <li><a href="{% url 'modules' %}">All</a></li>
+      {% for category in categories %}
+        <li>
+          <a href="#{{ category|slugify }}">{{ category }}</a>
+        </li>
+      {% endfor %}    
     </ul>
 </aside>
 

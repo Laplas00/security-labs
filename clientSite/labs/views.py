@@ -8,28 +8,24 @@ from itertools import groupby
 from operator import attrgetter
 
 
+def get_category_with_labs():
+    cards = LabModule.objects.order_by('category', 'container_name')
+    return {category: list(group)
+            for category, group in groupby(cards, key=attrgetter('category'))}
+
 @login_required
 def dashboard(request): 
     user = f"{request.user.username.lower()}{request.user.id}"
     runned = get_runned_container(user)
-    ic(runned)
-    
-    cards = LabModule.objects.all()
-    categories = list({card.category for card in cards if card.category})
-
-    return render(request, 'dashboard.html', {'runned':runned, 'categories':categories})
+    ic(runned) 
+    return render(request, 'dashboard.html', {'runned':runned, 'categories': get_category_with_labs()})
 
 @login_required
 def modules(request):
     user = f"{request.user.username.lower()}{request.user.id}"
     runned = get_runned_container(user)
-    ic(runned)
-    cards = LabModule.objects.order_by('category', 'container_name')
-    groups = {
-        category: list(group)
-        for category, group in groupby(cards, key=attrgetter('category'))
-    }
-    return render(request, 'cards.html', context={'groups': groups,
+    ic(runned)   
+    return render(request, 'cards.html', context={'categories': get_category_with_labs(),
                                                   'runned':runned})
 
 @login_required
@@ -45,6 +41,7 @@ def lab_view(request, container_name):
         'lab':lab,
         'status': status,
         'runned': '',
+        'categories': get_category_with_labs(),
         # 'vuln_mode': status.get('mode', ''), 
     })
 
