@@ -2,7 +2,7 @@
 from flask import request, render_template, redirect, url_for, session, flash, abort
 from app.utils.app import app, get_db
 from app.utils.vulns import get_vuln_flag
-
+from icecream import ic
 
 # idor_bac
 
