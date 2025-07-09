@@ -58,18 +58,16 @@
 /* сетка карточек */
 .cards-container {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
-  gap: 20px;
+  grid-template-columns: auto auto auto;
+  background-color: dodgerblue;
+  padding: 10px;
 }
-
-/* сама карточка */
-.card {
-  background: #1f2937;
-  border-radius: 12px;
-  overflow: hidden;
-  display: flex;
-  flex-direction: column;
-  box-shadow: 0 4px 12px rgba(0,0,0,0.6);
+.card > div {
+  background-color: #f1f1f1;
+  border: 1px solid black;
+  padding: 10px;
+  font-size: 30px;
+  text-align: center;
 }
 .card img {
   width: 100%;
