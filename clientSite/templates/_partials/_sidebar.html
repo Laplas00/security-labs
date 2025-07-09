@@ -18,7 +18,7 @@
     <ul class="topics-list">
       {% for category in categories %}
         <li>
-          <a href="#{{ category|slugify }}">{{ category }}</a>
+          <a href="{% url 'modules' %}#{{ category|slugify }}">{{ category }}</a>
         </li>
       {% endfor %}    
     </ul>
