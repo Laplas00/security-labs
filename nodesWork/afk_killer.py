@@ -8,68 +8,55 @@ ACCESS_LOG_PATH = "/root/security-labs/nodesWork/traefik_logs/access.log"  # и�
 AFK_TIMEOUT_MINUTES = 1
 
 
-def parse_log_timestamp(raw: str) -> datetime | None:
+
+def parse_log_timestamp(raw):
     try:
-        # adjust this to match your actual log format
-        # e.g. 2025-07-09T14:33:22+00:00 or whatever you log
         return datetime.fromisoformat(raw)
-    except Exception as e:
-        ic(f"Failed to parse timestamp {raw!r}: {e}")
+    except:
         return None
 
-def get_last_seen_containers() -> dict[str, datetime]:
-    last_seen: dict[str, datetime] = {}
-    try:
-        lines = Path(ACCESS_LOG_PATH).read_text().splitlines()
-    except FileNotFoundError:
-        print("❌ Log file not found:", ACCESS_LOG_PATH)
-        return last_seen
-
-    for line in lines:
-        # tweak this regex to match your actual log entries
-        match = re.search(r'\[([^\]]+)\].*?"(\S+)@\w+"', line)
-        if not match:
+def get_last_seen_containers():
+    last_seen = {}
+    for line in Path(ACCESS_LOG_PATH).read_text().splitlines():
+        m = re.search(r'\[([^\]]+)\].*?"(\S+)@\w+"', line)
+        if not m: 
             continue
-
-        ts_raw, container = match.groups()
+        ts_raw, name = m.groups()
         ts = parse_log_timestamp(ts_raw)
         if ts:
-            last_seen[container] = ts
-
+            last_seen[name] = ts
     return last_seen
 
-def get_afk_containers(last_seen: dict[str, datetime]) -> list[str]:
+def get_running_containers() -> set[str]:
+    p = subprocess.run(
+        ["docker", "ps", "--format", "{{.Names}}"],
+        check=True,
+        stdout=subprocess.PIPE,
+        text=True
+    )
+    return set(filter(None, p.stdout.splitlines()))
+
+def get_afk_containers(last_seen):
     if not last_seen:
-        print("ℹ️  No containers seen in logs; nothing to kill.")
         return []
-
-    # pick any tzinfo from your timestamps
-    tz = next(iter(last_seen.values())).tzinfo
-    now = datetime.now(tz=tz)
+    now       = datetime.now(tz=next(iter(last_seen.values())).tzinfo)
     threshold = now - timedelta(minutes=AFK_TIMEOUT_MINUTES)
-    ic("AFK threshold:", threshold.isoformat())
-
     return [name for name, ts in last_seen.items() if ts < threshold]
 
-def stop_container(container: str):
-    print(f"🗑 Killing AFK container: {container}")
-    try:
-        subprocess.run(
-            ["docker", "rm", "-f", container],
-            check=True,
-            stdout=subprocess.PIPE,
-            stderr=subprocess.PIPE,
-            text=True
-        )
-        print(f"✅ Successfully killed {container}")
-    except subprocess.CalledProcessError as e:
-        print(f"❌ Failed to kill {container}: {e.stderr.strip()}")
+def stop_container(name):
+    print(f"🗑 Killing AFK container: {name}")
+    subprocess.run(["docker", "rm", "-f", name], check=False)
 
 if __name__ == "__main__":
     last_seen = get_last_seen_containers()
-    afk = get_afk_containers(last_seen)
+    running   = get_running_containers()
 
+    # only handle containers that are both seen *and* still up
+    candidates = {n:ts for n,ts in last_seen.items() if n in running}
+
+    afk = get_afk_containers(candidates)
     for c in afk:
         stop_container(c)
 
-    print(f"✅ Checked {len(last_seen)} containers; killed {len(afk)}.")
+    print(f"✅ Checked {len(candidates)} running containers; killed {len(afk)}.")
+    
