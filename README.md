@@ -58,7 +58,7 @@ Four core processes spread across two servers:
 | 1 | **ClientSite** (Django) | **Server A** | Public site with auth, catalog, admin |
 | 2 | **image-manager** (Flask) | **Server B** | Starts / stops lab containers, provides status API |
 | 3 | **Traefik** | **Server B** | Reverse-proxy; routes `https://<user>-<lab>.<domain>` to lab |
-| 4 | **AFK killer** | **Server B** | Removes idle labs after `AFK_TIMEOUT_MINUTES` |
+| 4 | **AFK killer** | **Server B** | Removes idle labs after `AFK_TIMEOUT_MINUTES` with period `CHECK_INTERVAL_SECONDS`|
 
 ### Lab categories inside *image-manager*
 
