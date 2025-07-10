@@ -33,9 +33,8 @@ This repository hosts a **Cybersecurity Education Platform** built to provide ha
 
 ---
 
-### 3. Architecture Overview
-```markdown
-## Architecture Overview
+### Architecture Overview
+
 
 Four core processes spread across two servers:
 
