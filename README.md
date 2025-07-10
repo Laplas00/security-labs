@@ -30,10 +30,26 @@ This repository hosts a **Cybersecurity Education Platform** built to provide ha
 ---
 
 
+## Getting Started
+
+```bash
+git pull <this-repo>
+```
+I've setup all processes via pm2, so can you. 
+For better understanding i will use terms **siteA** and **siteB**
+
+SiteA: 
+- Run clientSite
+
+SiteB:
+- Setup traefic via docker-compose.yml
+- Run afk_killer.y
+- Run image-manager.py 
+
 
 ---
 
-### Architecture Overview
+## Architecture Overview
 
 
 Four core processes spread across two servers:
