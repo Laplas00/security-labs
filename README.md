@@ -15,7 +15,6 @@ This repository hosts a **Cybersecurity Education Platform** built to provide ha
 - **Nginx** for serving static assets and acting as the entrypoint  
 - **Docker** to encapsulate each lab environment in a clean, reproducible container  
 
-> [!NOTE]
 >  This repo is under active development. 
 
 ---
@@ -39,7 +38,7 @@ git pull <this-repo>
 I've setup all processes via pm2, so can you. 
 For better understanding i will use terms **siteA** and **siteB**
 
->![NOTE] 
+
 > Requirements is specified for A and B sites
 
 SiteA: 
@@ -79,7 +78,6 @@ To register a *SpecialLab*:
 ---
 
 ## Lab Modules
-> [!NOTE]
 > Below is written container names that specified in admin panel
 
 #### Access control:
