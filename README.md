@@ -158,4 +158,4 @@ Add or edit labs via Django Admin:
 
 ## License
 
-MIT License © 2025 Cybersecurity Labs Platform contributors
+MIT: [here](LICENSE.md)
