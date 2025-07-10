@@ -29,7 +29,7 @@ This repository hosts a **Cybersecurity Education Platform** built to provide ha
 6. [License](#license)  
 
 ---
-1
+
 ## Getting Started
 
 ```bash
@@ -47,7 +47,7 @@ SiteB:
 - Run image-manager.py 
 
 ---
-2
+
 ## Architecture Overview
 
 
