@@ -28,8 +28,7 @@ This repository hosts a **Cybersecurity Education Platform** built to provide ha
 6. [License](#license)  
 
 ---
-
-
+1
 ## Getting Started
 
 ```bash
@@ -46,9 +45,8 @@ SiteB:
 - Run afk_killer.y
 - Run image-manager.py 
 
-
 ---
-
+2
 ## Architecture Overview
 
 
@@ -76,3 +74,90 @@ To register a *SpecialLab*:
 
 Routing pattern  
 https://<username><userid>-<container_name>.<clientsite_domain>
+
+---
+
+## Lab Modules
+> [!NOTE]
+> Below is written container names that specified in admin panel
+
+#### Access control:
+- idor_bac
+- basic_csrf
+- http_parameter_pollution_priv_esc
+- circumbent_via_header
+
+#### Authentication:
+- session_fixation
+- auth_bypass_forgotten_cookie
+- 2fa_bypass_weak_logic
+- brute_force
+
+#### Cross-site scripting:
+- xss_angular_sandbox_escape
+- ssti_via_jinja2
+- reflected_xss
+- stored_xss
+
+#### DOM-based vulnerabilities:
+- clobbering_dom_attr_to_bp_html_filters
+- dom_xss_polyglot
+- dom_based_cookie_manipulation
+- dom_based_open_redirection
+
+#### HTTP request smuggling:
+- http_request_smuggling_cache_poison
+- poc_confirming_cl_te
+- poc_confirming_te_cl
+- front_end_request_rewriting
+
+#### Insecure deserialization:
+- insecure_deserialization
+- modifying_serialized_objects
+- modifying_serialized_data_types 
+- using_app_func_to_exploit_insecure_deserialization
+
+#### OS command injection:
+- command_injection_basic
+- blind_command_injection_time_delay
+- blind_command_injection_oob_interaction
+- command_injection_filter_bypass
+
+#### SQL injection:
+- sql_inj_classic
+- sql_union_column_number_discovery    
+- blind_sql_injection_conditional          
+- blind_sql_injection_time_delay
+
+#### Server-side request forgery (SSRF):
+- open_redirect_to_ssrf_chain
+- ssrf_whitelist_based_bypass
+- blind_ssrf_shellshock
+- ssrf_blacklist_bypass_ipv6 
+
+#### XML external entity (XXE) injection:
+- xxe_via_xml_post
+- xxe_repurpose_local_dtd
+- blind_xxe_to_retrieve_data_via_error_messages
+- xxe_to_perform_ssrf_attacks
+  
+---
+
+## Administration
+
+Add or edit labs via Django Admin:
+
+| Field | Description |
+|-------|-------------|
+| **Lab name** | Display title |
+| **Container name** | Must match Docker image / `SPECIAL_LABS` entry |
+| **Tier** | Difficulty / points |
+| **Description** | Shown on card list |
+| **Category** | Used for sidebar grouping |
+| **Full description** | Rendered on lab detail page |
+
+---
+
+## License
+
+MIT License © 2025 Cybersecurity Labs Platform contributors
