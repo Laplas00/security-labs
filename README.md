@@ -39,6 +39,9 @@ git pull <this-repo>
 I've setup all processes via pm2, so can you. 
 For better understanding i will use terms **siteA** and **siteB**
 
+>![NOTE] 
+> Requirements is specified for A and B sites
+
 SiteA: 
 - Run clientSite
 
