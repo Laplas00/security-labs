@@ -73,8 +73,8 @@ To register a *SpecialLab*:
 2. Build it: `docker build -t <container_name> <path/to/folder>`
 3. If it needs port **9000**, append its name to `labs_to_open_9000port`.
 
-Routing pattern  
-https://<username><userid>-<container_name>.<clientsite_domain>
+**Routing pattern**  
+`https://<username><userid>-<container_name>.<clientsite_domain>`
 
 ---
 
