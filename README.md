@@ -158,4 +158,4 @@ Add or edit labs via Django Admin:
 
 ## License
 
-MIT: [here](LICENSE.md)
+MIT: [here](LICENSE)
