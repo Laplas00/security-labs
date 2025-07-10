@@ -59,3 +59,4 @@ To register a *SpecialLab*:
 3. If it needs port **9000**, append its name to `labs_to_open_9000port`.
 
 Routing pattern  
+https://<username><userid>-<container_name>.<clientsite_domain>
