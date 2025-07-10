@@ -14,7 +14,8 @@ This repository hosts a **Cybersecurity Education Platform** built to provide ha
 - **Nginx** for serving static assets and acting as the entrypoint  
 - **Docker** to encapsulate each lab environment in a clean, reproducible container  
 
-> **Note:** This repo is under active development. 
+> [!NOTE]
+>  This repo is under active development. 
 
 ---
 
