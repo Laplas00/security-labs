@@ -1,6 +1,6 @@
 # Cybersecurity Labs Platform
 
-![LearningPurpose](https://img.shields.io/badge/nginx-%23009639.svg?style=for-the-badge&logo=LearningPurpose&logoColor=white)
+![LearningPurpose](https://img.shields.io/badge/LearningPurpose-blue)
 ![Nginx](https://img.shields.io/badge/nginx-%23009639.svg?style=for-the-badge&logo=nginx&logoColor=white)
 ![Traefik](https://img.shields.io/badge/traefik-%2324CEC3.svg?style=for-the-badge&logo=traefik&logoColor=white)
 ![Flask](https://img.shields.io/badge/Flask-%23000.svg?style=for-the-badge&logo=flask&logoColor=white)
