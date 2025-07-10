@@ -1,5 +1,6 @@
 # Cybersecurity Labs Platform
 
+![LearningPurpose](https://img.shields.io/badge/nginx-%23009639.svg?style=for-the-badge&logo=LearningPurpose&logoColor=white)
 ![Nginx](https://img.shields.io/badge/nginx-%23009639.svg?style=for-the-badge&logo=nginx&logoColor=white)
 ![Traefik](https://img.shields.io/badge/traefik-%2324CEC3.svg?style=for-the-badge&logo=traefik&logoColor=white)
 ![Flask](https://img.shields.io/badge/Flask-%23000.svg?style=for-the-badge&logo=flask&logoColor=white)
@@ -49,7 +50,6 @@ SiteB:
 ---
 
 ## Architecture Overview
-
 
 Four core processes spread across two servers:
 
