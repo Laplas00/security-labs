@@ -28,3 +28,35 @@ This repository hosts a **Cybersecurity Education Platform** built to provide ha
 6. [License](#license)  
 
 ---
+
+
+
+---
+
+### 3. Architecture Overview
+```markdown
+## Architecture Overview
+
+Four core processes spread across two servers:
+
+| # | Component | Host | Role |
+|---|-----------|------|------|
+| 1 | **ClientSite** (Django) | **Server A** | Public site with auth, catalog, admin |
+| 2 | **image-manager** (Flask) | **Server B** | Starts / stops lab containers, provides status API |
+| 3 | **Traefik** | **Server B** | Reverse-proxy; routes `https://<user>-<lab>.<domain>` to lab |
+| 4 | **AFK killer** | **Server B** | Removes idle labs after `AFK_TIMEOUT_MINUTES` |
+
+### Lab categories inside *image-manager*
+
+| Folder | Purpose |
+|--------|---------|
+| **CoreBlog** | Multi-vuln image; vulnerability toggled via env flag |
+| **SpecialLabs** | Stand-alone labs with custom logic |
+
+To register a *SpecialLab*:
+
+1. Add its name to `SPECIAL_LABS` in `vps-labs-api/image-manager.py`.
+2. Build it: `docker build -t <container_name> <path/to/folder>`
+3. If it needs port **9000**, append its name to `labs_to_open_9000port`.
+
+Routing pattern  
